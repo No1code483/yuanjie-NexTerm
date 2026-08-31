@@ -1,0 +1,454 @@
+/* ===== GitPanel — 终端黑客风格 ===== */
+/* 配色: var(--theme-bg-primary) 背景, var(--theme-accent) 前景, var(--theme-error) 强调 */
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--theme-bg-primary);
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-2) 12px;
+  background: var(--theme-bg-primary);
+  border-bottom: 1px solid var(--theme-accent);
+  min-height: 34px;
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.branchIcon {
+  color: var(--theme-accent);
+  font-size: 14px;
+}
+
+.branchName {
+  color: var(--theme-accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.branchSelect {
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 2px var(--nt-space-2);
+  border-radius: 0;
+  outline: none;
+  cursor: pointer;
+  margin-left: 8px;
+  max-width: 140px;
+}
+
+.branchSelect option {
+  background: var(--theme-bg-primary);
+  color: var(--theme-accent);
+}
+
+.branchSelect:focus {
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
+}
+
+/* ===== Buttons ===== */
+.btn {
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: var(--nt-space-1) var(--nt-space-2);
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.15s;
+}
+
+.btn:hover {
+  background: color-mix(in srgb, var(--theme-accent) 12%, transparent);
+  border-color: var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnPrimary {
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: var(--nt-space-1) var(--nt-space-4);
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.15s;
+}
+
+.btnPrimary:hover {
+  background: var(--theme-accent);
+  color: var(--theme-bg-primary);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnSmall {
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: 1px 8px;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.btnSmall:hover {
+  background: color-mix(in srgb, var(--theme-accent) 12%, transparent);
+  border-color: var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+/* ===== Error Bar ===== */
+.errorBar {
+  padding: 4px 12px;
+  background: rgba(255, 0, 0, 0.1);
+  border-bottom: 1px solid var(--theme-error);
+  color: var(--theme-error);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* ===== Empty State ===== */
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.emptyIcon {
+  color: var(--theme-accent);
+  font-size: 32px;
+  font-weight: 600;
+  opacity: 0.3;
+}
+
+.emptyText {
+  color: var(--theme-accent);
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+/* ===== Changes Section ===== */
+.changesSection {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  min-height: 0;
+}
+
+.changesSection::-webkit-scrollbar {
+  width: 4px;
+}
+
+.changesSection::-webkit-scrollbar-track {
+  background: var(--theme-bg-primary);
+}
+
+.changesSection::-webkit-scrollbar-thumb {
+  background: var(--theme-accent);
+  opacity: 0.3;
+}
+
+.changeGroup {
+  margin-bottom: 4px;
+}
+
+.changeGroupTitle {
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--theme-accent);
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  padding: var(--nt-space-1) 12px;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.fileItem:hover {
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.statusBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0px 4px;
+  border: 1px solid;
+  border-radius: 0;
+  flex-shrink: 0;
+  min-width: 16px;
+  text-align: center;
+}
+
+.filePath {
+  flex: 1;
+  font-size: 12px;
+  color: var(--theme-accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filePath:hover {
+  text-decoration: underline;
+}
+
+.cleanMessage {
+  padding: 16px;
+  text-align: center;
+  color: var(--theme-accent);
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+/* ===== Diff Section ===== */
+.diffSection {
+  border-top: 1px solid var(--theme-accent);
+  border-bottom: 1px solid var(--theme-accent);
+  max-height: 200px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.diffHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-1) 12px;
+  background: var(--theme-bg-primary);
+  font-size: 11px;
+  color: var(--theme-accent);
+  border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.diffContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--nt-space-2) 12px;
+  margin: 0;
+  background: var(--theme-bg-primary);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--theme-accent);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.diffContent::-webkit-scrollbar {
+  width: 4px;
+}
+
+.diffContent::-webkit-scrollbar-track {
+  background: var(--theme-bg-primary);
+}
+
+.diffContent::-webkit-scrollbar-thumb {
+  background: var(--theme-accent);
+  opacity: 0.3;
+}
+
+.diffLine {
+  display: block;
+}
+
+.diffAdded {
+  color: var(--theme-accent);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.diffRemoved {
+  color: var(--theme-error);
+  background: rgba(255, 0, 0, 0.05);
+}
+
+.diffHunk {
+  color: var(--theme-accent);
+}
+
+.diffLoading {
+  color: var(--theme-accent);
+  opacity: 0.5;
+}
+
+/* ===== Commit Section ===== */
+.commitSection {
+  padding: 8px 12px;
+  border-top: 1px solid var(--theme-accent);
+  flex-shrink: 0;
+}
+
+.commitInput {
+  width: 100%;
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: var(--nt-space-2) 8px;
+  resize: vertical;
+  outline: none;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.commitInput:focus {
+  box-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
+}
+
+.commitInput::placeholder {
+  color: var(--theme-accent);
+  opacity: 0.3;
+}
+
+.commitActions {
+  display: flex;
+  gap: var(--nt-space-2);
+  margin-top: var(--nt-space-2);
+  justify-content: flex-end;
+}
+
+/* ===== Log Section ===== */
+.logSection {
+  border-top: 1px solid rgba(0, 255, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.logHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  padding: 4px 12px;
+  cursor: pointer;
+  color: var(--theme-accent);
+  font-size: 11px;
+  user-select: none;
+}
+
+.logHeader:hover {
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.logToggle {
+  font-size: 9px;
+  width: 10px;
+}
+
+.logList {
+  max-height: 150px;
+  overflow-y: auto;
+  background: var(--theme-bg-primary);
+}
+
+.logList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.logList::-webkit-scrollbar-track {
+  background: var(--theme-bg-primary);
+}
+
+.logList::-webkit-scrollbar-thumb {
+  background: var(--theme-accent);
+  opacity: 0.3;
+}
+
+.logItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 12px;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.05);
+}
+
+.logHash {
+  color: var(--theme-warning);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.logMsg {
+  flex: 1;
+  color: var(--theme-accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logAuthor {
+  color: var(--theme-accent);
+  opacity: 0.5;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.logTime {
+  color: var(--theme-accent);
+  opacity: 0.4;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.logEmpty {
+  padding: 12px;
+  text-align: center;
+  color: var(--theme-accent);
+  opacity: 0.4;
+  font-size: 11px;
+}

@@ -1,0 +1,321 @@
+/* ===== 冲突解决 UI（A5.2.6.4）===== */
+
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(10, 0, 20, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+}
+
+.dialog {
+  background-color: rgba(10, 0, 20, 0.96);
+  border: var(--nt-border-width) solid var(--theme-secondary);
+  box-shadow:
+    0 0 25px rgba(176, 38, 255, 0.6),
+    0 0 50px rgba(176, 38, 255, 0.25);
+  font-family: var(--nt-font-mono);
+  width: 90vw;
+  max-width: 960px;
+  max-height: 88vh;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: var(--nt-space-4) 20px;
+  border-bottom: var(--nt-border-width) solid rgba(176, 38, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--nt-font-chinese);
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: var(--theme-secondary);
+  text-shadow: 0 0 10px rgba(176, 38, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border: var(--nt-border-width) solid var(--theme-secondary);
+  border-radius: 2px;
+  font-size: 11px;
+  color: var(--theme-secondary);
+}
+
+.closeBtn {
+  background: transparent;
+  border: var(--nt-border-width) solid var(--theme-secondary);
+  color: var(--theme-secondary);
+  width: 24px; height: 24px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s;
+}
+.closeBtn:hover {
+  border-color: var(--theme-secondary);
+  color: var(--theme-secondary);
+  box-shadow: 0 0 12px currentColor;
+}
+
+.body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--theme-text-muted);
+  font-size: 13px;
+  font-family: var(--nt-font-chinese);
+}
+
+/* 冲突列表 */
+.conflictList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nt-space-2);
+  margin-bottom: 16px;
+}
+
+.conflictItem {
+  border: var(--nt-border-width) solid rgba(176, 38, 255, 0.4);
+  background: rgba(20, 5, 30, 0.5);
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 2px;
+}
+.conflictItem:hover {
+  border-color: rgba(176, 38, 255, 0.7);
+  background: rgba(30, 10, 40, 0.7);
+}
+.conflictItem.active {
+  border-color: var(--theme-secondary);
+  box-shadow: inset 0 0 12px rgba(176, 38, 255, 0.2);
+}
+
+.conflictHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--nt-space-2);
+  font-size: 12px;
+  color: var(--theme-text-primary);
+}
+
+.conflictMeta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tableName {
+  color: var(--theme-accent);
+  font-weight: 600;
+}
+
+.recordId {
+  color: var(--theme-text-secondary);
+}
+
+.operation {
+  padding: 1px var(--nt-space-2);
+  border: 1px solid;
+  border-radius: 2px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.operation.INSERT { color: var(--theme-accent); border-color: var(--theme-accent); }
+.operation.UPDATE { color: var(--theme-warning); border-color: var(--theme-warning); }
+.operation.DELETE { color: var(--theme-error); border-color: var(--theme-error); }
+
+.conflictTime {
+  color: var(--theme-text-muted);
+  font-size: 11px;
+}
+
+/* 版本对比区 */
+.diffSection {
+  border-top: 1px solid rgba(176, 38, 255, 0.2);
+  padding-top: 16px;
+  margin-top: 4px;
+}
+
+.diffHeader {
+  font-size: 12px;
+  color: var(--theme-secondary);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  font-family: var(--nt-font-chinese);
+}
+
+.diffGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.diffCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.diffColTitle {
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  padding: var(--nt-space-1) 8px;
+  border: 1px solid;
+  border-radius: 2px;
+  text-align: center;
+}
+.diffColTitle.local {
+  color: var(--theme-accent);
+  border-color: rgba(0, 240, 255, 0.5);
+}
+.diffColTitle.remote {
+  color: var(--theme-warning);
+  border-color: rgba(255, 179, 71, 0.5);
+}
+
+.diffBody {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(102, 102, 128, 0.3);
+  padding: 8px var(--nt-space-2);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  color: var(--theme-text-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 2px;
+  flex: 1;
+}
+
+.mergeEditor {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(176, 38, 255, 0.5);
+  color: var(--theme-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  padding: 8px var(--nt-space-2);
+  min-height: 120px;
+  max-height: 260px;
+  resize: vertical;
+  border-radius: 2px;
+  outline: none;
+}
+.mergeEditor:focus {
+  border-color: var(--theme-secondary);
+  box-shadow: 0 0 12px rgba(176, 38, 255, 0.3);
+}
+
+.actions {
+  display: flex;
+  gap: var(--nt-space-2);
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid rgba(176, 38, 255, 0.2);
+}
+
+.btn {
+  padding: var(--nt-space-2) var(--nt-space-5);
+  border: var(--nt-border-width) solid;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  transition: all 0.25s;
+  letter-spacing: 1px;
+  border-radius: 2px;
+}
+
+.btnLocal {
+  color: var(--theme-accent);
+  border-color: var(--theme-accent);
+}
+.btnLocal:hover {
+  background: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+}
+
+.btnRemote {
+  color: var(--theme-warning);
+  border-color: var(--theme-warning);
+}
+.btnRemote:hover {
+  background: rgba(255, 179, 71, 0.15);
+  box-shadow: 0 0 12px rgba(255, 179, 71, 0.5);
+}
+
+.btnMerge {
+  color: var(--theme-secondary);
+  border-color: var(--theme-secondary);
+}
+.btnMerge:hover {
+  background: rgba(176, 38, 255, 0.15);
+  box-shadow: 0 0 12px rgba(176, 38, 255, 0.5);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--theme-text-secondary);
+}
+
+.refreshBtn {
+  padding: 4px 12px;
+  border: var(--nt-border-width) solid var(--theme-text-muted);
+  background: transparent;
+  color: var(--theme-text-primary);
+  cursor: pointer;
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+.refreshBtn:hover {
+  border-color: var(--theme-secondary);
+  color: var(--theme-secondary);
+}
+
+.errorMsg {
+  color: var(--theme-error);
+  font-size: 11px;
+  padding: var(--nt-space-2) var(--nt-space-2);
+  border: 1px solid rgba(255, 0, 64, 0.3);
+  background: rgba(25, 5, 5, 0.5);
+  margin-bottom: 8px;
+  border-radius: 2px;
+}

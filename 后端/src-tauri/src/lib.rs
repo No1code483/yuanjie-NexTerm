@@ -1,0 +1,26 @@
+pub mod agent;
+pub mod commands;
+pub mod compact;
+pub mod crypto;
+pub mod db;
+pub mod engine;
+pub mod error;
+pub mod goals;
+pub mod io_control;
+pub mod lsp;
+pub mod mcp;
+pub mod models;
+pub mod performance;
+pub mod project;
+pub mod plugins;
+pub mod prompts;
+pub mod safety;
+pub mod sandbox;
+pub mod services;
+pub mod skills;
+pub mod theme;
+pub mod tools;
+pub mod utils;
+pub mod workspace;
+
+pub use db::connection::AppState;

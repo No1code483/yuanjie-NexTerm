@@ -1,0 +1,369 @@
+@import '../styles/theme.css';
+
+/* ==================== 背景层 ==================== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(138, 43, 226, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 50%, rgba(30, 144, 255, 0.14) 0%, transparent 55%),
+    linear-gradient(180deg,
+      rgba(3, 0, 8, 0.99) 0%,
+      rgba(8, 2, 16, 0.98) 40%,
+      rgba(12, 4, 20, 0.98) 70%,
+      rgba(6, 1, 12, 0.99) 100%
+    );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* ==================== 登录框容器 ==================== */
+.modalContainer {
+  position: relative;
+  width: 460px;
+  background: linear-gradient(
+    180deg,
+    rgba(2, 2, 6, 0.97) 0%,
+    rgba(5, 3, 10, 0.98) 50%,
+    rgba(2, 2, 6, 0.97) 100%
+  );
+  padding: var(--nt-space-12) 45px 45px;
+
+  /* 切角边框 */
+  clip-path: polygon(
+    0 15px,
+    15px 0,
+    calc(100% - 15px) 0,
+    100% 15px,
+    100% calc(100% - 15px),
+    calc(100% - 15px) 100%,
+    15px 100%,
+    0 calc(100% - 15px)
+  );
+
+  border: none;
+
+  /* 发光边框效果 */
+  box-shadow:
+    0 0 80px rgba(0, 240, 255, 0.4),
+    0 0 160px rgba(0, 240, 255, 0.18),
+    inset 0 0 0 2.5px rgba(0, 240, 255, 0.55),
+    inset 0 0 40px rgba(0, 240, 255, 0.06);
+}
+
+/* 顶部霓虹青光带 */
+.modalContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 240, 255, 0.25) 10%,
+    var(--theme-accent) 50%,
+    rgba(0, 240, 255, 0.25) 90%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 20px rgba(0, 240, 255, 1),
+    0 0 40px rgba(0, 240, 255, 0.6),
+    0 0 60px rgba(0, 240, 255, 0.3);
+}
+
+/* ==================== 标题 ==================== */
+.title {
+  color: var(--theme-text-primary);
+  font-family: var(--nt-font-chinese);
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 36px;
+  letter-spacing: 4px;
+  font-weight: 300;
+  opacity: 0.9;
+}
+
+/* ==================== 表单组 ==================== */
+.formGroup {
+  margin-bottom: 32px;
+  position: relative;
+}
+
+/* 标签 */
+.label {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--theme-text-primary);
+  font-size: 15px;
+  font-family: var(--nt-font-mono);
+  letter-spacing: 2px;
+  font-weight: 300;
+}
+
+/* ==================== 输入框 ==================== */
+.input {
+  width: 100%;
+  padding: var(--nt-space-4) 16px;
+  background-color: rgba(6, 4, 12, 0.7);
+  border: none;
+  border-bottom: 1.5px solid rgba(90, 170, 210, 0.3);
+  color: var(--theme-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.input:focus {
+  border-bottom-color: var(--theme-accent);
+  background-color: rgba(8, 5, 15, 0.75);
+  box-shadow:
+    0 5px 25px rgba(0, 240, 255, 0.2);
+}
+
+.input::placeholder {
+  color: rgba(120, 120, 150, 0.5);
+}
+
+/* 文本域 */
+.textarea {
+  width: 100%;
+  padding: var(--nt-space-4) 16px;
+  background-color: rgba(6, 4, 12, 0.7);
+  border: none;
+  border-bottom: 1.5px solid rgba(90, 170, 210, 0.3);
+  color: var(--theme-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 15px;
+  outline: none;
+  resize: vertical;
+  min-height: 90px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.textarea:focus {
+  border-bottom-color: var(--theme-accent);
+  background-color: rgba(8, 5, 15, 0.75);
+  box-shadow:
+    0 5px 25px rgba(0, 240, 255, 0.2);
+}
+
+/* 选择框 */
+.select {
+  width: 100%;
+  padding: var(--nt-space-4) 16px;
+  background-color: rgba(6, 4, 12, 0.7);
+  border: none;
+  border-bottom: 1.5px solid rgba(90, 170, 210, 0.3);
+  color: var(--theme-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 15px;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.select:focus {
+  border-bottom-color: var(--theme-accent);
+  background-color: rgba(8, 5, 15, 0.75);
+  box-shadow:
+    0 5px 25px rgba(0, 240, 255, 0.2);
+}
+
+.select option {
+  background-color: rgba(10, 0, 20, 0.99);
+  color: var(--theme-accent);
+}
+
+/* ==================== 主按钮 ==================== */
+.primaryButton {
+  width: 100%;
+  padding: var(--nt-space-4);
+  margin-top: var(--nt-space-2);
+  background: rgba(0, 240, 255, 0.04);
+  border: 1.5px solid rgba(0, 240, 255, 0.4);
+  color: var(--theme-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: rgba(0, 240, 255, 0.6);
+  color: var(--theme-text-secondary);
+  box-shadow:
+    0 0 30px rgba(0, 240, 255, 0.4),
+    0 0 60px rgba(0, 240, 255, 0.2);
+}
+
+.primaryButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ==================== 底部选项区域 ==================== */
+.bottomOptions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(90, 170, 210, 0.12);
+}
+
+.optionLink {
+  background: none;
+  border: none;
+  color: rgba(130, 130, 165, 0.65);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: var(--nt-font-mono);
+  letter-spacing: 1px;
+  padding: var(--nt-space-1) var(--nt-space-2);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.optionLink:hover {
+  color: var(--theme-accent);
+  text-shadow:
+    0 0 10px rgba(0, 240, 255, 0.6),
+    0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.optionDivider {
+  color: rgba(90, 90, 120, 0.35);
+  font-size: 16px;
+  user-select: none;
+}
+
+/* ==================== 错误消息 ==================== */
+.errorMessage {
+  color: var(--theme-error);
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background-color: rgba(255, 34, 68, 0.06);
+  border-left: 2.5px solid rgba(255, 68, 102, 0.55);
+  font-size: 12px;
+  text-align: left;
+  font-family: var(--nt-font-mono);
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+}
+
+/* ==================== 信息框 ==================== */
+.warningBox {
+  background-color: rgba(0, 240, 255, 0.03);
+  border-left: 2px solid rgba(0, 240, 255, 0.35);
+  padding: 12px 16px;
+  margin-bottom: var(--nt-space-6);
+  font-size: 11px;
+  color: var(--theme-text-secondary);
+  line-height: 1.6;
+  font-family: var(--nt-font-mono);
+}
+
+.dangerBox {
+  background-color: rgba(255, 34, 68, 0.04);
+  border-left: 2.5px solid rgba(255, 68, 102, 0.45);
+  padding: 12px 16px;
+  font-size: 11px;
+  color: var(--theme-error);
+  line-height: 1.6;
+  font-family: var(--nt-font-mono);
+}
+
+.infoBox {
+  background-color: rgba(176, 38, 255, 0.04);
+  border-left: 2px solid rgba(176, 38, 255, 0.35);
+  padding: 12px 16px;
+  margin-bottom: var(--nt-space-6);
+  color: var(--theme-secondary);
+  font-size: 11px;
+  font-family: var(--nt-font-mono);
+  line-height: 1.5;
+}
+
+/* ==================== 恢复短语相关 ==================== */
+.recoveryPhraseTitle {
+  color: var(--theme-text-secondary);
+  margin-top: 0;
+  margin-bottom: var(--nt-space-5);
+  font-size: 14px;
+  font-family: var(--nt-font-chinese);
+  letter-spacing: 1.5px;
+}
+
+.recoveryPhraseBox {
+  background-color: rgba(6, 4, 12, 0.85);
+  border: 1px solid rgba(90, 170, 210, 0.25);
+  border-bottom: 1.5px solid rgba(90, 170, 210, 0.35);
+  padding: 20px;
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  line-height: 2.2;
+  color: var(--theme-text-primary);
+  word-break: break-word;
+  margin-bottom: var(--nt-space-5);
+  letter-spacing: 0.8px;
+}
+
+.copyButtonContainer {
+  display: flex;
+  gap: var(--nt-space-2);
+  margin-bottom: var(--nt-space-5);
+}
+
+.copyButton {
+  flex: 1;
+  padding: var(--nt-space-2);
+  background-color: rgba(176, 38, 255, 0.04);
+  border: 1px solid rgba(176, 38, 255, 0.3);
+  color: var(--theme-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--nt-font-mono);
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.copyButton:hover {
+  background-color: rgba(176, 38, 255, 0.08);
+  border-color: rgba(176, 38, 255, 0.5);
+  color: var(--theme-secondary);
+  box-shadow: 0 0 15px rgba(176, 38, 255, 0.25);
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: var(--nt-space-2);
+}
+
+.wordCount {
+  color: rgba(120, 120, 155, 0.6);
+  font-size: 10px;
+  margin-top: 8px;
+  font-family: var(--nt-font-mono);
+  letter-spacing: 0.5px;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="terminal">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NexTerm·元界</title>
+    <link rel="stylesheet" href="./src/styles/theme.css" />
+    <link rel="stylesheet" href="./src/styles/themes.css" />
+    <link rel="stylesheet" href="./src/styles/animations.css" />
+    <link rel="stylesheet" href="./src/styles/fonts.css" />
+    <link rel="stylesheet" href="./src/styles/global.css" />
+    <link rel="stylesheet" href="./src/styles/cyberpunk.css" />
+    <script>
+      // 启动前从 localStorage 恢复主题与语言，避免闪烁（FOUC）
+      (function() {
+        try {
+          var savedTheme = localStorage.getItem('nexterm-theme');
+          if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+          }
+          // C2.3：预加载语言偏好，设置 <html lang> 属性（无障碍 + 屏幕阅读器）
+          var savedLang = localStorage.getItem('nexterm_lang');
+          var langMap = { zh: 'zh-CN', en: 'en-US', ja: 'ja-JP', ko: 'ko-KR' };
+          var htmlLang = langMap[savedLang] || 'zh-CN';
+          document.documentElement.setAttribute('lang', htmlLang);
+          // C2.4：RTL 语言设置 dir 属性（ar/he/fa，当前未支持但预留）
+          var rtlLangs = ['ar', 'he', 'fa'];
+          var baseLang = (savedLang || 'zh').split('-')[0];
+          if (rtlLangs.indexOf(baseLang) !== -1) {
+            document.documentElement.setAttribute('dir', 'rtl');
+          }
+        } catch (e) { /* localStorage 不可用时使用默认 terminal 主题 + zh-CN */ }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>

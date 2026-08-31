@@ -1,0 +1,41 @@
+{
+  "name": "git-workflow",
+  "display_name": "Git 工作流",
+  "version": "1.0.0",
+  "description": "Git 分支管理、commit 模板生成、changelog 自动生成",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "git",
+  "tags": ["git", "branch", "commit", "changelog"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "git-workflow"
+  },
+  "permissions": [
+    {
+      "name": "git_commands",
+      "description": "执行 Git 命令",
+      "requires_approval": false
+    }
+  ],
+  "dependencies": [],
+  "skills": ["git-branch-manager", "git-commit-generator", "git-changelog"],
+  "mcp_servers": [],
+  "commands": [
+    {
+      "name": "generate_commit",
+      "description": "根据 diff 生成 commit 信息",
+      "handler": "git_generate_commit",
+      "args": {
+        "diff": "string"
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "event": "on_file_change",
+      "handler": "git_track_changes"
+    }
+  ],
+  "enabled": true
+}

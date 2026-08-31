@@ -1,0 +1,315 @@
+/**
+ * ThemePreviewPanel 样式（C1.1 主题编辑器组件）
+ * 所有颜色/字体/几何引用 --nt-* 语义层变量，自动跟随主题变化
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--nt-bg-primary);
+  border: 1px solid var(--nt-border-color);
+  border-radius: var(--theme-border-radius, 0px);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--nt-space-2) var(--nt-space-4);
+  background: var(--nt-bg-secondary);
+  border-bottom: 1px solid var(--nt-border-subtle);
+}
+
+.title {
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nt-primary);
+  letter-spacing: 0.5px;
+}
+
+.subtitle {
+  font-size: 10px;
+  color: var(--nt-text-muted);
+}
+
+.previewContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--nt-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ===== 区块 ===== */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nt-space-2);
+}
+
+.sectionLabel {
+  font-size: 10px;
+  color: var(--nt-text-muted);
+  font-family: var(--nt-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== 标题与正文 ===== */
+.previewTitle {
+  font-family: var(--nt-font-mono);
+  font-size: 16px;
+  color: var(--nt-primary);
+  font-weight: 600;
+  margin: 0;
+  text-shadow: var(--nt-shadow-primary);
+}
+
+.previewText {
+  font-size: 12px;
+  color: var(--nt-text-primary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.previewMuted {
+  font-size: 11px;
+  color: var(--nt-text-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ===== 按钮组 ===== */
+.buttonRow {
+  display: flex;
+  gap: var(--nt-space-2);
+  flex-wrap: wrap;
+}
+
+.btnPrimary,
+.btnSecondary,
+.btnDanger,
+.btnWarning {
+  padding: var(--nt-space-1) var(--nt-space-2);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: var(--theme-border-radius, 0px);
+  transition: all var(--nt-transition-fast);
+}
+
+.btnPrimary {
+  background: transparent;
+  border: 1px solid var(--nt-primary);
+  color: var(--nt-primary);
+}
+
+.btnPrimary:hover {
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.btnSecondary {
+  background: transparent;
+  border: 1px solid var(--nt-secondary);
+  color: var(--nt-secondary);
+}
+
+.btnSecondary:hover {
+  background: rgba(176, 38, 255, 0.1);
+  box-shadow: var(--nt-shadow-secondary);
+}
+
+.btnDanger {
+  background: transparent;
+  border: 1px solid var(--nt-error);
+  color: var(--nt-error);
+}
+
+.btnDanger:hover {
+  background: rgba(255, 0, 110, 0.1);
+  box-shadow: var(--nt-shadow-accent);
+}
+
+.btnWarning {
+  background: transparent;
+  border: 1px solid var(--nt-warning);
+  color: var(--nt-warning);
+}
+
+.btnWarning:hover {
+  background: rgba(255, 215, 0, 0.1);
+  box-shadow: var(--nt-shadow-warning);
+}
+
+/* ===== 输入框 ===== */
+.input {
+  width: 100%;
+  padding: var(--nt-space-2) var(--nt-space-2);
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  outline: none;
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.input::placeholder {
+  color: var(--nt-text-muted);
+}
+
+/* ===== 列表 ===== */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--nt-space-2) 8px;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.listDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nt-primary);
+  flex-shrink: 0;
+}
+
+.listDotSecondary {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nt-secondary);
+  flex-shrink: 0;
+}
+
+.listDotWarning {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nt-warning);
+  flex-shrink: 0;
+}
+
+.listText {
+  flex: 1;
+  font-size: 11px;
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+}
+
+.badgeActive {
+  font-size: 9px;
+  padding: 1px var(--nt-space-1);
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--nt-primary);
+  border: 1px solid var(--nt-primary);
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.badgeMuted {
+  font-size: 9px;
+  padding: 1px var(--nt-space-1);
+  background: var(--nt-bg-tertiary);
+  color: var(--nt-text-muted);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.badgeWarning {
+  font-size: 9px;
+  padding: 1px var(--nt-space-1);
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--nt-warning);
+  border: 1px solid var(--nt-warning);
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+/* ===== 卡片 ===== */
+.card {
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  border-radius: var(--theme-border-radius, 0px);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--nt-space-2) var(--nt-space-2);
+  background: var(--nt-bg-tertiary);
+  border-bottom: 1px solid var(--nt-border-subtle);
+}
+
+.cardTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nt-primary);
+  font-family: var(--nt-font-mono);
+}
+
+.cardMeta {
+  font-size: 10px;
+  color: var(--nt-text-muted);
+  font-family: var(--nt-font-mono);
+}
+
+.cardBody {
+  padding: 8px var(--nt-space-2);
+  font-size: 11px;
+  color: var(--nt-text-secondary);
+  line-height: 1.5;
+}
+
+/* ===== 终端 ANSI ===== */
+.terminal {
+  background: var(--nt-bg-primary);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--theme-border-radius, 0px);
+  padding: 8px var(--nt-space-2);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.terminalLine {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+}
+
+.ansiRed { color: var(--nt-ansi-red); }
+.ansiGreen { color: var(--nt-ansi-green); }
+.ansiYellow { color: var(--nt-ansi-yellow); }
+.ansiBlue { color: var(--nt-ansi-blue); }
+.ansiMagenta { color: var(--nt-ansi-magenta); }
+.ansiCyan { color: var(--nt-ansi-cyan); }
+.ansiWhite { color: var(--nt-ansi-white); }
+
+.prompt {
+  color: var(--nt-primary);
+  font-weight: 600;
+}
+
+.terminalText {
+  color: var(--nt-text-primary);
+}

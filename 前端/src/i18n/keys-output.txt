@@ -1,0 +1,1 @@
+﻿nav,sidebar,actions,common,a11y,app,components,errors,hooks,layout,lib,ai,AI,AutoSaveDemo,CommandManual,game,game3d,home,Home,IconDemo,Intelligence,IntelligenceCharts,knowledge,Knowledge,linux,Linux,LoginModal,PermissionDemo,profile,Profile,Recycle,Search,terminal,Terminal,TerminalPane,xin,Xin,yuan-code,YuanCode,routes,stores,utils

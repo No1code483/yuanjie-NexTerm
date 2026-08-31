@@ -1,0 +1,493 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  width: 520px;
+  max-width: 92vw;
+  height: 640px;
+  max-height: 90vh;
+  background: var(--nt-bg-secondary, var(--theme-bg-elevated));
+  border: 1px solid var(--nt-border, rgba(0, 240, 255, 0.2));
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--theme-shadow-md);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.05));
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.04), rgba(176, 38, 255, 0.03));
+}
+
+.npcInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 240, 255, 0.1);
+  border-radius: 50%;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--nt-text-primary, var(--theme-text-bright));
+}
+
+.role {
+  font-size: 12px;
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  margin-top: 2px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 8px;
+}
+
+.closeBtn,
+.clearBtn {
+  background: transparent;
+  border: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.closeBtn:hover,
+.clearBtn:hover {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: rgba(255, 0, 0, 0.3);
+  color: var(--theme-error);
+}
+
+.personality {
+  padding: 8px 16px;
+  font-size: 11px;
+  color: var(--nt-text-tertiary, var(--theme-text-muted));
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--nt-border-subtle);
+  font-style: italic;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 8px;
+}
+
+.greetingBubble {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--nt-text-secondary, var(--theme-text-primary));
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.avatarSmall {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.msg {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  max-width: 85%;
+}
+
+.msgUser {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.msgNpc {
+  align-self: flex-start;
+}
+
+.bubble {
+  padding: var(--nt-space-2) var(--nt-space-4);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.msgUser .bubble {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(176, 38, 255, 0.1));
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  color: var(--nt-text-primary, var(--theme-text-bright));
+}
+
+.msgNpc .bubble {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.08));
+  color: var(--nt-text-primary, var(--theme-text-primary));
+}
+
+.dots {
+  display: inline-block;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+.error {
+  padding: 8px 16px;
+  font-size: 12px;
+  color: var(--theme-error);
+  background: rgba(255, 0, 0, 0.05);
+  border-top: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.inputArea {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--nt-border-subtle);
+  background: var(--nt-bg-tertiary, rgba(0, 0, 0, 0.3));
+}
+
+.input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--nt-text-primary, var(--theme-text-bright));
+  font-size: 13px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--nt-primary, var(--theme-accent));
+}
+
+.sendBtn {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(176, 38, 255, 0.15));
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  color: var(--nt-primary, var(--theme-accent));
+  padding: 0 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(176, 38, 255, 0.2));
+}
+
+.sendBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  font-size: 14px;
+}
+
+/* ============================================================================
+ * D4.6 智能 NPC 深化：关系条 + 记忆面板
+ * ============================================================================ */
+
+.relationBar {
+  padding: 8px 16px var(--nt-space-2);
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.05));
+  position: relative;
+}
+
+.relationHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--nt-space-2);
+  font-size: 11px;
+}
+
+.relationLabel {
+  font-weight: 600;
+  color: var(--nt-primary, var(--theme-accent));
+  letter-spacing: 0.5px;
+}
+
+.relationValue {
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.memoryToggle {
+  background: transparent;
+  border: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--nt-text-secondary, var(--theme-text-primary));
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.memoryToggle:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: var(--nt-primary, var(--theme-accent));
+}
+
+.relationTrack {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 中点标记（0 关系值位置，帮助识别"中立"分界） */
+.relationTrack::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.relationFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease, background 0.3s ease;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.deltaBadge {
+  position: absolute;
+  top: 6px;
+  right: 16px;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-weight: 600;
+  animation: deltaFadeIn 0.3s ease;
+}
+
+.deltaPos {
+  background: rgba(102, 255, 153, 0.15);
+  border: 1px solid rgba(102, 255, 153, 0.4);
+  color: var(--theme-accent);
+}
+
+.deltaNeg {
+  background: rgba(255, 68, 68, 0.15);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  color: var(--theme-error);
+}
+
+.deltaNeutral {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--theme-text-secondary);
+}
+
+@keyframes deltaFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- 记忆面板 ---------------- */
+
+.memoryPanel {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.05));
+  max-height: 220px;
+  overflow-y: auto;
+  padding: var(--nt-space-2) 16px;
+  animation: memorySlideIn 0.2s ease;
+}
+
+@keyframes memorySlideIn {
+  from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+  to { opacity: 1; max-height: 220px; padding-top: var(--nt-space-2); padding-bottom: var(--nt-space-2); }
+}
+
+.memoryPanelHeader {
+  display: flex;
+  gap: var(--nt-space-2);
+  margin-bottom: 8px;
+}
+
+/* D4.7 记忆面板子标签：亲历记忆 / 道听途说 */
+.memoryTab {
+  background: transparent;
+  border: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.08));
+  color: var(--nt-text-tertiary, var(--theme-text-secondary));
+  padding: var(--nt-space-1) var(--nt-space-2);
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.memoryTab:hover {
+  background: rgba(0, 240, 255, 0.06);
+  border-color: rgba(0, 240, 255, 0.25);
+  color: var(--nt-text-secondary, var(--theme-text-primary));
+}
+
+.memoryTabActive {
+  background: rgba(0, 240, 255, 0.12);
+  border-color: rgba(0, 240, 255, 0.4);
+  color: var(--nt-primary, var(--theme-accent));
+}
+
+/* D4.7 传闻条目：来源 NPC 徽章 */
+.rumorItem {
+  flex-wrap: wrap;
+  border-left: 2px solid rgba(255, 215, 0, 0.4);
+}
+
+.rumorSource {
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 1px var(--nt-space-2);
+  border-radius: 2px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: var(--theme-warning);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  letter-spacing: 0.3px;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.memoryEmpty {
+  font-size: 12px;
+  color: var(--nt-text-tertiary, var(--theme-text-muted));
+  text-align: center;
+  padding: 16px 0;
+  font-style: italic;
+}
+
+.memoryList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nt-space-2);
+}
+
+.memoryItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--nt-space-2) 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--nt-border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.memoryType {
+  flex-shrink: 0;
+  font-size: 10px;
+  padding: 1px var(--nt-space-2);
+  border-radius: 2px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.memType_fact {
+  background: rgba(0, 240, 255, 0.12);
+  color: var(--theme-accent);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.memType_preference {
+  background: rgba(176, 38, 255, 0.12);
+  color: var(--theme-secondary);
+  border: 1px solid rgba(176, 38, 255, 0.3);
+}
+
+.memType_commitment {
+  background: rgba(255, 215, 0, 0.12);
+  color: var(--theme-warning);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.memType_event {
+  background: rgba(255, 102, 102, 0.12);
+  color: var(--theme-error);
+  border: 1px solid rgba(255, 102, 102, 0.3);
+}
+
+.memoryContent {
+  flex: 1;
+  color: var(--nt-text-primary, var(--theme-text-primary));
+  word-break: break-word;
+}
+
+.memoryMeta {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--nt-text-tertiary, var(--theme-text-muted));
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+}

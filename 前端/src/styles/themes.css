@@ -1,0 +1,764 @@
+/**
+ * 主题定义层（L1 调色�?+ L2 主题�?
+ *
+ * 架构说明�?
+ *   - L0 语义层（theme.css 中的 --nt-* 变量）引�?--theme-* 变量
+ *   - L1+L2 主题层（本文件）�?[data-theme="xxx"] 选择器定�?--theme-* 变量
+ *   - 切换主题时，只需修改 <html data-theme="xxx"> 属�?
+ *
+ * 11 套预设主题（M4.① 对标 VSCode 内置主题完善）：
+ *   1. terminal       - 终端青色风（默认，项目特色，无 VSCode 对标）
+ *   2. matrix         - 极致荧光绿黑（项目规范原始风格）
+ *   3. dracula        - 经典暗色（对标 Dracula 官方 #282a36）
+ *   4. monokai        - 经典编辑器风（对标 VSCode theme-monokai #272822）
+ *   5. one-dark       - 现代暗色（Atom One Dark）
+ *   6. nord           - 北极冷色（对标 Nord 官方 #2e3440）
+ *   7. solarized-dark - 学术暗色（对标 VSCode theme-solarized-dark #002b36）
+ *   8. solarized-light- 学术亮色（对标 VSCode theme-solarized-light #fdf6e3）
+ *   9. github-light   - GitHub 亮色（对标 GitHub Primer #ffffff）
+ *  10. github-dark    - GitHub 暗色（对标 GitHub Primer #0d1117）
+ *  11. high-contrast  - 高对比度（对标 VSCode hc_black #000000，A11y）
+ *
+ * 创建时间�?026-07-18（v1.51.4 体验深化 Phase 1�?
+ * 关联文档：功能展�?体验深化/01_主题自定义系统_详细设计.md §2.1
+ */
+
+/* ===================================================================
+ * 1. Terminal（默认主�?- 终端青色风）
+ *    向后兼容现有 UI：青�?#00F0FF 主调 + 粉红 #FF006E 强调
+ * ================================================================ */
+:root:is([data-theme="terminal"], [data-module-theme="terminal"]) {
+  --theme-bg-primary: #090300;
+  --theme-bg-secondary: rgba(10, 0, 20, 0.6);
+  --theme-bg-tertiary: rgba(10, 0, 20, 0.4);
+  --theme-bg-elevated: #141414;
+  --theme-bg-overlay: rgba(10, 0, 20, 0.85);
+
+  --theme-text-primary: #c8c8dd;
+  --theme-text-secondary: #8a8aaa;
+  --theme-text-muted: #6a6a8a;
+  --theme-text-bright: #ffffff;
+
+  --theme-accent: #00F0FF;
+  --theme-accent-hover: #33F5FF;
+  --theme-accent-active: #00C8D9;
+  --theme-secondary: #B026FF;
+  --theme-secondary-hover: #C44AFF;
+  --theme-warning: #FFD700;
+  --theme-warning-hover: #FFE033;
+  --theme-success: #00F0FF;
+  --theme-error: #FF006E;
+  --theme-error-hover: #FF3385;
+  --theme-info: #00F0FF;
+
+  --theme-border-color: rgba(0, 240, 255, 0.25);
+  --theme-border-subtle: rgba(255, 255, 255, 0.06);
+
+  --theme-shadow-primary: 0 0 10px rgba(0, 240, 255, 0.3);
+  --theme-shadow-accent: 0 0 10px rgba(255, 0, 110, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(176, 38, 255, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(255, 215, 0, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(0, 240, 255, 0.2);
+  --theme-shadow-md: 0 0 10px rgba(0, 240, 255, 0.3);
+  --theme-shadow-lg: 0 0 14px rgba(0, 240, 255, 0.4);
+
+  --theme-gray-dark: #5a5a5a;
+  --theme-gray-medium: #3a3a3a;
+  --theme-gray-light: #1a1a1a;
+  --theme-gray-ultra-light: #2a2a2a;
+
+  --theme-ansi-black: #090300;
+  --theme-ansi-red: #FF006E;
+  --theme-ansi-green: #00F0FF;
+  --theme-ansi-yellow: #FFD700;
+  --theme-ansi-blue: #01a0e4;
+  --theme-ansi-magenta: #B026FF;
+  --theme-ansi-cyan: #00F0FF;
+  --theme-ansi-white: #a5a2a2;
+  --theme-ansi-bright-black: #5c5855;
+  --theme-ansi-bright-red: #FF3385;
+  --theme-ansi-bright-green: #33F5FF;
+  --theme-ansi-bright-yellow: #FFE033;
+  --theme-ansi-bright-blue: #00b8ff;
+  --theme-ansi-bright-magenta: #C44AFF;
+  --theme-ansi-bright-cyan: #33F5FF;
+  --theme-ansi-bright-white: #ffffff;
+
+  --theme-border-radius: 0px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 2. Matrix（极致荧光绿�?- 项目规范原始风格�?
+ *    黑底 #000000 + 荧光�?#00FF00 + 警示�?#FF0000
+ * ================================================================ */
+:root:is([data-theme="matrix"], [data-module-theme="matrix"]) {
+  --theme-bg-primary: #000000;
+  --theme-bg-secondary: rgba(0, 15, 0, 0.6);
+  --theme-bg-tertiary: rgba(0, 10, 0, 0.4);
+  --theme-bg-elevated: #0a0a0a;
+  --theme-bg-overlay: rgba(0, 10, 0, 0.85);
+
+  --theme-text-primary: #00FF00;
+  --theme-text-secondary: #00CC00;
+  --theme-text-muted: #006600;
+  --theme-text-bright: #80FF80;
+
+  --theme-accent: #00FF00;
+  --theme-accent-hover: #33FF33;
+  --theme-accent-active: #00CC00;
+  --theme-secondary: #00DD00;
+  --theme-secondary-hover: #33FF33;
+  --theme-warning: #FFFF00;
+  --theme-warning-hover: #FFFF66;
+  --theme-success: #00FF00;
+  --theme-error: #FF0000;
+  --theme-error-hover: #FF3333;
+  --theme-info: #00FFFF;
+
+  --theme-border-color: rgba(0, 255, 0, 0.3);
+  --theme-border-subtle: rgba(0, 255, 0, 0.1);
+
+  --theme-shadow-primary: 0 0 10px rgba(0, 255, 0, 0.4);
+  --theme-shadow-accent: 0 0 10px rgba(255, 0, 0, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(0, 255, 0, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(255, 255, 0, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(0, 255, 0, 0.25);
+  --theme-shadow-md: 0 0 10px rgba(0, 255, 0, 0.4);
+  --theme-shadow-lg: 0 0 14px rgba(0, 255, 0, 0.5);
+
+  --theme-gray-dark: #004400;
+  --theme-gray-medium: #003300;
+  --theme-gray-light: #001a00;
+  --theme-gray-ultra-light: #002a00;
+
+  --theme-ansi-black: #000000;
+  --theme-ansi-red: #FF0000;
+  --theme-ansi-green: #00FF00;
+  --theme-ansi-yellow: #FFFF00;
+  --theme-ansi-blue: #0066FF;
+  --theme-ansi-magenta: #FF00FF;
+  --theme-ansi-cyan: #00FFFF;
+  --theme-ansi-white: #808080;
+  --theme-ansi-bright-black: #004400;
+  --theme-ansi-bright-red: #FF6666;
+  --theme-ansi-bright-green: #66FF66;
+  --theme-ansi-bright-yellow: #FFFF66;
+  --theme-ansi-bright-blue: #6699FF;
+  --theme-ansi-bright-magenta: #FF66FF;
+  --theme-ansi-bright-cyan: #66FFFF;
+  --theme-ansi-bright-white: #FFFFFF;
+
+  --theme-border-radius: 0px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 3. Dracula（经典暗色主题）
+ * ================================================================ */
+:root:is([data-theme="dracula"], [data-module-theme="dracula"]) {
+  --theme-bg-primary: #282a36;
+  --theme-bg-secondary: rgba(33, 34, 44, 0.8);
+  --theme-bg-tertiary: rgba(33, 34, 44, 0.6);
+  --theme-bg-elevated: #44475a;
+  --theme-bg-overlay: rgba(33, 34, 44, 0.9);
+
+  --theme-text-primary: #f8f8f2;
+  --theme-text-secondary: #bababa;
+  --theme-text-muted: #6272a4;
+  --theme-text-bright: #ffffff;
+
+  --theme-accent: #bd93f9;
+  --theme-accent-hover: #caa9fa;
+  --theme-accent-active: #a678e8;
+  --theme-secondary: #ff79c6;
+  --theme-secondary-hover: #ff9ad1;
+  --theme-warning: #f1fa8c;
+  --theme-warning-hover: #f7fdaf;
+  --theme-success: #50fa7b;
+  --theme-error: #ff5555;
+  --theme-error-hover: #ff7777;
+  --theme-info: #8be9fd;
+
+  --theme-border-color: rgba(189, 147, 249, 0.3);
+  --theme-border-subtle: rgba(248, 248, 242, 0.08);
+
+  --theme-shadow-primary: 0 0 10px rgba(189, 147, 249, 0.3);
+  --theme-shadow-accent: 0 0 10px rgba(255, 85, 85, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(255, 121, 198, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(241, 250, 140, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(189, 147, 249, 0.2);
+  --theme-shadow-md: 0 0 10px rgba(189, 147, 249, 0.3);
+  --theme-shadow-lg: 0 0 14px rgba(189, 147, 249, 0.4);
+
+  --theme-gray-dark: #6272a4;
+  --theme-gray-medium: #44475a;
+  --theme-gray-light: #282a36;
+  --theme-gray-ultra-light: #21222c;
+
+  --theme-ansi-black: #21222c;
+  --theme-ansi-red: #ff5555;
+  --theme-ansi-green: #50fa7b;
+  --theme-ansi-yellow: #f1fa8c;
+  --theme-ansi-blue: #bd93f9;
+  --theme-ansi-magenta: #ff79c6;
+  --theme-ansi-cyan: #8be9fd;
+  --theme-ansi-white: #f8f8f2;
+  --theme-ansi-bright-black: #6272a4;
+  --theme-ansi-bright-red: #ff7777;
+  --theme-ansi-bright-green: #70fba0;
+  --theme-ansi-bright-yellow: #f7fdaf;
+  --theme-ansi-bright-blue: #caa9fa;
+  --theme-ansi-bright-magenta: #ff9ad1;
+  --theme-ansi-bright-cyan: #a5ecff;
+  --theme-ansi-bright-white: #ffffff;
+
+  --theme-border-radius: 6px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 4. Monokai（经典编辑器�?- Sublime Text�?
+ * ================================================================ */
+:root:is([data-theme="monokai"], [data-module-theme="monokai"]) {
+  --theme-bg-primary: #272822;
+  --theme-bg-secondary: rgba(30, 31, 25, 0.8);
+  --theme-bg-tertiary: rgba(30, 31, 25, 0.6);
+  --theme-bg-elevated: #3e3d32;
+  --theme-bg-overlay: rgba(30, 31, 25, 0.9);
+
+  --theme-text-primary: #f8f8f2;
+  --theme-text-secondary: #c8c8c0;
+  --theme-text-muted: #75715e;
+  --theme-text-bright: #ffffff;
+
+  --theme-accent: #a6e22e;
+  --theme-accent-hover: #b6f23e;
+  --theme-accent-active: #96d21e;
+  --theme-secondary: #fd971f;
+  --theme-secondary-hover: #fda73f;
+  --theme-warning: #e6db74;
+  --theme-warning-hover: #f6eb84;
+  --theme-success: #a6e22e;
+  --theme-error: #f92672;
+  --theme-error-hover: #fb468c;
+  --theme-info: #66d9ef;
+
+  --theme-border-color: rgba(166, 226, 46, 0.3);
+  --theme-border-subtle: rgba(248, 248, 242, 0.08);
+
+  --theme-shadow-primary: 0 0 10px rgba(166, 226, 46, 0.3);
+  --theme-shadow-accent: 0 0 10px rgba(249, 38, 114, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(253, 151, 31, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(230, 219, 116, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(166, 226, 46, 0.2);
+  --theme-shadow-md: 0 0 10px rgba(166, 226, 46, 0.3);
+  --theme-shadow-lg: 0 0 14px rgba(166, 226, 46, 0.4);
+
+  --theme-gray-dark: #75715e;
+  --theme-gray-medium: #3e3d32;
+  --theme-gray-light: #272822;
+  --theme-gray-ultra-light: #1e1f19;
+
+  --theme-ansi-black: #272822;
+  --theme-ansi-red: #f92672;
+  --theme-ansi-green: #a6e22e;
+  --theme-ansi-yellow: #f4bf75;
+  --theme-ansi-blue: #66d9ef;
+  --theme-ansi-magenta: #ae81ff;
+  --theme-ansi-cyan: #a1efe4;
+  --theme-ansi-white: #f8f8f2;
+  --theme-ansi-bright-black: #75715e;
+  --theme-ansi-bright-red: #f92672;
+  --theme-ansi-bright-green: #a6e22e;
+  --theme-ansi-bright-yellow: #f4bf75;
+  --theme-ansi-bright-blue: #66d9ef;
+  --theme-ansi-bright-magenta: #ae81ff;
+  --theme-ansi-bright-cyan: #a1efe4;
+  --theme-ansi-bright-white: #f9f8f5;
+
+  --theme-border-radius: 4px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 5. One Dark（现代暗�?- Atom 编辑器）
+ * ================================================================ */
+:root:is([data-theme="one-dark"], [data-module-theme="one-dark"]) {
+  --theme-bg-primary: #282c34;
+  --theme-bg-secondary: rgba(33, 37, 43, 0.8);
+  --theme-bg-tertiary: rgba(33, 37, 43, 0.6);
+  --theme-bg-elevated: #313842;
+  --theme-bg-overlay: rgba(33, 37, 43, 0.9);
+
+  --theme-text-primary: #abb2bf;
+  --theme-text-secondary: #9da5b4;
+  --theme-text-muted: #5c6370;
+  --theme-text-bright: #ffffff;
+
+  --theme-accent: #61afef;
+  --theme-accent-hover: #79c1ff;
+  --theme-accent-active: #4a9fdf;
+  --theme-secondary: #c678dd;
+  --theme-secondary-hover: #d68bed;
+  --theme-warning: #e5c07b;
+  --theme-warning-hover: #f5d08b;
+  --theme-success: #98c379;
+  --theme-error: #e06c75;
+  --theme-error-hover: #f08c85;
+  --theme-info: #56b6c2;
+
+  --theme-border-color: rgba(97, 175, 239, 0.3);
+  --theme-border-subtle: rgba(171, 178, 191, 0.08);
+
+  --theme-shadow-primary: 0 0 10px rgba(97, 175, 239, 0.3);
+  --theme-shadow-accent: 0 0 10px rgba(224, 108, 117, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(198, 120, 221, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(229, 192, 123, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(97, 175, 239, 0.2);
+  --theme-shadow-md: 0 0 10px rgba(97, 175, 239, 0.3);
+  --theme-shadow-lg: 0 0 14px rgba(97, 175, 239, 0.4);
+
+  --theme-gray-dark: #5c6370;
+  --theme-gray-medium: #313842;
+  --theme-gray-light: #282c34;
+  --theme-gray-ultra-light: #21252b;
+
+  --theme-ansi-black: #282c34;
+  --theme-ansi-red: #e06c75;
+  --theme-ansi-green: #98c379;
+  --theme-ansi-yellow: #e5c07b;
+  --theme-ansi-blue: #61afef;
+  --theme-ansi-magenta: #c678dd;
+  --theme-ansi-cyan: #56b6c2;
+  --theme-ansi-white: #abb2bf;
+  --theme-ansi-bright-black: #5c6370;
+  --theme-ansi-bright-red: #e06c75;
+  --theme-ansi-bright-green: #98c379;
+  --theme-ansi-bright-yellow: #e5c07b;
+  --theme-ansi-bright-blue: #61afef;
+  --theme-ansi-bright-magenta: #c678dd;
+  --theme-ansi-bright-cyan: #56b6c2;
+  --theme-ansi-bright-white: #ffffff;
+
+  --theme-border-radius: 6px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 6. Nord（北极冷色）
+ * ================================================================ */
+:root:is([data-theme="nord"], [data-module-theme="nord"]) {
+  --theme-bg-primary: #2e3440;
+  --theme-bg-secondary: rgba(46, 52, 64, 0.8);
+  --theme-bg-tertiary: rgba(46, 52, 64, 0.6);
+  --theme-bg-elevated: #3b4252;
+  --theme-bg-overlay: rgba(46, 52, 64, 0.9);
+
+  --theme-text-primary: #d8dee9;
+  --theme-text-secondary: #b8c0d0;
+  --theme-text-muted: #616e88;
+  --theme-text-bright: #ffffff;
+
+  --theme-accent: #88c0d0;
+  --theme-accent-hover: #a0d0e0;
+  --theme-accent-active: #6bacbf;
+  --theme-secondary: #b48ead;
+  --theme-secondary-hover: #c69dbd;
+  --theme-warning: #ebcb8b;
+  --theme-warning-hover: #f5d9a0;
+  --theme-success: #a3be8c;
+  --theme-error: #bf616a;
+  --theme-error-hover: #cf717a;
+  --theme-info: #81a1c1;
+
+  --theme-border-color: rgba(136, 192, 208, 0.3);
+  --theme-border-subtle: rgba(216, 222, 233, 0.08);
+
+  --theme-shadow-primary: 0 0 10px rgba(136, 192, 208, 0.3);
+  --theme-shadow-accent: 0 0 10px rgba(191, 97, 106, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(180, 142, 173, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(235, 203, 139, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(136, 192, 208, 0.2);
+  --theme-shadow-md: 0 0 10px rgba(136, 192, 208, 0.3);
+  --theme-shadow-lg: 0 0 14px rgba(136, 192, 208, 0.4);
+
+  --theme-gray-dark: #616e88;
+  --theme-gray-medium: #434c5e;
+  --theme-gray-light: #2e3440;
+  --theme-gray-ultra-light: #3b4252;
+
+  --theme-ansi-black: #2e3440;
+  --theme-ansi-red: #bf616a;
+  --theme-ansi-green: #a3be8c;
+  --theme-ansi-yellow: #ebcb8b;
+  --theme-ansi-blue: #81a1c1;
+  --theme-ansi-magenta: #b48ead;
+  --theme-ansi-cyan: #88c0d0;
+  --theme-ansi-white: #d8dee9;
+  --theme-ansi-bright-black: #4c566a;
+  --theme-ansi-bright-red: #bf616a;
+  --theme-ansi-bright-green: #a3be8c;
+  --theme-ansi-bright-yellow: #ebcb8b;
+  --theme-ansi-bright-blue: #81a1c1;
+  --theme-ansi-bright-magenta: #b48ead;
+  --theme-ansi-bright-cyan: #8fbcbb;
+  --theme-ansi-bright-white: #eceff4;
+
+  --theme-border-radius: 4px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 7. Solarized Dark（学术暗色）
+ * ================================================================ */
+:root:is([data-theme="solarized-dark"], [data-module-theme="solarized-dark"]) {
+  --theme-bg-primary: #002b36;
+  --theme-bg-secondary: rgba(0, 43, 54, 0.8);
+  --theme-bg-tertiary: rgba(0, 43, 54, 0.6);
+  --theme-bg-elevated: #073642;
+  --theme-bg-overlay: rgba(0, 43, 54, 0.9);
+
+  --theme-text-primary: #93a1a1;
+  --theme-text-secondary: #839496;
+  --theme-text-muted: #586e75;
+  --theme-text-bright: #eee8d5;
+
+  --theme-accent: #268bd2;
+  --theme-accent-hover: #3a9ce0;
+  --theme-accent-active: #1a7bc2;
+  --theme-secondary: #6c71c4;
+  --theme-secondary-hover: #8085d0;
+  --theme-warning: #b58900;
+  --theme-warning-hover: #c59900;
+  --theme-success: #859900;
+  --theme-error: #dc322f;
+  --theme-error-hover: #ec4240;
+  --theme-info: #2aa198;
+
+  --theme-border-color: rgba(38, 139, 210, 0.3);
+  --theme-border-subtle: rgba(147, 161, 161, 0.08);
+
+  --theme-shadow-primary: 0 0 10px rgba(38, 139, 210, 0.3);
+  --theme-shadow-accent: 0 0 10px rgba(220, 50, 47, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(108, 113, 196, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(181, 137, 0, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(38, 139, 210, 0.2);
+  --theme-shadow-md: 0 0 10px rgba(38, 139, 210, 0.3);
+  --theme-shadow-lg: 0 0 14px rgba(38, 139, 210, 0.4);
+
+  --theme-gray-dark: #586e75;
+  --theme-gray-medium: #073642;
+  --theme-gray-light: #002b36;
+  --theme-gray-ultra-light: #003440;
+
+  --theme-ansi-black: #073642;
+  --theme-ansi-red: #dc322f;
+  --theme-ansi-green: #859900;
+  --theme-ansi-yellow: #b58900;
+  --theme-ansi-blue: #268bd2;
+  --theme-ansi-magenta: #6c71c4;
+  --theme-ansi-cyan: #2aa198;
+  --theme-ansi-white: #93a1a1;
+  --theme-ansi-bright-black: #586e75;
+  --theme-ansi-bright-red: #cb4b16;
+  --theme-ansi-bright-green: #586e75;
+  --theme-ansi-bright-yellow: #657b83;
+  --theme-ansi-bright-blue: #839496;
+  --theme-ansi-bright-magenta: #6c71c4;
+  --theme-ansi-bright-cyan: #93a1a1;
+  --theme-ansi-bright-white: #eee8d5;
+
+  --theme-border-radius: 4px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 8. Solarized Light（学术亮色）
+ * ================================================================ */
+:root:is([data-theme="solarized-light"], [data-module-theme="solarized-light"]) {
+  --theme-bg-primary: #fdf6e3;
+  --theme-bg-secondary: rgba(238, 232, 213, 0.8);
+  --theme-bg-tertiary: rgba(238, 232, 213, 0.6);
+  --theme-bg-elevated: #eee8d5;
+  --theme-bg-overlay: rgba(238, 232, 213, 0.9);
+
+  --theme-text-primary: #657b83;
+  --theme-text-secondary: #586e75;
+  --theme-text-muted: #93a1a1;
+  --theme-text-bright: #073642;
+
+  --theme-accent: #268bd2;
+  --theme-accent-hover: #3a9ce0;
+  --theme-accent-active: #1a7bc2;
+  --theme-secondary: #6c71c4;
+  --theme-secondary-hover: #8085d0;
+  --theme-warning: #b58900;
+  --theme-warning-hover: #c59900;
+  --theme-success: #859900;
+  --theme-error: #dc322f;
+  --theme-error-hover: #ec4240;
+  --theme-info: #2aa198;
+
+  --theme-border-color: rgba(38, 139, 210, 0.3);
+  --theme-border-subtle: rgba(101, 123, 131, 0.1);
+
+  --theme-shadow-primary: 0 0 10px rgba(38, 139, 210, 0.2);
+  --theme-shadow-accent: 0 0 10px rgba(220, 50, 47, 0.2);
+  --theme-shadow-secondary: 0 0 10px rgba(108, 113, 196, 0.2);
+  --theme-shadow-warning: 0 0 10px rgba(181, 137, 0, 0.2);
+
+  --theme-shadow-sm: 0 0 6px rgba(38, 139, 210, 0.15);
+  --theme-shadow-md: 0 0 10px rgba(38, 139, 210, 0.2);
+  --theme-shadow-lg: 0 0 14px rgba(38, 139, 210, 0.3);
+
+  --theme-gray-dark: #93a1a1;
+  --theme-gray-medium: #eee8d5;
+  --theme-gray-light: #fdf6e3;
+  --theme-gray-ultra-light: #fff8e8;
+
+  --theme-ansi-black: #073642;
+  --theme-ansi-red: #dc322f;
+  --theme-ansi-green: #859900;
+  --theme-ansi-yellow: #b58900;
+  --theme-ansi-blue: #268bd2;
+  --theme-ansi-magenta: #6c71c4;
+  --theme-ansi-cyan: #2aa198;
+  --theme-ansi-white: #93a1a1;
+  --theme-ansi-bright-black: #586e75;
+  --theme-ansi-bright-red: #cb4b16;
+  --theme-ansi-bright-green: #586e75;
+  --theme-ansi-bright-yellow: #657b83;
+  --theme-ansi-bright-blue: #839496;
+  --theme-ansi-bright-magenta: #6c71c4;
+  --theme-ansi-bright-cyan: #93a1a1;
+  --theme-ansi-bright-white: #eee8d5;
+
+  --theme-border-radius: 4px;
+  --theme-is-light: 1;
+}
+
+/* ===================================================================
+ * 9. GitHub Light（GitHub 亮色�?
+ * ================================================================ */
+:root:is([data-theme="github-light"], [data-module-theme="github-light"]) {
+  --theme-bg-primary: #ffffff;
+  --theme-bg-secondary: rgba(246, 248, 250, 0.8);
+  --theme-bg-tertiary: rgba(246, 248, 250, 0.6);
+  --theme-bg-elevated: #f6f8fa;
+  --theme-bg-overlay: rgba(246, 248, 250, 0.9);
+
+  --theme-text-primary: #24292f;
+  --theme-text-secondary: #57606a;
+  --theme-text-muted: #8c959f;
+  --theme-text-bright: #000000;
+
+  --theme-accent: #0969da;
+  --theme-accent-hover: #218bff;
+  --theme-accent-active: #0550ae;
+  --theme-secondary: #8250df;
+  --theme-secondary-hover: #9a6fd6;
+  --theme-warning: #d4a72c;
+  --theme-warning-hover: #e3b850;
+  --theme-success: #1a7f37;
+  --theme-error: #cf222e;
+  --theme-error-hover: #e35560;
+  --theme-info: #0969da;
+
+  --theme-border-color: rgba(9, 105, 218, 0.3);
+  --theme-border-subtle: rgba(36, 41, 47, 0.1);
+
+  --theme-shadow-primary: 0 0 10px rgba(9, 105, 218, 0.2);
+  --theme-shadow-accent: 0 0 10px rgba(207, 34, 46, 0.2);
+  --theme-shadow-secondary: 0 0 10px rgba(130, 80, 223, 0.2);
+  --theme-shadow-warning: 0 0 10px rgba(212, 167, 44, 0.2);
+
+  --theme-shadow-sm: 0 0 6px rgba(9, 105, 218, 0.15);
+  --theme-shadow-md: 0 0 10px rgba(9, 105, 218, 0.2);
+  --theme-shadow-lg: 0 0 14px rgba(9, 105, 218, 0.3);
+
+  --theme-gray-dark: #8c959f;
+  --theme-gray-medium: #d0d7de;
+  --theme-gray-light: #f6f8fa;
+  --theme-gray-ultra-light: #ffffff;
+
+  --theme-ansi-black: #24292f;
+  --theme-ansi-red: #cf222e;
+  --theme-ansi-green: #1a7f37;
+  --theme-ansi-yellow: #d4a72c;
+  --theme-ansi-blue: #0969da;
+  --theme-ansi-magenta: #8250df;
+  --theme-ansi-cyan: #1b7c83;
+  --theme-ansi-white: #57606a;
+  --theme-ansi-bright-black: #57606a;
+  --theme-ansi-bright-red: #a40e26;
+  --theme-ansi-bright-green: #2da44e;
+  --theme-ansi-bright-yellow: #bf8700;
+  --theme-ansi-bright-blue: #218bff;
+  --theme-ansi-bright-magenta: #a475f9;
+  --theme-ansi-bright-cyan: #3192aa;
+  --theme-ansi-bright-white: #8c959f;
+
+  --theme-border-radius: 6px;
+  --theme-is-light: 1;
+}
+
+/* ===================================================================
+ * 10. GitHub Dark（GitHub 暗色�?
+ * ================================================================ */
+:root:is([data-theme="github-dark"], [data-module-theme="github-dark"]) {
+  --theme-bg-primary: #0d1117;
+  --theme-bg-secondary: rgba(13, 17, 23, 0.8);
+  --theme-bg-tertiary: rgba(13, 17, 23, 0.6);
+  --theme-bg-elevated: #161b22;
+  --theme-bg-overlay: rgba(13, 17, 23, 0.9);
+
+  --theme-text-primary: #c9d1d9;
+  --theme-text-secondary: #8b949e;
+  --theme-text-muted: #6e7681;
+  --theme-text-bright: #f0f6fc;
+
+  --theme-accent: #58a6ff;
+  --theme-accent-hover: #79b8ff;
+  --theme-accent-active: #3894ff;
+  --theme-secondary: #bc8cff;
+  --theme-secondary-hover: #d0a6ff;
+  --theme-warning: #d29922;
+  --theme-warning-hover: #e3b341;
+  --theme-success: #3fb950;
+  --theme-error: #f85149;
+  --theme-error-hover: #ff6b63;
+  --theme-info: #58a6ff;
+
+  --theme-border-color: rgba(88, 166, 255, 0.3);
+  --theme-border-subtle: rgba(201, 209, 217, 0.08);
+
+  --theme-shadow-primary: 0 0 10px rgba(88, 166, 255, 0.3);
+  --theme-shadow-accent: 0 0 10px rgba(248, 81, 73, 0.3);
+  --theme-shadow-secondary: 0 0 10px rgba(188, 140, 255, 0.3);
+  --theme-shadow-warning: 0 0 10px rgba(210, 153, 34, 0.3);
+
+  --theme-shadow-sm: 0 0 6px rgba(88, 166, 255, 0.2);
+  --theme-shadow-md: 0 0 10px rgba(88, 166, 255, 0.3);
+  --theme-shadow-lg: 0 0 14px rgba(88, 166, 255, 0.4);
+
+  --theme-gray-dark: #6e7681;
+  --theme-gray-medium: #21262d;
+  --theme-gray-light: #0d1117;
+  --theme-gray-ultra-light: #161b22;
+
+  --theme-ansi-black: #0d1117;
+  --theme-ansi-red: #ff7b72;
+  --theme-ansi-green: #3fb950;
+  --theme-ansi-yellow: #d29922;
+  --theme-ansi-blue: #58a6ff;
+  --theme-ansi-magenta: #bc8cff;
+  --theme-ansi-cyan: #39c5cf;
+  --theme-ansi-white: #c9d1d9;
+  --theme-ansi-bright-black: #6e7681;
+  --theme-ansi-bright-red: #ffa198;
+  --theme-ansi-bright-green: #56d364;
+  --theme-ansi-bright-yellow: #e3b341;
+  --theme-ansi-bright-blue: #79c0ff;
+  --theme-ansi-bright-magenta: #d2a8ff;
+  --theme-ansi-bright-cyan: #56d4dd;
+  --theme-ansi-bright-white: #f0f6fc;
+
+  --theme-border-radius: 6px;
+  --theme-is-light: 0;
+}
+
+/* ===================================================================
+ * 系统主题跟随 fallback（prefers-color-scheme）
+ *
+ * M4.① 联动校验说明：themeStore.toggleFollowSystem 实际不使用 data-theme="system"，
+ * 而是根据 systemThemeDark / systemThemeLight 切换到具体主题名（如 terminal / solarized-light），
+ * 并监听 prefers-color-scheme 变化自动在具体主题间切换。
+ * 此 [data-theme="system"] 块仅作 CSS fallback 兜底（如初始化瞬间或异常时），
+ * 完整体验由 themeStore.ts 的 JS 动态切换保证。
+ * ================================================================ */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --theme-bg-primary: #0d1117;
+    --theme-bg-elevated: #161b22;
+    --theme-text-primary: #c9d1d9;
+    --theme-accent: #58a6ff;
+    --theme-border-radius: 6px;
+    --theme-is-light: 0;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    --theme-bg-primary: #ffffff;
+    --theme-bg-elevated: #f6f8fa;
+    --theme-text-primary: #24292f;
+    --theme-accent: #0969da;
+    --theme-border-radius: 6px;
+    --theme-is-light: 1;
+  }
+}
+
+/* ===================================================================
+ * C4 §2.6 高对比度主题（A11y 强制可读模式）
+ *
+ * 设计依据：功能展望/体验深化/04_无障碍_A11y合规.md §2.6.2
+ * 触发：<html data-theme="high-contrast"> 或 body.high-contrast
+ * 原则：纯黑底 + 纯白字，关键色饱和度拉满，禁用渐变/阴影/半透明
+ * 对比度：白/黑 = 21:1（远超 AAA 7:1）
+ * ================================================================ */
+:root[data-theme="high-contrast"],
+body.high-contrast [data-theme] {
+  --theme-bg-primary: #000000;
+  --theme-bg-elevated: #000000;
+  --theme-bg-secondary: #000000;
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: #ffffff;
+  --theme-text-muted: #ffffff;
+  --theme-accent: #ffff00;
+  --theme-success: #00ff00;
+  --theme-error: #ff0000;
+  --theme-warning: #ffff00;
+  --theme-info: #00ffff;
+  /* M4.① 取优改进：对标 VSCode hc_black 补充完整 ansi 终端色板（纯饱和色确保 HC 模式终端可读） */
+  --theme-ansi-black: #000000;
+  --theme-ansi-red: #ff0000;
+  --theme-ansi-green: #00ff00;
+  --theme-ansi-yellow: #ffff00;
+  --theme-ansi-blue: #3b82ff;
+  --theme-ansi-magenta: #ff00ff;
+  --theme-ansi-cyan: #00ffff;
+  --theme-ansi-white: #ffffff;
+  --theme-ansi-bright-black: #808080;
+  --theme-ansi-bright-red: #ff6666;
+  --theme-ansi-bright-green: #66ff66;
+  --theme-ansi-bright-yellow: #ffff66;
+  --theme-ansi-bright-blue: #66aaff;
+  --theme-ansi-bright-magenta: #ff66ff;
+  --theme-ansi-bright-cyan: #66ffff;
+  --theme-ansi-bright-white: #ffffff;
+  --theme-border-color: #ffffff;
+  --theme-border-radius: 0;
+  --theme-shadow-sm: none;
+  --theme-shadow-md: none;
+  --theme-shadow-lg: none;
+  --theme-is-light: 0;
+}
+
+/* 高对比度模式下：所有边框强制可见 */
+body.high-contrast * {
+  border-color: #ffffff !important;
+}
+
+/* 高对比度模式下：禁用所有半透明背景 */
+body.high-contrast [class*="rgba"],
+body.high-contrast [style*="rgba"] {
+  background: #000000 !important;
+}

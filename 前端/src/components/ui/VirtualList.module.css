@@ -1,0 +1,53 @@
+/* VirtualList 虚拟滚动 - 终端黑客风格 */
+.virtualContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+.virtualContainer :global(.react-window-list) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.2) transparent;
+}
+
+.virtualContainer :global(.react-window-list::-webkit-scrollbar) {
+  width: 6px;
+}
+
+.virtualContainer :global(.react-window-list::-webkit-scrollbar-track) {
+  background: transparent;
+}
+
+.virtualContainer :global(.react-window-list::-webkit-scrollbar-thumb) {
+  background: rgba(0, 240, 255, 0.2);
+  border-radius: 2px;
+}
+
+.virtualContainer :global(.react-window-list::-webkit-scrollbar-thumb:hover) {
+  background: rgba(0, 240, 255, 0.4);
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--nt-text-muted);
+  font-size: 13px;
+  font-family: var(--nt-font-mono);
+  opacity: 0.6;
+}
+
+/* 加载遮罩 */
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 0, 20, 0.7);
+  z-index: 1;
+  font-family: var(--nt-font-mono);
+  color: var(--nt-primary);
+  font-size: 13px;
+}

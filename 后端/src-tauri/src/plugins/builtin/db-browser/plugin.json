@@ -1,0 +1,51 @@
+{
+  "name": "db-browser",
+  "display_name": "数据库浏览器",
+  "version": "1.0.0",
+  "description": "多数据库连接管理、SQL 查询、Schema 浏览，支持 SQLite/PostgreSQL/MySQL",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "database",
+  "tags": ["database", "sql", "schema", "query"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "db-browser"
+  },
+  "permissions": [
+    {
+      "name": "database_connect",
+      "description": "连接数据库",
+      "requires_approval": true
+    },
+    {
+      "name": "database_query",
+      "description": "执行 SQL 查询",
+      "requires_approval": true
+    }
+  ],
+  "dependencies": [],
+  "skills": ["db-explorer"],
+  "mcp_servers": [
+    {
+      "name": "db-browser-server",
+      "command": "db-browser",
+      "args": ["--mode", "server"],
+      "env": {},
+      "timeout_ms": 60000,
+      "auto_reconnect": true
+    }
+  ],
+  "commands": [
+    {
+      "name": "query_db",
+      "description": "执行数据库查询",
+      "handler": "db_query",
+      "args": {
+        "connection": "string",
+        "sql": "string"
+      }
+    }
+  ],
+  "hooks": [],
+  "enabled": true
+}

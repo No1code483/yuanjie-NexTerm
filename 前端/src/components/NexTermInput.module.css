@@ -1,0 +1,82 @@
+@import '../styles/theme.css';
+
+.input {
+  background-color: rgba(10, 0, 20, 0.8);
+  border: var(--nt-border-width) solid;
+  color: var(--theme-accent);
+  font-family: var(--nt-font-mono);
+  outline: none;
+  transition: all var(--nt-transition-normal);
+  width: 100%;
+}
+
+.input:focus {
+  border-color: var(--theme-accent);
+  box-shadow:
+    0 0 12px rgba(0, 240, 255, 0.8),
+    0 0 24px rgba(0, 240, 255, 0.4);
+}
+
+.input::placeholder {
+  color: rgba(106, 106, 138, 0.6);
+}
+
+.input:disabled {
+  border-color: rgba(106, 106, 138, 0.4);
+  color: rgba(106, 106, 138, 0.5);
+  cursor: not-allowed;
+}
+
+/* 输入框状态样式 */
+.normal {
+  border-color: rgba(0, 240, 255, 0.4);
+}
+
+.focused {
+  border-color: var(--theme-accent);
+  box-shadow:
+    0 0 14px rgba(0, 240, 255, 0.9),
+    0 0 28px rgba(0, 240, 255, 0.45);
+}
+
+.error {
+  border-color: var(--theme-error);
+  box-shadow:
+    0 0 12px rgba(255, 0, 64, 0.8),
+    0 0 24px rgba(255, 0, 64, 0.4);
+}
+
+/* 输入框尺寸样式 */
+.small {
+  padding: var(--nt-input-padding-small);
+  font-size: var(--nt-input-font-size-small);
+}
+
+.medium {
+  padding: var(--nt-input-padding-medium);
+  font-size: var(--nt-input-font-size-medium);
+}
+
+.large {
+  padding: var(--nt-input-padding-large);
+  font-size: var(--nt-input-font-size-large);
+}
+
+/* 错误提示样式 */
+.errorMessage {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: var(--theme-error);
+  font-size: 12px;
+  margin-top: var(--nt-spacing-xs);
+  font-family: var(--nt-font-mono);
+  text-shadow:
+    0 0 6px rgba(255, 0, 64, 0.6),
+    0 0 12px rgba(255, 0, 64, 0.3);
+}
+
+/* 容器样式 */
+.inputContainer {
+  position: relative;
+}

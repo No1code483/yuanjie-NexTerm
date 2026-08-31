@@ -1,0 +1,42 @@
+{
+  "name": "code-reviewer",
+  "display_name": "代码审查",
+  "version": "1.0.0",
+  "description": "自动化代码审查，检查代码质量、安全漏洞、最佳实践违规",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "security",
+  "tags": ["review", "code-quality", "security", "best-practices"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "code-reviewer"
+  },
+  "permissions": [
+    {
+      "name": "file_read",
+      "description": "读取项目文件",
+      "requires_approval": false
+    }
+  ],
+  "dependencies": [],
+  "skills": ["code-review", "security-audit"],
+  "mcp_servers": [],
+  "commands": [
+    {
+      "name": "review_file",
+      "description": "审查指定文件",
+      "handler": "code_review_file",
+      "args": {
+        "file_path": "string",
+        "review_type": "string"
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "event": "on_file_save",
+      "handler": "code_review_on_save"
+    }
+  ],
+  "enabled": true
+}

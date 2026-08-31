@@ -1,0 +1,36 @@
+{
+  "name": "terminal-tools",
+  "display_name": "终端工具集",
+  "version": "1.0.0",
+  "description": "终端增强工具集，包含 shell 命令增强、历史搜索、命令别名管理",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "utility",
+  "tags": ["terminal", "shell", "command", "alias"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "terminal-tools"
+  },
+  "permissions": [
+    {
+      "name": "shell_exec",
+      "description": "执行 Shell 命令",
+      "requires_approval": false
+    }
+  ],
+  "dependencies": [],
+  "skills": ["terminal-helper"],
+  "mcp_servers": [],
+  "commands": [
+    {
+      "name": "search_history",
+      "description": "搜索命令历史",
+      "handler": "term_search_history",
+      "args": {
+        "keyword": "string"
+      }
+    }
+  ],
+  "hooks": [],
+  "enabled": true
+}

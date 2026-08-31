@@ -1,0 +1,144 @@
+/* ===== 统一确认弹窗 ===== */
+
+/* 遮罩层 */
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background-color: rgba(10, 0, 20, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+}
+
+/* 弹窗主体 */
+.dialog {
+  background-color: rgba(10, 0, 20, 0.96);
+  border: var(--nt-border-width) solid;
+  font-family: var(--nt-font-mono);
+  min-width: 380px;
+  max-width: 480px;
+  border-radius: 4px;
+}
+
+/* ===== 类型：danger (红色/删除) ===== */
+.dialog.danger {
+  border-color: var(--theme-error);
+  box-shadow:
+    0 0 25px rgba(255, 0, 64, 0.6),
+    0 0 50px rgba(255, 0, 64, 0.25),
+    inset 0 1px 0 rgba(255, 0, 64, 0.15);
+}
+/* ===== 类型：warning (紫色) ===== */
+.dialog.warning {
+  border-color: var(--theme-secondary);
+  box-shadow:
+    0 0 25px rgba(176, 38, 255, 0.6),
+    0 0 50px rgba(176, 38, 255, 0.25),
+    inset 0 1px 0 rgba(176, 38, 255, 0.15);
+}
+/* ===== 类型：default (青色) ===== */
+.dialog.default {
+  border-color: var(--theme-accent);
+  box-shadow:
+    0 0 25px rgba(0, 240, 255, 0.6),
+    0 0 50px rgba(0, 240, 255, 0.25),
+    inset 0 1px 0 rgba(0, 240, 255, 0.15);
+}
+
+/* 标题栏 */
+.header {
+  padding: 16px 20px;
+  border-bottom: var(--nt-border-width) solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header.danger { border-color: rgba(255, 0, 64, 0.3); }
+.header.warning { border-color: rgba(176, 38, 255, 0.3); }
+.header.default { border-color: rgba(0, 240, 255, 0.3); }
+
+.title {
+  margin: 0;
+  font-family: var(--nt-font-chinese);
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+.title.danger { color: var(--theme-error); text-shadow: 0 0 10px rgba(255, 0, 64, 0.8), 0 0 20px rgba(255, 0, 64, 0.4); }
+.title.warning { color: var(--theme-secondary); text-shadow: 0 0 10px rgba(176, 38, 255, 0.8), 0 0 20px rgba(176, 38, 255, 0.4); }
+.title.default { color: var(--theme-accent); text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4); }
+
+/* 关闭按钮 */
+.closeBtn {
+  background: transparent;
+  border: var(--nt-border-width) solid;
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: all 0.3s;
+  font-family: var(--nt-font-mono);
+}
+.closeBtn.danger { border-color: var(--theme-error); color: var(--theme-error); }
+.closeBtn.danger:hover { border-color: var(--theme-error); color: var(--theme-error); box-shadow: 0 0 12px currentColor; }
+.closeBtn.warning { border-color: var(--theme-secondary); color: var(--theme-secondary); }
+.closeBtn.warning:hover { border-color: var(--theme-secondary); color: var(--theme-secondary); box-shadow: 0 0 12px currentColor; }
+.closeBtn.default { border-color: var(--theme-accent); color: var(--theme-accent); }
+.closeBtn.default:hover { border-color: var(--theme-accent); color: var(--theme-accent); box-shadow: 0 0 12px currentColor; }
+
+/* 内容区 */
+.body {
+  padding: 28px 20px 20px;
+}
+
+.message {
+  margin: 0 0 24px;
+  font-family: var(--nt-font-chinese);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--theme-text-primary);
+  white-space: pre-line;
+}
+
+/* 按钮组 */
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn {
+  padding: var(--nt-space-2) var(--nt-space-6);
+  border: var(--nt-border-width) solid;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  transition: all 0.25s;
+  min-width: 60px;
+}
+
+/* 确认按钮（跟随类型色） */
+.confirmBtn {
+  color: inherit;
+}
+.confirmBtn.danger { color: var(--theme-error); border-color: var(--theme-error); }
+.confirmBtn.danger:hover { background: rgba(255, 68, 68, 0.15); box-shadow: 0 0 12px rgba(255, 68, 68, 0.5); }
+.confirmBtn.warning { color: var(--theme-secondary); border-color: var(--theme-secondary); }
+.confirmBtn.warning:hover { background: rgba(176, 38, 255, 0.15); box-shadow: 0 0 12px rgba(176, 38, 255, 0.5); }
+.confirmBtn.default { color: var(--theme-accent); border-color: var(--theme-accent); }
+.confirmBtn.default:hover { background: rgba(0, 240, 255, 0.15); box-shadow: 0 0 12px rgba(0, 240, 255, 0.5); }
+
+/* 取消按钮（统一灰色） */
+.cancelBtn {
+  color: var(--theme-text-muted);
+  border-color: var(--theme-text-muted);
+}
+.cancelBtn:hover {
+  color: var(--theme-text-secondary);
+  border-color: var(--theme-text-muted);
+  background: rgba(102, 102, 128, 0.08);
+}

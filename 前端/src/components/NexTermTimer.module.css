@@ -1,0 +1,41 @@
+.timerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border: var(--nt-border-width) solid rgba(0, 240, 255, 0.35);
+  background-color: rgba(10, 0, 20, 0.85);
+}
+
+.timeDisplay {
+  font-size: 48px;
+  font-family: var(--nt-font-mono);
+  color: var(--theme-accent);
+  text-shadow:
+    0 0 12px rgba(0, 240, 255, 1),
+    0 0 24px rgba(0, 240, 255, 0.6),
+    0 0 48px rgba(0, 240, 255, 0.25);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: var(--nt-space-2);
+}
+
+.button {
+  background-color: rgba(10, 0, 20, 0.9);
+  border: var(--nt-border-width) solid rgba(0, 240, 255, 0.4);
+  color: var(--theme-accent);
+  font-family: var(--nt-font-mono);
+  padding: var(--nt-space-2) 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button:hover {
+  box-shadow:
+    0 0 16px rgba(0, 240, 255, 0.8),
+    0 0 32px rgba(0, 240, 255, 0.4);
+  border-color: var(--theme-accent);
+}

@@ -1,0 +1,239 @@
+/**
+ * ColorPicker 样式（C1.1 主题编辑器组件）
+ * 风格：终端黑客风（黑底 + 荧光青边框 + 等宽字体）
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  border-radius: var(--theme-border-radius, 0px);
+  user-select: none;
+}
+
+.container.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ===== SV 面板（饱和度+明度）===== */
+.svPanel {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  cursor: crosshair;
+  border: 1px solid var(--nt-border-subtle);
+  overflow: hidden;
+}
+
+.svOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, var(--theme-bg-primary) 0%, transparent 100%),
+    linear-gradient(to right, var(--theme-text-bright) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.svPointer {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--theme-text-bright);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 6px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ===== 滑块行 ===== */
+.sliderRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sliderLabel {
+  flex: 0 0 16px;
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  color: var(--nt-text-secondary);
+  text-align: center;
+}
+
+.hueSlider {
+  position: relative;
+  flex: 1;
+  height: 14px;
+  cursor: pointer;
+  background: linear-gradient(to right,
+    var(--theme-error) 0%, var(--theme-warning) 17%, var(--theme-accent) 33%, var(--theme-accent) 50%, var(--theme-accent) 67%, var(--theme-secondary) 83%, var(--theme-error) 100%);
+  border: 1px solid var(--nt-border-subtle);
+}
+
+.huePointer {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 18px;
+  background: var(--theme-text-bright);
+  border: 1px solid var(--theme-bg-primary);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.alphaSlider {
+  position: relative;
+  flex: 1;
+  height: 14px;
+  cursor: pointer;
+  border: 1px solid var(--nt-border-subtle);
+  background-image:
+    linear-gradient(45deg, var(--theme-text-muted) 25%, transparent 25%, transparent 75%, var(--theme-text-muted) 75%),
+    linear-gradient(45deg, var(--theme-text-muted) 25%, transparent 25%, transparent 75%, var(--theme-text-muted) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+}
+
+.alphaPointer {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 18px;
+  background: var(--theme-text-bright);
+  border: 1px solid var(--theme-bg-primary);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ===== 输入行 ===== */
+.inputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modeTabs {
+  display: flex;
+  gap: 2px;
+  border: 1px solid var(--nt-border-color);
+}
+
+.modeTab {
+  flex: 1;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  color: var(--nt-text-secondary);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all var(--nt-transition-fast);
+}
+
+.modeTab:hover {
+  color: var(--nt-primary);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+.modeTabActive {
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--nt-primary);
+}
+
+.textInput {
+  width: 100%;
+  padding: var(--nt-space-2) 8px;
+  background: var(--nt-bg-tertiary);
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  outline: none;
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.textInput:focus {
+  border-color: var(--nt-primary);
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.numberGroup {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--nt-space-2);
+}
+
+.numberField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.numberField > span {
+  font-size: 10px;
+  color: var(--nt-text-muted);
+  font-family: var(--nt-font-mono);
+  text-align: center;
+}
+
+.numberField > input {
+  width: 100%;
+  padding: 4px 2px;
+  background: var(--nt-bg-tertiary);
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  text-align: center;
+  outline: none;
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.numberField > input:focus {
+  border-color: var(--nt-primary);
+}
+
+/* ===== 历史色 ===== */
+.historyRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: var(--nt-space-2);
+  border-top: 1px solid var(--nt-border-subtle);
+}
+
+.historyLabel {
+  flex: 0 0 auto;
+  font-size: 10px;
+  color: var(--nt-text-muted);
+  font-family: var(--nt-font-mono);
+}
+
+.historySwatches {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.historySwatch {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--nt-border-subtle);
+  cursor: pointer;
+  padding: 0;
+  border-radius: var(--theme-border-radius, 0px);
+  transition: transform var(--nt-transition-fast);
+}
+
+.historySwatch:hover {
+  transform: scale(1.15);
+  border-color: var(--nt-primary);
+}

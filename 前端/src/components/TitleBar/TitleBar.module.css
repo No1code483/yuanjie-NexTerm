@@ -1,0 +1,457 @@
+/**
+ * TitleBar 自定义标题栏样式（C3 窗口控制按钮）
+ *
+ * 合并后：仅渲染右侧控制区（语言切换 + 窗口控制 + 设置面板）
+ * 风格：终端黑客风，紧凑型，主题感知
+ * 配色：黑底荧光绿主色，hover 时高亮，关闭按钮 hover 红色
+ */
+
+/* ===== 合并后透明包装器（承载 data-style / data-platform 属性） ===== */
+.titleBarWrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+/* ===== 右侧：语言切换 + 窗口控制 ===== */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding-right: 0;
+  flex-shrink: 0;
+}
+
+/* ===== 窗口控制按钮组 ===== */
+.windowControls {
+  display: flex;
+  height: 100%;
+  margin-left: 4px;
+}
+
+.controlBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  cursor: pointer;
+  transition: background var(--nt-transition-fast, 0.2s), color var(--nt-transition-fast, 0.2s);
+  outline: none;
+  padding: 0;
+}
+
+.controlBtn:hover {
+  background: rgba(0, 240, 255, 0.12);
+  color: var(--nt-primary, var(--theme-accent));
+}
+
+.controlBtn:focus-visible {
+  outline: 1px solid var(--nt-primary, var(--theme-accent));
+  outline-offset: -1px;
+}
+
+.controlBtn:active {
+  background: rgba(0, 240, 255, 0.2);
+}
+
+/* 关闭按钮 hover 红色 */
+.closeBtn:hover {
+  background: rgba(255, 0, 110, 0.2);
+  color: var(--nt-error, var(--theme-error));
+}
+
+.closeBtn:active {
+  background: rgba(255, 0, 110, 0.3);
+}
+
+/* minimize/maximize 占位类（供 [data-style="minimal"] 选择器排除）*/
+.minimizeBtn,
+.maximizeBtn {
+  /* 继承 .controlBtn 样式，无额外覆盖 */
+}
+
+/* ===== C3.2 激活态按钮（置顶/录屏已开启）===== */
+.activeBtn {
+  background: rgba(0, 255, 0, 0.15);
+  color: var(--nt-primary, var(--theme-accent));
+  box-shadow: inset 0 0 0 1px rgba(0, 255, 0, 0.4);
+}
+
+.activeBtn:hover {
+  background: rgba(0, 255, 0, 0.22);
+}
+
+/* ===== C3.5 设置面板入口按钮 ===== */
+.settingsBtn {
+  width: 32px;
+  position: relative;
+}
+
+.settingsBtn[aria-expanded="true"] {
+  background: rgba(0, 240, 255, 0.15);
+  color: var(--nt-cyan, var(--theme-accent));
+}
+
+/* ===== C3.5 设置面板弹窗 ===== */
+.settingsPanel {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  width: 280px;
+  background: var(--nt-bg-elevated, var(--theme-bg-primary));
+  border: 1px solid var(--nt-border-color, rgba(0, 255, 0, 0.2));
+  box-shadow: var(--theme-shadow-md);
+  padding: 12px;
+  z-index: 1100;
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  color: var(--nt-text-primary, var(--theme-text-primary));
+}
+
+.settingsGroup {
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(0, 255, 0, 0.1);
+}
+
+.settingsGroup:last-child {
+  border-bottom: none;
+}
+
+.settingsLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  margin-bottom: var(--nt-space-2);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.settingsSelect {
+  width: 100%;
+  padding: 4px var(--nt-space-2);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--nt-border-color, rgba(0, 255, 0, 0.2));
+  color: var(--nt-text-primary, var(--theme-text-primary));
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.settingsSelect:focus {
+  border-color: var(--nt-primary, var(--theme-accent));
+  outline: none;
+}
+
+/* C3.2 扩展按钮可见性复选框行 */
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxRow input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--nt-primary, var(--theme-accent));
+  cursor: pointer;
+}
+
+/* C3.3 按钮排序行 */
+.sortRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.05);
+}
+
+.sortRow:last-child {
+  border-bottom: none;
+}
+
+.sortBtns {
+  display: flex;
+  gap: 4px;
+}
+
+.sortBtn {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 0, 0.15);
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  cursor: pointer;
+  font-size: 11px;
+  transition: all var(--nt-transition-fast, 0.2s);
+}
+
+.sortBtn:hover {
+  background: rgba(0, 255, 0, 0.1);
+  color: var(--nt-primary, var(--theme-accent));
+  border-color: rgba(0, 255, 0, 0.4);
+}
+
+.sortBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ===== C3.4 风格变体 ===== */
+/* minimal：仅保留最小化/最大化/关闭，隐藏扩展按钮 */
+.titleBar[data-style="minimal"] .controlBtn:not(.minimizeBtn):not(.maximizeBtn):not(.closeBtn):not(.settingsBtn) {
+  display: none;
+}
+
+/* system：使用系统默认外观（颜色更接近原生） */
+.titleBar[data-style="system"] {
+  background: var(--nt-bg-primary, var(--theme-bg-primary));
+}
+
+/* custom：完全自定义外观 */
+.titleBar[data-style="custom"] {
+  background: linear-gradient(180deg, rgba(0, 255, 0, 0.04) 0%, transparent 100%);
+}
+
+/* reduced-motion：设置面板禁用过渡动画 */
+@media (prefers-reduced-motion: reduce) {
+  .settingsPanel,
+  .controlBtn,
+  .sortBtn {
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+ * C3.4 macOS 适配（红绿灯按钮 / 左上角布局）
+ * 规范：03_窗口控制按钮_自定义方案 §2.6
+ * ============================================================ */
+
+/* macOS 平台：窗口控制按钮移到左侧，紧贴 Logo 之前 */
+.titleBar[data-platform="macos"] .leftSection {
+  padding-left: 8px;
+}
+
+/* macOS 红绿灯按钮容器 */
+.macTrafficLights {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 var(--nt-space-2) 0 4px;
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
+}
+
+/* 单个红绿灯圆点按钮 */
+.trafficLight {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: filter var(--nt-transition-fast, 0.2s);
+}
+
+.trafficLight svg {
+  opacity: 0;
+  transition: opacity var(--nt-transition-fast, 0.2s);
+}
+
+.macTrafficLights:hover .trafficLight svg {
+  opacity: 1;
+}
+
+/* 关闭（红色） */
+.trafficLightClose {
+  background: var(--theme-error);
+  border: 1px solid var(--theme-error);
+}
+
+.trafficLightClose:hover {
+  filter: brightness(1.15);
+}
+
+/* 最小化（黄色） */
+.trafficLightMinimize {
+  background: var(--theme-warning);
+  border: 1px solid var(--theme-warning);
+}
+
+.trafficLightMinimize:hover {
+  filter: brightness(1.15);
+}
+
+/* 最大化（绿色） */
+.trafficLightMaximize {
+  background: var(--theme-accent);
+  border: 1px solid var(--theme-accent);
+}
+
+.trafficLightMaximize:hover {
+  filter: brightness(1.15);
+}
+
+/* macOS：隐藏右侧原生按钮（由红绿灯替代） */
+.titleBar[data-platform="macos"] .windowControls .minimizeBtn,
+.titleBar[data-platform="macos"] .windowControls .maximizeBtn,
+.titleBar[data-platform="macos"] .windowControls .closeBtn {
+  display: none;
+}
+
+/* ============================================================
+ * C3.2 截图区域选择覆盖层
+ * 规范：03_窗口控制按钮_自定义方案 §2.5.1
+ * ============================================================ */
+
+.screenshotOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: crosshair;
+  z-index: 9999;
+  user-select: none;
+}
+
+.screenshotSelection {
+  position: absolute;
+  border: 2px solid var(--nt-primary, var(--theme-accent));
+  background: rgba(0, 255, 0, 0.08);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.screenshotHint {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--nt-primary, var(--theme-accent));
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  padding: var(--nt-space-2) var(--nt-space-4);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  z-index: 10000;
+  pointer-events: none;
+  letter-spacing: 0.5px;
+}
+
+.screenshotFlash {
+  position: fixed;
+  inset: 0;
+  background: var(--theme-text-bright);
+  z-index: 10001;
+  pointer-events: none;
+  animation: screenshotFlashAnim 0.25s ease-out forwards;
+}
+
+@keyframes screenshotFlashAnim {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* ============================================================
+ * C3.2 录屏指示器与计时
+ * ============================================================ */
+
+.recordIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  height: 100%;
+  color: var(--nt-error, var(--theme-error));
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.recordDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nt-error, var(--theme-error));
+  animation: recordPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes recordPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* ============================================================
+ * C3.6 快捷键展示（设置面板内）
+ * ============================================================ */
+
+.shortcutRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.05);
+  font-size: 11px;
+}
+
+.shortcutRow:last-child {
+  border-bottom: none;
+}
+
+.shortcutLabel {
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+}
+
+.shortcutKey {
+  display: inline-block;
+  padding: 1px var(--nt-space-2);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  color: var(--nt-primary, var(--theme-accent));
+  font-family: var(--nt-font-mono);
+  font-size: 10px;
+  border-radius: 2px;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================================
+ * 通知 toast（截图/录屏完成后展示路径）
+ * ============================================================ */
+
+.notificationToast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(0, 0, 0, 0.92);
+  color: var(--nt-primary, var(--theme-accent));
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  padding: var(--nt-space-2) var(--nt-space-4);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  box-shadow: var(--theme-shadow-sm);
+  z-index: 10002;
+  max-width: 400px;
+  word-break: break-all;
+  animation: toastSlideIn 0.25s ease-out;
+}
+
+@keyframes toastSlideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}

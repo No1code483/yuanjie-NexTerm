@@ -1,0 +1,39 @@
+{
+  "productName": "NexTerm·元界",
+  "version": "1.0.0",
+  "identifier": "com.nexterm.app",
+  "build": {
+    "frontendDist": "../../前端/dist",
+    "devUrl": "http://localhost:3001",
+    "beforeDevCommand": "cd ../前端 && npm run dev",
+    "beforeBuildCommand": "cd ../前端 && npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "NexTerm·元界",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true,
+        "dragDropEnabled": false,
+        "decorations": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: http://asset.localhost data: blob:; media-src 'self' asset: http://asset.localhost blob: data:; font-src 'self' data: asset: http://asset.localhost; connect-src 'self' ipc: http://ipc.localhost asset: http://asset.localhost http://localhost:3001; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'",
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["$APPDATA/fonts/**", "$APPDATA/**"]
+      }
+    }
+  },
+  "plugins": {
+    "shell": {
+      "open": true
+    }
+  }
+}

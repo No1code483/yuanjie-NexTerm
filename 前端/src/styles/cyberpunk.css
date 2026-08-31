@@ -1,0 +1,256 @@
+/* 赛博朋克视觉效果 - 终端黑客风格 */
+
+/* ===== CRT 扫描线（全局覆盖层） ===== */
+.cyberpunk-crt {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+/* 扫描线 */
+.cyberpunk-crt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  animation: scanline-drift 8s linear infinite;
+}
+
+/* 屏幕微光 */
+.cyberpunk-crt::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+
+/* 扫描线漂移 */
+@keyframes scanline-drift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* 屏幕闪烁 */
+@keyframes screen-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.85; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+/* ===== 故障文字效果 ===== */
+.cyberpunk-glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.cyberpunk-glitch::before,
+.cyberpunk-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cyberpunk-glitch::before {
+  animation: glitch-top 2s infinite linear alternate-reverse;
+  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+  color: var(--theme-error);
+  opacity: 0.8;
+}
+
+.cyberpunk-glitch::after {
+  animation: glitch-bottom 3s infinite linear alternate-reverse;
+  clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+  color: var(--theme-accent);
+  opacity: 0.8;
+}
+
+@keyframes glitch-top {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 0); }
+  80% { transform: translate(1px, 1px); }
+}
+
+@keyframes glitch-bottom {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(2px, -1px); }
+  45% { transform: translate(-2px, 1px); }
+  65% { transform: translate(1px, 0); }
+  85% { transform: translate(-1px, -1px); }
+}
+
+/* 故障闪烁效果 */
+.cyberpunk-glitch-active {
+  animation: glitch-flash 0.5s steps(1) infinite;
+}
+
+@keyframes glitch-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ===== 霓虹文字效果 ===== */
+.cyberpunk-neon {
+  text-shadow:
+    0 0 5px var(--theme-accent),
+    0 0 10px var(--theme-accent),
+    0 0 20px rgba(0, 240, 255, 0.5),
+    0 0 40px rgba(0, 240, 255, 0.3);
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+.cyberpunk-neon-red {
+  text-shadow:
+    0 0 5px var(--theme-error),
+    0 0 10px var(--theme-error),
+    0 0 20px rgba(255, 0, 110, 0.5),
+    0 0 40px rgba(255, 0, 110, 0.3);
+  animation: neon-pulse-red 2s ease-in-out infinite;
+}
+
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 5px var(--theme-accent),
+      0 0 10px var(--theme-accent),
+      0 0 20px rgba(0, 240, 255, 0.5);
+  }
+  50% {
+    text-shadow:
+      0 0 10px var(--theme-accent),
+      0 0 20px var(--theme-accent),
+      0 0 40px rgba(0, 240, 255, 0.6),
+      0 0 60px rgba(0, 240, 255, 0.3);
+  }
+}
+
+@keyframes neon-pulse-red {
+  0%, 100% {
+    text-shadow:
+      0 0 5px var(--theme-error),
+      0 0 10px var(--theme-error),
+      0 0 20px rgba(255, 0, 110, 0.5);
+  }
+  50% {
+    text-shadow:
+      0 0 10px var(--theme-error),
+      0 0 20px var(--theme-error),
+      0 0 40px rgba(255, 0, 110, 0.6),
+      0 0 60px rgba(255, 0, 110, 0.3);
+  }
+}
+
+/* ===== 打字机效果 ===== */
+.cyberpunk-typewriter {
+  overflow: hidden;
+  border-right: 2px solid var(--theme-accent);
+  white-space: nowrap;
+  animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--theme-accent); }
+}
+
+/* ===== 终端边框辉光 ===== */
+.cyberpunk-border-glow {
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  box-shadow:
+    0 0 5px rgba(0, 240, 255, 0.1),
+    inset 0 0 5px rgba(0, 240, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.cyberpunk-border-glow:hover {
+  border-color: rgba(0, 240, 255, 0.6);
+  box-shadow:
+    0 0 10px rgba(0, 240, 255, 0.2),
+    0 0 20px rgba(0, 240, 255, 0.1),
+    inset 0 0 10px rgba(0, 240, 255, 0.08);
+}
+
+/* ===== 数据雨效果（背景装饰） ===== */
+.cyberpunk-rain-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.06;
+  overflow: hidden;
+}
+
+.cyberpunk-rain-column {
+  position: absolute;
+  top: -20px;
+  font-family: 'Consolas', monospace;
+  font-size: 14px;
+  color: var(--theme-accent);
+  animation: rain-fall linear infinite;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+@keyframes rain-fall {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* ===== 进度条霓虹 ===== */
+.cyberpunk-progress {
+  height: 4px;
+  background: rgba(0, 240, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cyberpunk-progress::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 240, 255, 0.1),
+    transparent
+  );
+  animation: progress-sweep 2s ease-in-out infinite;
+}
+
+@keyframes progress-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.cyberpunk-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--theme-accent), var(--theme-accent));
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}

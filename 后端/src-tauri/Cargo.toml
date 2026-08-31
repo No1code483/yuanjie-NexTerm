@@ -1,0 +1,111 @@
+[package]
+name = "nexterm"
+version = "1.0.0"
+description = "NexTerm·元界 后端服务"
+authors = ["NexTerm Team"]
+edition = "2021"
+
+[lib]
+name = "nexterm_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset", "unstable"] }
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-store = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+meval = "0.2"
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "migrate"] }
+aes-gcm = "0.10"
+argon2 = "0.5"
+rand = { version = "0.8", features = ["small_rng"] }
+sha2 = "0.10"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "stream", "multipart"] }
+quick-xml = { version = "0.41", features = ["serialize"] }
+base64 = "0.22"
+hex = "0.4"
+thiserror = "1"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+portable-pty = "0.8"
+ssh2 = "0.9"
+git2 = "0.19"
+whoami = "1"
+dirs-next = "2"
+sysinfo = "0.31"
+num_cpus = "1"
+opener = "0.7"
+futures = "0.3"
+filetime = "0.2"
+image = { version = "0.25", features = ["png", "jpeg", "gif", "webp"] }
+lopdf = "0.42"
+syntect = { version = "5", default-features = false, features = ["default-fancy"] }
+regex = "1"
+glob = "0.3"
+csv = "1.3"
+pulldown-cmark = { version = "0.12", default-features = false, features = ["html", "simd"] }
+trash = "5"
+once_cell = "1"
+flate2 = "1"
+tar = "0.4"
+tantivy = { version = "0.22", default-features = false, features = ["mmap"] }
+zip = "2"
+calamine = "0.25"
+rust_xlsxwriter = "0.80"
+cfb = "0.9"
+rtf-parser-tt = "0.5"
+encoding_rs = "0.8"
+rawpsd = "0.2"
+async-trait = "0.1"
+
+# T1.1 时间轴回放：快照压缩 + LRU 缓存（11_时间轴回放.md §5.2）
+zstd = "0.13"
+lru = "0.12"
+
+# D3.6 实时对话：WAV 编解码（流式 TTS 音频处理）
+hound = "3.5"
+
+# A5 离线与同步机制 Phase 2-4：ECDH 密钥交换（NIST P-256 曲线，RustCrypto 同栈）
+p256 = { version = "0.13", features = ["ecdh", "pem", "pkcs8"] }
+hkdf = "0.12"
+hmac = "0.12"
+
+[dev-dependencies]
+tempfile = "3"
+mockito = "1"
+# v1.52 测试体系骨架（03_测试体系_单元与集成测试.md §2.1.1）
+mockall = "0.13"   # Mock 自动派生，用于 trait 模拟
+rstest = "0.23"    # 参数化测试，类似 pytest 风格
+# v1.52.0.0 新增：HTTP Mock，用于 AI 模块（调用外部 API）测试（A2 测试体系 T2.1）
+wiremock = "0.6"
+# v1.52 性能基线（01_性能优化_首屏200ms计划.md §2.1.1）
+criterion = { version = "0.5", features = ["html_reports", "async_tokio"] }
+
+# v1.52 性能基准测试目标（01_性能优化 §2.1.1）
+# 每个文件为独立 benchmark binary，criterion 自带 harness
+[[bench]]
+name = "startup_bench"
+harness = false
+
+[[bench]]
+name = "db_bench"
+harness = false
+
+[[bench]]
+name = "command_bench"
+harness = false
+
+[[bench]]
+name = "crypto_bench"
+harness = false

@@ -1,0 +1,157 @@
+/**
+ * LanguageSwitcher 紧凑型语言切换器样式（C2.2）
+ *
+ * 风格：终端黑客风，紧凑型，适合顶部栏嵌入
+ * 配色：黑底荧光绿主色，与 ThemeSelector 一致
+ */
+
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+/* ===== 尺寸 ===== */
+.small .trigger {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.medium .trigger {
+  padding: var(--nt-space-2) var(--nt-space-2);
+  font-size: 12px;
+}
+
+.small .menu {
+  min-width: 140px;
+}
+
+.medium .menu {
+  min-width: 180px;
+}
+
+/* ===== 触发按钮 ===== */
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-primary);
+  font-family: var(--nt-font-mono);
+  cursor: pointer;
+  transition: all var(--nt-transition-fast);
+  border-radius: var(--theme-border-radius, 0px);
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.trigger:hover {
+  border-color: var(--nt-primary);
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.trigger.open {
+  border-color: var(--nt-primary);
+  background: rgba(0, 240, 255, 0.12);
+}
+
+.codeBadge {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.arrow {
+  font-size: 9px;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+/* ===== 下拉菜单 ===== */
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 1000;
+  background: var(--nt-bg-elevated, var(--theme-bg-elevated));
+  border: 1px solid var(--nt-border-color);
+  box-shadow: var(--nt-shadow-primary);
+  padding: 4px 0;
+  border-radius: var(--theme-border-radius, 0px);
+  animation: langSwitcherFadeIn 0.15s ease-out;
+}
+
+@keyframes langSwitcherFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== 选项 ===== */
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background var(--nt-transition-fast);
+  font-family: var(--nt-font-mono);
+  color: var(--nt-text-primary);
+  border-left: 2px solid transparent;
+}
+
+.option:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-left-color: var(--nt-primary);
+}
+
+.option.active {
+  background: rgba(0, 240, 255, 0.15);
+  border-left-color: var(--nt-primary);
+  color: var(--nt-primary);
+}
+
+.optionMain {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.optionLabel {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.optionNative {
+  font-size: 10px;
+  color: var(--nt-text-muted);
+  opacity: 0.8;
+}
+
+.option.active .optionNative {
+  color: var(--nt-primary);
+  opacity: 0.7;
+}
+
+.experimentalTag {
+  font-size: 9px;
+  padding: 1px var(--nt-space-1);
+  background: rgba(255, 215, 0, 0.15);
+  color: var(--nt-warning);
+  border: 1px solid var(--nt-warning);
+  border-radius: 2px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.checkMark {
+  color: var(--nt-primary);
+  font-size: 12px;
+  font-weight: 600;
+}

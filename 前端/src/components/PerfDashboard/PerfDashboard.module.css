@@ -1,0 +1,277 @@
+/* PerfDashboard 样式（T2.4.3 周度性能仪表盘） */
+/* 终端风格配色，对齐项目 theme.css 变量 */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: var(--theme-bg-primary, var(--theme-bg-primary));
+  color: var(--theme-text-primary, var(--theme-text-primary));
+  border: 1px solid var(--theme-border, var(--theme-border-color));
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+}
+
+/* ===== 头部 ===== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--theme-accent, var(--theme-accent));
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.windowBtn {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid var(--theme-border, var(--theme-border-color));
+  border-radius: 4px;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+.windowBtn:hover {
+  border-color: var(--theme-accent, var(--theme-accent));
+  color: var(--theme-accent, var(--theme-accent));
+}
+
+.windowBtnActive {
+  background: var(--theme-accent, var(--theme-accent));
+  border-color: var(--theme-accent, var(--theme-accent));
+  color: var(--theme-bg-primary, var(--theme-bg-primary));
+  font-weight: 600;
+}
+
+.refreshBtn {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid var(--theme-border, var(--theme-border-color));
+  border-radius: 4px;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+
+.refreshBtn:hover:not(:disabled) {
+  border-color: var(--theme-success, var(--theme-accent));
+  color: var(--theme-success, var(--theme-accent));
+}
+
+.refreshBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== 错误提示 ===== */
+
+.errorBar {
+  padding: 8px 12px;
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.4);
+  border-radius: 4px;
+  color: var(--theme-error);
+  font-size: 12px;
+}
+
+/* ===== 空状态 ===== */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+}
+
+.emptyIcon {
+  font-size: 36px;
+  margin: 0 0 8px 0;
+}
+
+.emptyHint {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 4px;
+  max-width: 400px;
+}
+
+/* ===== 表格 ===== */
+
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--theme-border, var(--theme-border-color));
+  border-radius: 4px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.table thead {
+  background: var(--theme-bg-secondary, var(--theme-bg-elevated));
+}
+
+.table th {
+  padding: 8px var(--nt-space-2);
+  text-align: left;
+  font-weight: 600;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  border-bottom: 1px solid var(--theme-border, var(--theme-border-color));
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 8px var(--nt-space-2);
+  border-bottom: 1px solid var(--theme-border, var(--theme-border-color));
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.row:hover {
+  background: rgba(88, 166, 255, 0.05);
+}
+
+.rowSelected {
+  background: rgba(88, 166, 255, 0.1);
+}
+
+.metricNameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metricLabel {
+  font-weight: 600;
+  color: var(--theme-text-primary, var(--theme-text-primary));
+}
+
+.metricKey {
+  font-size: 10px;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  opacity: 0.7;
+}
+
+.p95Cell {
+  color: var(--theme-warning);
+  font-weight: 600;
+}
+
+.latestCell {
+  color: var(--theme-accent, var(--theme-accent));
+  font-weight: 600;
+}
+
+.timeCell {
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  font-size: 11px;
+}
+
+/* ===== 趋势图 ===== */
+
+.trendSection {
+  border: 1px solid var(--theme-border, var(--theme-border-color));
+  border-radius: 4px;
+  padding: 16px;
+  background: var(--theme-bg-secondary, var(--theme-bg-elevated));
+}
+
+.trendTitle {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--theme-accent, var(--theme-accent));
+}
+
+.trendSubtitle {
+  font-size: 11px;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.trendLoading,
+.trendEmpty {
+  padding: 20px;
+  text-align: center;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  font-size: 12px;
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chartBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 120px;
+  padding: 0 4px;
+  border-bottom: 1px solid var(--theme-border, var(--theme-border-color));
+}
+
+.bar {
+  flex: 1;
+  min-width: 3px;
+  max-width: 12px;
+  background: linear-gradient(to top, var(--theme-accent, var(--theme-accent)), rgba(88, 166, 255, 0.4));
+  border-radius: 2px 2px 0 0;
+  transition: height 0.2s;
+  cursor: pointer;
+}
+
+.bar:hover {
+  background: linear-gradient(to top, var(--theme-warning), rgba(240, 136, 62, 0.4));
+}
+
+.chartAxis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  padding: 0 4px;
+}
+
+.chartLegend {
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--theme-text-secondary, var(--theme-text-muted));
+  padding: 4px 4px 0 4px;
+}

@@ -1,0 +1,142 @@
+/* ErrorBoundary - 终端黑客风格错误页 */
+.boundary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--theme-bg-primary);
+  font-family: 'Consolas', 'Courier New', monospace;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* 故障背景文字 */
+.glitch {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20vw;
+  font-weight: 900;
+  color: rgba(255, 0, 0, 0.03);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  letter-spacing: 0.2em;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 600px;
+}
+
+.icon {
+  font-size: 48px;
+  color: var(--theme-error);
+  margin-bottom: 16px;
+  animation: iconPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { opacity: 1; text-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+  50% { opacity: 0.6; text-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+}
+
+.title {
+  font-size: 22px;
+  color: var(--theme-error);
+  margin: 0 0 12px 0;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 0, 0, 0.2);
+  padding-bottom: var(--nt-space-2);
+}
+
+.message {
+  font-size: 14px;
+  color: var(--theme-error);
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.details {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--theme-text-muted);
+  padding: var(--nt-space-2) 0;
+  user-select: none;
+}
+
+.summary:hover {
+  color: var(--theme-text-secondary);
+}
+
+.stack {
+  margin-top: 8px;
+  padding: 12px;
+  background: rgba(255, 0, 0, 0.05);
+  border: 1px solid rgba(255, 0, 0, 0.15);
+  border-radius: 2px;
+  font-size: 11px;
+  color: var(--theme-error);
+  line-height: 1.5;
+  max-height: 200px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: var(--nt-space-2) 24px;
+  background: transparent;
+  border: 1.5px solid var(--theme-error);
+  color: var(--theme-error);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.btn:hover {
+  background: rgba(255, 0, 0, 0.1);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3), 0 0 30px rgba(255, 0, 0, 0.1);
+}
+
+.btnReload {
+  padding: var(--nt-space-2) 24px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 0, 0, 0.4);
+  color: rgba(255, 0, 0, 0.7);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.btnReload:hover {
+  border-color: var(--theme-error);
+  color: var(--theme-error);
+  background: rgba(255, 0, 0, 0.05);
+}

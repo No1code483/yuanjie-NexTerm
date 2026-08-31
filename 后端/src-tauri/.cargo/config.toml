@@ -1,0 +1,12 @@
+[source.crates-io]
+replace-with = "tuna-sparse"
+
+[source.tuna-sparse]
+registry = "sparse+https://mirrors.tuna.tsinghua.edu.cn/crates.io-index/"
+
+[http]
+multiplexing = true
+
+[build]
+# 使用项目内目录，避免 Windows Smart App Control 拦截 %USERPATH% 下的构建产物
+target-dir = "../../target-nexterm"

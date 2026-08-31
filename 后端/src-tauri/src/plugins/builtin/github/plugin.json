@@ -1,0 +1,49 @@
+{
+  "name": "github-integration",
+  "display_name": "GitHub 集成",
+  "version": "1.0.0",
+  "description": "GitHub PR/Issue/CI 管理，支持创建PR、查看Issue、触发CI工作流",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "git",
+  "tags": ["github", "pr", "issue", "ci"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "github"
+  },
+  "permissions": [
+    {
+      "name": "github_api",
+      "description": "访问 GitHub API",
+      "requires_approval": true
+    },
+    {
+      "name": "git_credentials",
+      "description": "读取 Git 凭据",
+      "requires_approval": true
+    }
+  ],
+  "dependencies": [],
+  "skills": ["github-review", "github-issue"],
+  "mcp_servers": [],
+  "commands": [
+    {
+      "name": "create_pr",
+      "description": "创建 GitHub Pull Request",
+      "handler": "github_create_pr",
+      "args": {
+        "title": "string",
+        "body": "string",
+        "base": "string",
+        "head": "string"
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "event": "on_git_commit",
+      "handler": "github_on_commit"
+    }
+  ],
+  "enabled": true
+}

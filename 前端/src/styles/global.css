@@ -1,0 +1,848 @@
+/* 全局样式重置与基础样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--nt-black);
+  color: var(--nt-green);
+  font-family: var(--nt-font-mono);
+  overflow: hidden;
+  line-height: 1.5;
+  height: 100%;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 链接样式重置 */
+a {
+  color: var(--nt-green);
+  text-decoration: none;
+  transition: color var(--nt-transition-normal);
+}
+
+a:hover {
+  color: var(--nt-cyan);
+}
+
+/* 列表样式重置 */
+ul, ol {
+  list-style: none;
+}
+
+/* 输入框样式重置 */
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+
+/* 按钮样式重置 */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* 图片样式重置 */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 表格样式重置 */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 隐藏滚动条但保持滚动功能 */
+.scroll-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== 简历打印样式 ===== */
+@media print {
+  /* 隐藏整个应用界面 */
+  body * {
+    visibility: hidden;
+  }
+
+  /* 只显示简历预览区域 */
+  .printableResume,
+  .printableResume * {
+    visibility: visible;
+  }
+
+  /* 简历内容定位到页面左上角 */
+  .printableResume {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 20mm 15mm !important;
+    background: white !important;
+    color: var(--theme-bg-elevated) !important;
+    font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif !important;
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
+  }
+
+  /* 打印时简历内文字颜色全部改为黑色 */
+  .printableResume h1,
+  .printableResume h2,
+  .printableResume h3,
+  .printableResume p,
+  .printableResume li,
+  .printableResume strong,
+  .printableResume em,
+  .printableResume span,
+  .printableResume td,
+  .printableResume th {
+    color: var(--theme-bg-elevated) !important;
+    text-shadow: none !important;
+  }
+
+  .printableResume h1 {
+    font-size: 20pt !important;
+    border-bottom: 2px solid var(--theme-bg-elevated) !important;
+  }
+
+  .printableResume h2 {
+    font-size: 14pt !important;
+    border-left: 3px solid var(--theme-bg-elevated) !important;
+  }
+
+  .printableResume h3 {
+    font-size: 12pt !important;
+  }
+
+  .printableResume strong {
+    font-weight: 600 !important;
+  }
+
+  .printableResume em {
+    font-style: italic !important;
+  }
+
+  .noPrint {
+    display: none !important;
+  }
+
+  @page {
+    margin: 0;
+  }
+}
+
+/* 优化滚动条样式 - 宽度为原来的1/3，高度为0.5厘米 */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 0, 0.3);
+  border-radius: 2px;
+  min-height: 5px;
+  min-width: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 0, 0.6);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 255, 0, 0.8);
+}
+
+/* Firefox滚动条优化 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 0, 0.3) rgba(0, 0, 0, 0.1);
+}
+
+/* 针对特定页面的滚动条优化 */
+.ai-scrollable, .knowledge-scrollable, .profile-scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 255, 0, 0.3) rgba(0, 0, 0, 0.1);
+}
+
+.ai-scrollable::-webkit-scrollbar,
+.knowledge-scrollable::-webkit-scrollbar,
+.profile-scrollable::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.ai-scrollable::-webkit-scrollbar-thumb,
+.knowledge-scrollable::-webkit-scrollbar-thumb,
+.profile-scrollable::-webkit-scrollbar-thumb {
+  min-height: 5px;
+}
+
+/* 通用工具类 */
+.nt-hidden {
+  display: none !important;
+}
+
+.nt-visible {
+  display: block !important;
+}
+
+.nt-flex {
+  display: flex;
+}
+
+.nt-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.nt-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nt-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nt-flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.nt-flex-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.nt-full-width {
+  width: 100%;
+}
+
+.nt-full-height {
+  height: 100%;
+}
+
+.nt-text-center {
+  text-align: center;
+}
+
+.nt-text-left {
+  text-align: left;
+}
+
+.nt-text-right {
+  text-align: right;
+}
+
+.nt-text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nt-cursor-pointer {
+  cursor: pointer;
+}
+
+.nt-cursor-default {
+  cursor: default;
+}
+
+.nt-cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.nt-user-select-none {
+  user-select: none;
+}
+
+.nt-user-select-text {
+  user-select: text;
+}
+
+/* 状态类 */
+.nt-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nt-loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.nt-error {
+  color: var(--nt-red);
+}
+
+.nt-warning {
+  color: var(--nt-light-red);
+}
+
+.nt-success {
+  color: var(--nt-green);
+}
+
+.nt-info {
+  color: var(--nt-cyan);
+}
+
+/* 动画类 */
+.nt-fade-in {
+  animation: fade-in var(--nt-transition-normal) ease-in;
+}
+
+.nt-fade-out {
+  animation: fade-out var(--nt-transition-normal) ease-out;
+}
+
+.nt-blink-green {
+  animation: blink-green 1s infinite;
+}
+
+.nt-blink-red {
+  animation: blink-red 0.5s infinite;
+}
+
+.nt-glow-green {
+  animation: glow-green 2s infinite;
+}
+
+/* 扫描线效果已移除 */
+
+/* 终端光标效果 */
+.nt-terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background-color: var(--nt-green);
+  animation: blink-green 1s infinite;
+  margin-left: 2px;
+  vertical-align: middle;
+}
+
+/* 键盘焦点可见样式 */
+*:focus-visible {
+  outline: 2px solid var(--theme-accent) !important;
+  outline-offset: 2px !important;
+}
+
+[role="button"]:focus-visible,
+[role="navigation"] a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--theme-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* 高对比度模式下使用亮绿色 */
+body.high-contrast *:focus-visible {
+  outline: 3px solid var(--theme-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* 黑客风格边框 */
+.nt-border-hacker {
+  border: var(--nt-border-width) solid var(--nt-border-color);
+  position: relative;
+}
+
+.nt-border-hacker::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 1px solid var(--nt-border-color);
+  opacity: 0;
+  transition: opacity var(--nt-transition-normal);
+}
+
+.nt-border-hacker:hover::before {
+  opacity: 1;
+}
+
+/* 代码块样式 */
+.nt-code-block {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: var(--nt-border-width) solid var(--nt-border-color);
+  padding: var(--nt-space-4);
+  font-family: var(--nt-font-mono);
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-x: auto;
+}
+
+.nt-code-block code {
+  color: var(--nt-green);
+}
+
+/* 占位符样式 */
+.nt-placeholder {
+  color: var(--nt-gray-dark);
+  font-style: italic;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.nt-placeholder-large {
+  font-size: 18px;
+  padding: 60px 20px;
+}
+
+/* 权限限制样式 */
+.nt-permission-restricted {
+  padding: 20px;
+  text-align: center;
+  color: var(--nt-gray-dark);
+}
+
+.nt-permission-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nt-space-2);
+  padding: var(--nt-space-4);
+  border: 1.5px solid var(--nt-gray-dark);
+}
+
+.nt-permission-icon {
+  font-size: 24px;
+}
+
+.nt-permission-text {
+  text-align: left;
+}
+
+.nt-permission-title {
+  font-weight: 600;
+  color: var(--nt-gray-dark);
+  margin-bottom: var(--nt-space-1);
+}
+
+.nt-permission-desc {
+  font-size: 14px;
+  color: var(--nt-gray-medium);
+}
+
+.nt-permission-badge {
+  margin-left: var(--nt-space-1);
+  opacity: 0.7;
+}
+
+.nt-permission-input-wrapper {
+  position: relative;
+}
+
+.nt-permission-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.nt-permission-overlay-text {
+  color: var(--nt-gray-dark);
+  font-size: 12px;
+}
+
+/* 自动保存样式 */
+.nt-auto-save-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.nt-auto-save-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+.nt-auto-save-input-wrapper,
+.nt-auto-save-textarea-wrapper {
+  margin-bottom: 20px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* 图标系统样式 */
+.nt-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.nt-icon:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.nt-icon:active {
+  transform: scale(0.95);
+}
+
+.nt-icon-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nt-icon-button:hover {
+  background-color: rgba(0, 255, 0, 0.1);
+}
+
+.nt-icon-button:active {
+  background-color: rgba(0, 255, 0, 0.2);
+}
+
+.nt-icon-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nt-icon-button:disabled:hover {
+  background-color: transparent;
+  transform: none;
+}
+
+/* 图标动画 */
+@keyframes icon-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.nt-icon-spin {
+  animation: icon-spin 1s linear infinite;
+}
+
+@keyframes icon-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0,0,0);
+  }
+  40%, 43% {
+    transform: translate3d(0,-8px,0);
+  }
+  70% {
+    transform: translate3d(0,-4px,0);
+  }
+  90% {
+    transform: translate3d(0,-2px,0);
+  }
+}
+
+.nt-icon-bounce {
+  animation: icon-bounce 1s ease infinite;
+}
+
+/* 图标尺寸变体 */
+.nt-icon-xs { width: 16px; height: 16px; }
+.nt-icon-sm { width: 20px; height: 20px; }
+.nt-icon-md { width: 24px; height: 24px; }
+.nt-icon-lg { width: 32px; height: 32px; }
+.nt-icon-xl { width: 40px; height: 40px; }
+
+/* 图标颜色变体 */
+.nt-icon-primary { color: var(--nt-green); }
+.nt-icon-secondary { color: var(--nt-gray-dark); }
+.nt-icon-success { color: var(--nt-green); }
+.nt-icon-warning { color: var(--nt-yellow); }
+.nt-icon-error { color: var(--nt-red); }
+.nt-icon-info { color: var(--nt-cyan); }
+
+/* 图标组 */
+.nt-icon-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nt-icon-group.vertical {
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 图标标签 */
+.nt-icon-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.nt-icon-label.vertical {
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.nt-icon-label .label-text {
+  color: var(--nt-gray-dark);
+}
+
+/* 图标徽章 */
+.nt-icon-badge {
+  position: relative;
+  display: inline-flex;
+}
+
+.nt-icon-badge .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: var(--nt-red);
+  color: var(--nt-black);
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+/* 响应式断点 */
+@media (max-width: 768px) {
+  .nt-responsive-hide {
+    display: none !important;
+  }
+  
+  .nt-responsive-show {
+    display: block !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .nt-mobile-hide {
+    display: none !important;
+  }
+
+  .nt-mobile-show {
+    display: block !important;
+  }
+}
+
+/* ===== C4 无障碍 A11y 基础样式（Phase 1 基础合规）===== */
+/* 设计依据：功能展望/体验深化/04_无障碍_A11y合规.md §2.3.3 / §2.4.4 / §2.5.2 */
+
+/* 屏幕阅读器专用隐藏（视觉隐藏但辅助技术可读，WCAG 1.3.1）*/
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 跳过导航链接（默认隐藏在视口外，键盘聚焦时滑入）*/
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--nt-cyan, var(--theme-accent));
+  color: var(--nt-black, var(--theme-bg-primary));
+  padding: 8px 16px;
+  z-index: 9999;
+  text-decoration: none;
+  font-weight: 600;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* C4 §2.5 动画减弱：前庭功能障碍用户友好（WCAG 2.3.3）*/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===================================================================
+ * C2.8：RTL（从右到左）布局支持
+ *
+ * 当 <html dir="rtl"> 时，通过 logical properties 实现自动翻转。
+ * 当前 6 种语言：zh/en/ja/ko/ru 为 LTR，ar 为 RTL（实验性）。
+ * he/fa 为未来扩展预留。
+ * ================================================================ */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] [data-flip-rtl] {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] [data-flex-row-rtl] {
+  flex-direction: row-reverse;
+}
+
+/* C2.8：逻辑属性工具类 — 使用 inset-inline-* / margin-inline-* / padding-inline-*
+ * 替代物理 left/right，自动适应 LTR/RTL 方向。
+ * 组件可通过 className 引用，或直接在 CSS 中使用 logical properties。
+ */
+
+/* 逻辑定位 */
+.nt-pos-start { inset-inline-start: 0; }
+.nt-pos-end { inset-inline-end: 0; }
+
+/* 逻辑外边距 */
+.nt-ms-auto { margin-inline-start: auto; }
+.nt-me-auto { margin-inline-end: auto; }
+.nt-ms-1 { margin-inline-start: 4px; }
+.nt-me-1 { margin-inline-end: 4px; }
+.nt-ms-2 { margin-inline-start: 8px; }
+.nt-me-2 { margin-inline-end: 8px; }
+.nt-ms-3 { margin-inline-start: 12px; }
+.nt-me-3 { margin-inline-end: 12px; }
+
+/* 逻辑内边距 */
+.nt-ps-1 { padding-inline-start: 4px; }
+.nt-pe-1 { padding-inline-end: 4px; }
+.nt-ps-2 { padding-inline-start: 8px; }
+.nt-pe-2 { padding-inline-end: 8px; }
+.nt-ps-3 { padding-inline-start: 12px; }
+.nt-pe-3 { padding-inline-end: 12px; }
+
+/* 逻辑文本对齐 */
+.nt-text-start { text-align: start; }
+.nt-text-end { text-align: end; }
+
+/* 逻辑浮动 */
+.nt-float-start { float: inline-start; }
+.nt-float-end { float: inline-end; }
+
+/* RTL 下不翻转的元素（如品牌 Logo、对称图标）*/
+[data-no-flip-rtl] {
+  /* 在 RTL 模式下保持原样，不翻转 */
+}
+
+/* RTL 下强制 LTR（用于代码块、命令行等必须保持 LTR 的区域）*/
+[dir="rtl"] [data-force-ltr] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* ===================================================================
+ * C4 §2.7 字号档位响应
+ *
+ * a11yStore 把 <html data-font-size="..."> + style.fontSize=Npx 同步到根，
+ * 这里通过 CSS 变量提供响应式断点（rem 已自动跟随 root font-size）。
+ * 设计依据：功能展望/体验深化/04_无障碍_A11y合规.md §2.7.1
+ * ================================================================ */
+[data-font-size="small"] {
+  --nt-font-size-sm: 11px;
+  --nt-font-size-base: 12px;
+  --nt-font-size-lg: 14px;
+  --nt-font-size-xl: 16px;
+  --nt-font-size-2xl: 18px;
+}
+
+[data-font-size="default"] {
+  --nt-font-size-sm: 12px;
+  --nt-font-size-base: 14px;
+  --nt-font-size-lg: 16px;
+  --nt-font-size-xl: 20px;
+  --nt-font-size-2xl: 24px;
+}
+
+[data-font-size="large"] {
+  --nt-font-size-sm: 14px;
+  --nt-font-size-base: 18px;
+  --nt-font-size-lg: 20px;
+  --nt-font-size-xl: 24px;
+  --nt-font-size-2xl: 28px;
+}
+
+[data-font-size="xlarge"] {
+  --nt-font-size-sm: 18px;
+  --nt-font-size-base: 24px;
+  --nt-font-size-lg: 28px;
+  --nt-font-size-xl: 32px;
+  --nt-font-size-2xl: 40px;
+}
+
+/* ===================================================================
+ * C4 §2.5 强制减弱动画（用户手动覆盖系统偏好）
+ *
+ * a11yStore 把 <html data-reduced-motion="true"> 同步到根，
+ * 此选择器与 prefers-reduced-motion 互补：用户可在设置中强制开启，
+ * 即便系统未设置也能生效。
+ * 设计依据：功能展望/体验深化/04_无障碍_A11y合规.md §2.5.2
+ * ================================================================ */
+[data-reduced-motion="true"] *,
+[data-reduced-motion="true"] *::before,
+[data-reduced-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* 减弱动画时：用边框/背景变化替代 hover 动画 */
+[data-reduced-motion="true"] button:hover,
+[data-reduced-motion="true"] a:hover {
+  transform: none !important;
+}

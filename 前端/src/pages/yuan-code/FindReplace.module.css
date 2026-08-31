@@ -1,0 +1,176 @@
+/**
+ * 查找/替换组件样式 — 对标 VSCode Find Widget
+ */
+
+.findBar {
+  position: absolute;
+  top: 0;
+  right: 16px;
+  z-index: 100;
+  background: var(--theme-bg-elevated);
+  border: 1px solid var(--theme-gray-medium);
+  border-radius: 4px;
+  padding: 4px;
+  box-shadow: var(--theme-shadow-sm);
+  min-width: 320px;
+  max-width: 600px;
+  user-select: none;
+}
+
+.findRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+}
+
+.replaceRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  margin-top: 2px;
+  padding-top: 2px;
+  border-top: 1px solid var(--theme-gray-medium);
+}
+
+.inputWrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.input {
+  width: 100%;
+  height: 24px;
+  background: var(--theme-gray-medium);
+  border: 1px solid var(--theme-gray-medium);
+  border-radius: 2px;
+  color: var(--theme-text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 0 var(--nt-space-2);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: var(--theme-accent);
+}
+
+.input::placeholder {
+  color: var(--theme-text-muted);
+}
+
+.matchCount {
+  font-size: 11px;
+  color: var(--theme-text-secondary);
+  white-space: nowrap;
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.matchCountError {
+  font-size: 11px;
+  color: var(--theme-error);
+  white-space: nowrap;
+  min-width: 40px;
+  text-align: center;
+}
+
+.navBtn {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: var(--theme-text-primary);
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.navBtn:hover {
+  background: var(--theme-bg-elevated);
+}
+
+.optionBtn {
+  height: 24px;
+  min-width: 28px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: var(--theme-text-primary);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.optionBtn:hover {
+  background: var(--theme-bg-elevated);
+}
+
+.optionActive {
+  background: var(--theme-accent) !important;
+  border-color: var(--theme-accent);
+  color: var(--theme-text-bright);
+}
+
+.closeBtn {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: var(--theme-text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.closeBtn:hover {
+  background: var(--theme-error);
+  color: var(--theme-text-bright);
+}
+
+.replaceBtn,
+.replaceAllBtn {
+  height: 24px;
+  padding: 0 8px;
+  background: var(--theme-accent);
+  border: none;
+  border-radius: 2px;
+  color: var(--theme-text-bright);
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.replaceBtn:hover,
+.replaceAllBtn:hover {
+  background: var(--theme-accent);
+}
+
+.replaceAllBtn {
+  background: var(--theme-gray-medium);
+  border: 1px solid var(--theme-gray-medium);
+}
+
+.replaceAllBtn:hover {
+  background: var(--theme-gray-medium);
+}

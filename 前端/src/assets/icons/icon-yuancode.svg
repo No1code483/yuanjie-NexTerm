@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter">
+  <!-- 外框 - 六边形编程符号 -->
+  <path d="M12 2 L21 7 L21 17 L12 22 L3 17 L3 7 Z" />
+
+  <!-- 内部代码符号 - 括号和代码元素 -->
+  <path d="M8 10 L6 12 L8 14" />
+  <path d="M16 10 L18 12 L16 14" />
+  <line x1="14" y1="9" x2="10" y2="15" />
+
+  <!-- 中心点 - 代表"元" -->
+  <circle cx="12" cy="12" r="1.5" fill="#00F0FF" />
+</svg>

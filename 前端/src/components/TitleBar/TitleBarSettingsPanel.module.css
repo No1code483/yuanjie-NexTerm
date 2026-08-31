@@ -1,0 +1,146 @@
+/**
+ * TitleBarSettingsPanel 窗口控制设置面板样式（M3.② 迁移自 TitleBar）
+ *
+ * 从 TitleBar.module.css 的 .settingsPanel 适配而来，
+ * 移除绝对定位（不再是弹窗，而是页面内嵌内容）。
+ * 风格：终端黑客风，与 TitleBar 设置面板视觉一致。
+ */
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  background: var(--nt-bg-elevated, var(--theme-bg-primary));
+  border: 1px solid var(--nt-border-color, rgba(0, 255, 0, 0.2));
+  box-shadow: var(--theme-shadow-md);
+  padding: 16px;
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  color: var(--nt-text-primary, var(--theme-text-primary));
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.settingsGroup {
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(0, 255, 0, 0.1);
+}
+
+.settingsGroup:last-child {
+  border-bottom: none;
+}
+
+.settingsLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  margin-bottom: var(--nt-space-2);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.settingsSelect {
+  width: 100%;
+  padding: 6px var(--nt-space-2);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--nt-border-color, rgba(0, 255, 0, 0.2));
+  color: var(--nt-text-primary, var(--theme-text-primary));
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.settingsSelect:focus {
+  border-color: var(--nt-primary, var(--theme-accent));
+  outline: none;
+}
+
+/* 扩展按钮可见性复选框行 */
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxRow input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--nt-primary, var(--theme-accent));
+  cursor: pointer;
+}
+
+/* 按钮排序行 */
+.sortRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.05);
+}
+
+.sortRow:last-child {
+  border-bottom: none;
+}
+
+.sortBtns {
+  display: flex;
+  gap: 4px;
+}
+
+.sortBtn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 0, 0.15);
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  cursor: pointer;
+  font-size: 12px;
+  transition: all var(--nt-transition-fast, 0.2s);
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.sortBtn:hover {
+  background: rgba(0, 255, 0, 0.1);
+  color: var(--nt-primary, var(--theme-accent));
+  border-color: rgba(0, 255, 0, 0.4);
+}
+
+.sortBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* 快捷键展示行 */
+.shortcutRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.shortcutLabel {
+  color: var(--nt-text-secondary, var(--theme-text-secondary));
+  font-size: 12px;
+}
+
+.shortcutKey {
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  color: var(--nt-primary, var(--theme-accent));
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px 8px;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sortBtn {
+    transition: none !important;
+  }
+}

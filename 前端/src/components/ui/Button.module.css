@@ -1,0 +1,109 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--nt-font-mono);
+  border: var(--nt-border-width) solid;
+  background-color: rgba(10, 0, 20, 0.9);
+  outline: none;
+}
+
+.button:hover:not(.disabled) {
+  box-shadow:
+    0 0 10px currentColor,
+    0 0 25px currentColor,
+    0 0 40px currentColor;
+  animation: btn-neon-pulse 1.5s ease-in-out infinite;
+}
+
+.button:active:not(.disabled) {
+  transform: scale(0.98);
+  animation: none;
+}
+
+@keyframes btn-neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 10px currentColor,
+      0 0 25px currentColor,
+      0 0 40px currentColor;
+  }
+  50% {
+    box-shadow:
+      0 0 15px currentColor,
+      0 0 35px currentColor,
+      0 0 55px currentColor,
+      0 0 70px currentColor;
+  }
+}
+
+.button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.default {
+  color: var(--theme-accent);
+  border-color: rgba(0, 240, 255, 0.45);
+}
+
+.default:hover:not(.disabled) {
+  color: var(--theme-accent);
+  border-color: var(--theme-accent);
+}
+
+.danger {
+  color: var(--theme-error);
+  border-color: rgba(255, 0, 64, 0.45);
+}
+
+.danger:hover:not(.disabled) {
+  color: var(--theme-error);
+  border-color: var(--theme-error);
+}
+
+.warning {
+  color: var(--theme-secondary);
+  border-color: rgba(176, 38, 255, 0.45);
+}
+
+.warning:hover:not(.disabled) {
+  color: var(--theme-secondary);
+  border-color: var(--theme-secondary);
+}
+
+.ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--theme-accent);
+}
+
+.ghost:hover:not(.disabled) {
+  background-color: rgba(0, 240, 255, 0.08);
+  box-shadow:
+    0 0 14px rgba(0, 240, 255, 0.6),
+    0 0 28px rgba(0, 240, 255, 0.3);
+}
+
+.small {
+  padding: var(--nt-space-2) 12px;
+  font-size: 12px;
+  min-width: 60px;
+  min-height: 24px;
+}
+
+.medium {
+  padding: var(--nt-space-2) 20px;
+  font-size: 14px;
+  min-width: 80px;
+  min-height: 32px;
+}
+
+.large {
+  padding: var(--nt-space-4) 28px;
+  font-size: 16px;
+  min-width: 100px;
+  min-height: 40px;
+}

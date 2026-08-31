@@ -1,0 +1,42 @@
+{
+  "name": "test-runner",
+  "display_name": "测试运行器",
+  "version": "1.0.0",
+  "description": "多语言测试执行与报告，支持 Rust/Python/TypeScript/Go 等",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "testing",
+  "tags": ["test", "coverage", "ci", "tdd"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "test-runner"
+  },
+  "permissions": [
+    {
+      "name": "shell_exec",
+      "description": "执行测试命令",
+      "requires_approval": false
+    }
+  ],
+  "dependencies": [],
+  "skills": ["test-writer", "test-runner"],
+  "mcp_servers": [],
+  "commands": [
+    {
+      "name": "run_tests",
+      "description": "运行项目测试",
+      "handler": "test_run",
+      "args": {
+        "language": "string",
+        "filter": "string"
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "event": "on_file_save",
+      "handler": "test_auto_run"
+    }
+  ],
+  "enabled": true
+}

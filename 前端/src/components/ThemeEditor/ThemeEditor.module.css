@@ -1,0 +1,586 @@
+/**
+ * ThemeEditor 样式（C1.1 主题编辑器主组件）
+ * 风格：终端黑客风（黑底 + 荧光青边框 + 等宽字体）
+ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn var(--nt-transition-fast) ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  max-width: 1200px;
+  height: 85vh;
+  background: var(--nt-bg-primary);
+  border: 1px solid var(--nt-primary);
+  border-radius: var(--theme-border-radius, 0px);
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.3), 0 0 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: slideUp var(--nt-transition-normal) ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ===== 标题栏 ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--nt-bg-secondary);
+  border-bottom: 1px solid var(--nt-primary);
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  font-family: var(--nt-font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--nt-primary);
+  letter-spacing: 0.5px;
+  text-shadow: var(--nt-shadow-primary);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--nt-text-muted);
+}
+
+.closeBtn {
+  background: transparent;
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-secondary);
+  font-size: 20px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  border-radius: var(--theme-border-radius, 0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--nt-transition-fast);
+  font-family: var(--nt-font-mono);
+}
+
+.closeBtn:hover {
+  border-color: var(--nt-error);
+  color: var(--nt-error);
+  box-shadow: var(--nt-shadow-accent);
+}
+
+/* ===== 主体 ===== */
+.body {
+  flex: 1;
+  display: flex;
+  gap: 1px;
+  background: var(--nt-border-subtle);
+  overflow: hidden;
+}
+
+/* ===== 左侧：变量分组 ===== */
+/* M4.④ Step4：参考 Linear surface ladder，leftPanel=canvas / group=surface-1 / varRow=surface-2，用 hairline border 分层 */
+.leftPanel {
+  flex: 1 1 58%;
+  background: var(--nt-bg-primary);
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.group {
+  margin-bottom: 6px;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--theme-border-radius, 0px);
+  overflow: hidden;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  text-align: left;
+  transition: all var(--nt-transition-fast);
+}
+
+.groupHeader:hover {
+  background: rgba(0, 240, 255, 0.05);
+  color: var(--nt-primary);
+}
+
+.groupExpanded {
+  background: rgba(0, 240, 255, 0.08);
+  color: var(--nt-primary);
+  border-bottom: 1px solid var(--nt-border-color);
+}
+
+.groupArrow {
+  font-size: 10px;
+  color: var(--nt-primary);
+  flex-shrink: 0;
+}
+
+.groupLabel {
+  flex: 1;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.groupCount {
+  font-size: 10px;
+  color: var(--nt-text-muted);
+  background: var(--nt-bg-tertiary);
+  padding: 1px var(--nt-space-2);
+  border-radius: var(--theme-border-radius, 0px);
+  border: 1px solid var(--nt-border-subtle);
+}
+
+.groupBody {
+  padding: 8px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ===== 变量行 ===== */
+.varRow {
+  padding: 10px 12px;
+  background: var(--nt-bg-tertiary);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--theme-border-radius, 0px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.varHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.varLabel {
+  font-size: 12px;
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  letter-spacing: 0.3px;
+}
+
+.varActions {
+  display: flex;
+  gap: 4px;
+}
+
+.resetBtn {
+  background: transparent;
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-muted);
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+  border-radius: var(--theme-border-radius, 0px);
+  transition: all var(--nt-transition-fast);
+}
+
+.resetBtn:hover {
+  border-color: var(--nt-warning);
+  color: var(--nt-warning);
+}
+
+/* ===== 颜色变量 ===== */
+/* M4.④ Step4：参考 Mobbin 1000+ 色卡案例，色块增至 28px（接近 32px 点击最佳实践），配 hex 输入可读性提升 */
+.colorSwatchBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  cursor: pointer;
+  border-radius: var(--theme-border-radius, 0px);
+  transition: all var(--nt-transition-fast);
+}
+
+.colorSwatchBtn:hover {
+  border-color: var(--nt-primary);
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.colorSwatchBtn:focus-visible {
+  outline: 2px solid var(--nt-primary);
+  outline-offset: 1px;
+}
+
+.colorSwatch {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--theme-border-radius, 0px);
+  flex-shrink: 0;
+  background-image:
+    linear-gradient(45deg, var(--theme-text-muted) 25%, transparent 25%, transparent 75%, var(--theme-text-muted) 75%),
+    linear-gradient(45deg, var(--theme-text-muted) 25%, transparent 25%, transparent 75%, var(--theme-text-muted) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.colorValue {
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  color: var(--nt-text-secondary);
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+/* ===== 阴影变量 ===== */
+.shadowInput {
+  width: 100%;
+  padding: 4px var(--nt-space-2);
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 10px;
+  outline: none;
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.shadowInput:focus {
+  border-color: var(--nt-primary);
+}
+
+/* ===== 数字变量 ===== */
+.numberRow {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+}
+
+.rangeInput {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  outline: none;
+  border-radius: 0;
+}
+
+.rangeInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--nt-primary);
+  border: 1px solid var(--nt-bg-primary);
+  cursor: pointer;
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.numberInput {
+  width: 50px;
+  padding: var(--nt-space-1) 4px;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 10px;
+  text-align: center;
+  outline: none;
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.unit {
+  font-size: 10px;
+  color: var(--nt-text-muted);
+  font-family: var(--nt-font-mono);
+}
+
+/* ===== 右侧：快速预设 + 预览面板 ===== */
+/* M4.④ Step4：quickPresets 从左侧迁入右侧顶部，形成「配色→预览」工作流；参考 Linear surface ladder 分层 */
+.rightPanel {
+  flex: 1 1 42%;
+  background: var(--nt-bg-primary);
+  padding: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 快速预设配色区（M4.④ Step1 整合自 Profile 底部颜色区，Step4 补齐样式并迁至右侧） */
+.quickPresets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--nt-border-subtle);
+  flex-shrink: 0;
+}
+
+.quickPresetsLabel {
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--nt-text-muted);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.quickPresetsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.quickPresetBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  border: 1px solid;
+  border-radius: var(--theme-border-radius, 0px);
+  transition: transform var(--nt-transition-fast), box-shadow var(--nt-transition-fast);
+}
+
+.quickPresetBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.quickPresetBtn:active {
+  transform: translateY(0);
+}
+
+.quickPresetBtn:focus-visible {
+  outline: 2px solid var(--nt-primary);
+  outline-offset: 1px;
+}
+
+/* 预览面板滚动容器 */
+.previewWrap {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* ===== 另存为对话框 ===== */
+.saveAsOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.saveAsDialog {
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-primary);
+  padding: 16px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nt-space-2);
+  box-shadow: var(--nt-shadow-primary);
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.saveAsTitle {
+  font-size: 13px;
+  color: var(--nt-primary);
+  font-family: var(--nt-font-mono);
+  font-weight: 600;
+}
+
+.saveAsInput {
+  padding: var(--nt-space-2) 8px;
+  background: var(--nt-bg-tertiary);
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  outline: none;
+  border-radius: var(--theme-border-radius, 0px);
+}
+
+.saveAsInput:focus {
+  border-color: var(--nt-primary);
+}
+
+.saveAsActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  font-size: 12px;
+  font-family: var(--nt-font-mono);
+  border-radius: var(--theme-border-radius, 0px);
+  z-index: 20;
+  animation: toastIn var(--nt-transition-fast) ease;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.toastSuccess {
+  background: rgba(0, 240, 255, 0.15);
+  border: 1px solid var(--nt-primary);
+  color: var(--nt-primary);
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.toastError {
+  background: rgba(255, 0, 110, 0.15);
+  border: 1px solid var(--nt-error);
+  color: var(--nt-error);
+  box-shadow: var(--nt-shadow-accent);
+}
+
+/* ===== 底部操作栏 ===== */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--nt-space-2) 16px;
+  background: var(--nt-bg-secondary);
+  border-top: 1px solid var(--nt-border-color);
+  gap: 8px;
+}
+
+.footerLeft,
+.footerRight {
+  display: flex;
+  gap: var(--nt-space-2);
+  align-items: center;
+}
+
+/* ===== 通用按钮 ===== */
+/* M4.④ Step4：参考 Linear button spec（padding 8px 14px / font 12px / focus ring 2px） */
+.btnPrimary,
+.btnSecondary,
+.btnDanger {
+  padding: 8px 14px;
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: var(--theme-border-radius, 0px);
+  transition: all var(--nt-transition-fast);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.btnPrimary:focus-visible,
+.btnSecondary:focus-visible,
+.btnDanger:focus-visible {
+  outline: 2px solid var(--nt-primary);
+  outline-offset: 1px;
+}
+
+.btnPrimary {
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid var(--nt-primary);
+  color: var(--nt-primary);
+}
+
+.btnPrimary:hover {
+  background: rgba(0, 240, 255, 0.2);
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.btnSecondary {
+  background: transparent;
+  border: 1px solid var(--nt-border-color);
+  color: var(--nt-text-primary);
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.btnSecondary:hover {
+  border-color: var(--nt-primary);
+  color: var(--nt-primary);
+}
+
+.btnDanger {
+  background: transparent;
+  border: 1px solid var(--nt-error);
+  color: var(--nt-error);
+}
+
+.btnDanger:hover {
+  background: rgba(255, 0, 110, 0.1);
+  box-shadow: var(--nt-shadow-accent);
+}
+
+/* ===== 滚动条 ===== */
+.leftPanel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.leftPanel::-webkit-scrollbar-track {
+  background: var(--nt-bg-primary);
+}
+
+.leftPanel::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.3);
+}
+
+.leftPanel::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.5);
+}

@@ -1,0 +1,72 @@
+/* 高对比度模式 - 终端黑客风格 */
+body.high-contrast {
+  --nt-black: #000000;
+  --nt-primary: #00FF00;
+  --nt-primary-hover: #33FF33;
+  --nt-accent: #00FF00;
+  --nt-accent-hover: #33FF33;
+  --nt-secondary: #00FF00;
+  --nt-text-primary: #FFFFFF;
+  --nt-text-secondary: #00FF00;
+  --nt-text-muted: #00CC00;
+  --nt-text-bright: #FFFFFF;
+  --nt-border-color: #FFFFFF;
+  --nt-border-subtle: #FFFFFF;
+  --nt-bg-primary: #000000;
+  --nt-bg-secondary: #000000;
+  --nt-bg-tertiary: #000000;
+  --nt-overlay: #000000;
+  --nt-green: #00FF00;
+  --nt-cyan: #00FF00;
+  --nt-purple: #00FF00;
+  --nt-red: #FF0000;
+  --nt-yellow: #FFFFFF;
+  --nt-blue: #00FF00;
+  --nt-magenta: #00FF00;
+  --nt-shadow-primary: 0 0 10px rgba(0, 255, 0, 0.5);
+  --nt-shadow-accent: 0 0 10px rgba(0, 255, 0, 0.5);
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+body.high-contrast a {
+  color: #00FF00 !important;
+}
+
+body.high-contrast button {
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+body.high-contrast *:focus-visible {
+  outline: 3px solid #00FF00 !important;
+  outline-offset: 2px !important;
+}
+
+body.high-contrast .navItem:hover,
+body.high-contrast .sidebarItem:hover {
+  background: rgba(0, 255, 0, 0.15) !important;
+  color: #00FF00 !important;
+}
+
+body.high-contrast .navItemActive,
+body.high-contrast .sidebarItemActive {
+  background: rgba(0, 255, 0, 0.2) !important;
+  color: #00FF00 !important;
+  border-color: #00FF00 !important;
+}
+
+body.high-contrast input,
+body.high-contrast textarea {
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+  background-color: #000000 !important;
+}
+
+body.high-contrast ::-webkit-scrollbar-thumb {
+  background: #00FF00 !important;
+}
+
+body.high-contrast ::-webkit-scrollbar-track {
+  background: #000000 !important;
+}

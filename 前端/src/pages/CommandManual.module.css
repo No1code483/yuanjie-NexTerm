@@ -1,0 +1,290 @@
+@import '../styles/theme.css';
+
+:root {
+  --accent: var(--theme-accent);
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(10, 0, 20, 0.98);
+  border: 1px solid rgba(0, 240, 255, 0.28);
+  border-radius: var(--nt-radius-md);
+  overflow: hidden;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-spacing-lg);
+  padding: var(--nt-spacing-xl) var(--nt-spacing-xxl);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+  background-color: rgba(15, 0, 28, 0.95);
+}
+
+.headerIcon {
+  font-size: 28px;
+}
+
+.headerTitle {
+  font-family: var(--nt-font-chinese);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--theme-accent);
+  margin: 0;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.25);
+}
+
+.headerSub {
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  color: var(--theme-secondary);
+  margin: 2px 0 0 0;
+}
+
+/* ===== List (Main Page) ===== */
+.list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--nt-spacing-lg) var(--nt-spacing-xxl);
+  gap: 0;
+  overflow-y: auto;
+}
+
+.list::-webkit-scrollbar { width: 5px; }
+.list::-webkit-scrollbar-track { background: transparent; }
+.list::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.25); border-radius: 2px; }
+
+.listItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-spacing-lg) var(--nt-spacing-xl);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.listItem::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.listItem:hover {
+  background-color: rgba(0, 240, 255, 0.04);
+}
+
+.listItem:hover::after {
+  opacity: 1;
+}
+
+.listLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-spacing-md);
+}
+
+.listDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+  flex-shrink: 0;
+}
+
+.listTitle {
+  font-family: var(--nt-font-chinese);
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(200, 200, 220, 0.92);
+}
+
+.listCount {
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  color: rgba(120, 120, 150, 0.7);
+}
+
+.listRight {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-spacing-md);
+}
+
+.listArrow {
+  font-family: var(--nt-font-mono);
+  font-size: 14px;
+  color: rgba(0, 240, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.listItem:hover .listArrow {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+
+/* ===== Status Badges ===== */
+.statusAvailable,
+.statusDeveloping,
+.statusPlanned {
+  font-family: var(--nt-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.statusAvailable {
+  border: 1px solid rgba(0, 240, 255, 0.45);
+  background-color: rgba(0, 240, 255, 0.1);
+  color: var(--theme-accent);
+}
+
+.statusDeveloping {
+  border: 1px solid rgba(176, 38, 255, 0.45);
+  background-color: rgba(176, 38, 255, 0.1);
+  color: var(--theme-secondary);
+}
+
+.statusPlanned {
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  background-color: rgba(255, 215, 0, 0.06);
+  color: var(--theme-warning);
+}
+
+/* ===== Table (Shared) ===== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+}
+
+.table thead th {
+  text-align: left;
+  padding: 8px 12px;
+  font-family: var(--nt-font-chinese);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-accent);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.25);
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+  color: rgba(180, 180, 208, 0.85);
+  vertical-align: top;
+}
+
+.table tbody tr:hover td {
+  background-color: rgba(0, 240, 255, 0.03);
+}
+
+.table code {
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  background-color: rgba(0, 0, 0, 0.35);
+  padding: 2px var(--nt-space-2);
+  border-radius: 2px;
+  white-space: nowrap;
+  color: rgba(184, 184, 208, 0.9);
+}
+
+.tag {
+  font-family: var(--nt-font-mono);
+  font-size: 10px;
+  color: rgba(136, 136, 170, 0.75);
+  border: 1px solid rgba(136, 136, 170, 0.2);
+  padding: 1px var(--nt-space-2);
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/* ===== Detail Page Header ===== */
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-spacing-lg) var(--nt-spacing-xxl);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+  background-color: rgba(15, 0, 28, 0.95);
+  gap: var(--nt-spacing-lg);
+}
+
+.backBtn {
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  color: var(--theme-accent);
+  background: transparent;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  padding: var(--nt-space-1) var(--nt-space-4);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.backBtn:hover {
+  background-color: rgba(0, 240, 255, 0.08);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.detailHeaderCenter {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-spacing-md);
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.detailTitle {
+  font-family: var(--nt-font-chinese);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+  white-space: nowrap;
+}
+
+.detailSub {
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  color: var(--theme-secondary);
+}
+
+/* ===== Detail Page Body ===== */
+.detailBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--nt-spacing-xl) var(--nt-spacing-xxl) calc(var(--nt-spacing-xxl) + 20px);
+}
+
+.detailBody::-webkit-scrollbar { width: 5px; }
+.detailBody::-webkit-scrollbar-track { background: transparent; border-radius: 2px; }
+.detailBody::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.25); border-radius: 2px; }
+.detailBody::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.4); }
+
+.sectionTitle {
+  font-family: var(--nt-font-chinese);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}

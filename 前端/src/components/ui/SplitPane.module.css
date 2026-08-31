@@ -1,0 +1,187 @@
+/* ===== SplitPane v2 — VSCode 风格分割面板 ===== */
+
+/* ========== 根容器 ========== */
+.root {
+  display: flex;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.root.h { flex-direction: row; }
+.root.v { flex-direction: column; }
+
+/* ========== 面板 ========== */
+.pane {
+  overflow: hidden;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+.paneHidden {
+  display: none;
+}
+
+/* ========== Sash 分隔条（核心）========== */
+/* 设计：始终可见的 1px 细线 + hover 时高亮 + 可拖拽 */
+.sash {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 5;
+  /* 始终可见的分隔线背景 */
+  background: rgba(0, 240, 255, 0.08);
+  transition: background-color 0.12s ease;
+}
+
+.sash:hover,
+.sash.sashDrag {
+  background: rgba(0, 240, 255, 0.2);
+}
+
+/* 水平方向 Sash（垂直线）*/
+.sashH {
+  width: 1px;
+  cursor: col-resize;
+  height: 100%;
+  min-height: 100%;
+}
+
+/* 垂直方向 Sash（水平线）*/
+.sashV {
+  height: 1px;
+  cursor: row-resize;
+  width: 100%;
+  min-width: 100%;
+}
+
+/* Sash 热区扩展（不可见，增大可点击/拖拽范围） */
+.sashH::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -3px; right: -3px;
+}
+
+.sashV::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: -3px; bottom: -3px;
+}
+
+/* 拖拽时的视觉反馈 */
+.sashDrag {
+  z-index: 100;
+}
+.sashDrag.sashH { width: 2px; }
+.sashDrag.sashV { height: 2px; }
+
+/* ========== 折叠按钮（内嵌在 Sash 中）========== */
+/* 极小、半透明，hover 时才完全显示 */
+.foldBtn {
+  position: absolute;
+  z-index: 10;
+  background: transparent;
+  border: none;
+  color: rgba(0, 240, 255, 0.35);
+  font-size: 8px;
+  line-height: 1;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.12s ease;
+  opacity: 0;
+  border-radius: 2px;
+}
+
+.sash:hover .foldBtn {
+  opacity: 1;
+}
+
+.foldBtn:hover {
+  color: var(--theme-accent);
+  background: rgba(0, 240, 255, 0.15);
+}
+
+/* 水平 Sash：折叠按钮位置 */
+.foldBtnRight {
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.foldBtnLeft {
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 垂直 Sash：折叠按钮位置 */
+.foldBtnDown {
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.foldBtnUp {
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ========== 展开条（面板折叠后显示）========== */
+.expandBar {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 3, 22, 0.98);
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  transition: all 0.12s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.expandBar:hover {
+  background: rgba(0, 240, 255, 0.06);
+  border-color: rgba(0, 240, 255, 0.25);
+}
+
+.expandIcon {
+  font-size: 9px;
+  color: rgba(0, 240, 255, 0.5);
+  transition: color 0.12s ease;
+}
+.expandBar:hover .expandIcon {
+  color: var(--theme-accent);
+}
+
+/* 水平方向：第一个面板折叠后的展开条（垂直窄条）*/
+.expandBarV {
+  width: 14px;
+  height: 100%;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* 水平方向：第二个面板折叠后的展开条 */
+.expandBarVLeft {
+  width: 14px;
+  height: 100%;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+}
+
+/* 垂直方向：第一个面板折叠后的展开条（水平窄条）*/
+.expandBarH {
+  height: 16px;
+  width: 100%;
+}
+
+/* 垂直方向：第二个面板折叠后的展开条 */
+.expandBarHTop {
+  height: 16px;
+  width: 100%;
+}

@@ -1,0 +1,370 @@
+/* ===== InlineEdit — AI 内联编辑 (Ctrl+K) ===== */
+/* 配色: 深黑 var(--theme-bg-elevated) + 青色 var(--theme-accent) + 绿 var(--theme-accent) + 红 var(--theme-error) + 紫 var(--theme-secondary) */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.container {
+  position: absolute;
+  min-width: 420px;
+  max-width: 680px;
+  background: rgba(14, 0, 34, 0.97);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 4px;
+  box-shadow: var(--theme-shadow-sm);
+  pointer-events: all;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  overflow: hidden;
+  z-index: 101;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--nt-space-2) 12px;
+  background: rgba(0, 240, 255, 0.06);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  user-select: none;
+}
+
+.headerTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-accent);
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+
+.headerShortcut {
+  font-size: 10px;
+  color: rgba(0, 240, 255, 0.4);
+  padding: 1px var(--nt-space-2);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 2px;
+}
+
+.closeBtn {
+  background: none;
+  border: 1px solid rgba(255, 0, 110, 0.2);
+  color: rgba(255, 0, 110, 0.5);
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  padding: 0;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 0, 110, 0.1);
+  color: var(--theme-error);
+  border-color: rgba(255, 0, 110, 0.4);
+}
+
+/* ===== Body ===== */
+.body {
+  padding: var(--nt-space-2) 12px;
+}
+
+/* ===== Code Preview ===== */
+.codePreview {
+  margin-bottom: var(--nt-space-2);
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+  max-height: 120px;
+}
+
+.codePreviewLabel {
+  font-size: 10px;
+  color: rgba(0, 240, 255, 0.4);
+  padding: var(--nt-space-1) var(--nt-space-2);
+  background: rgba(0, 240, 255, 0.04);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.codePreviewContent {
+  margin: 0;
+  padding: 8px var(--nt-space-2);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--theme-text-primary);
+  background: rgba(0, 0, 0, 0.2);
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 90px;
+  white-space: pre;
+  tab-size: 4;
+}
+
+.codePreviewContent::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.codePreviewContent::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.15);
+  border-radius: 2px;
+}
+
+/* ===== Input Group ===== */
+.inputGroup {
+  margin-bottom: 8px;
+}
+
+.inputLabel {
+  display: block;
+  font-size: 11px;
+  color: rgba(0, 240, 255, 0.55);
+  margin-bottom: var(--nt-space-2);
+  letter-spacing: 0.3px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 60px;
+  background: rgba(0, 240, 255, 0.04);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 2px;
+  color: var(--theme-text-secondary);
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  padding: 8px var(--nt-space-2);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.textarea:focus {
+  border-color: rgba(0, 240, 255, 0.5);
+  background: rgba(0, 240, 255, 0.06);
+}
+
+.textarea::placeholder {
+  color: rgba(184, 184, 208, 0.3);
+}
+
+.inputHint {
+  font-size: 10px;
+  color: rgba(106, 106, 138, 0.5);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.inputHint kbd {
+  display: inline-block;
+  padding: 0 4px;
+  border: 1px solid rgba(106, 106, 138, 0.2);
+  border-radius: 2px;
+  font-size: 9px;
+  color: rgba(184, 184, 208, 0.5);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ===== Error ===== */
+.error {
+  font-size: 11px;
+  color: var(--theme-error);
+  padding: var(--nt-space-2) var(--nt-space-2);
+  background: rgba(255, 0, 110, 0.08);
+  border: 1px solid rgba(255, 0, 110, 0.2);
+  border-radius: 2px;
+  margin-top: 8px;
+}
+
+/* A5 Phase 3 Task 2: 云端 AI 离线降级提示（青色警告色，与 InlineEdit 主题一致） */
+.offlineHint {
+  font-size: 11px;
+  color: var(--theme-warning);
+  padding: var(--nt-space-2) var(--nt-space-2);
+  background: rgba(255, 179, 0, 0.08);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: 2px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+}
+
+.offlineHint::before {
+  content: "📴";
+  font-size: 13px;
+}
+
+/* ===== Loading ===== */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  padding: 16px 0;
+  justify-content: center;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 240, 255, 0.2);
+  border-top-color: var(--theme-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingText {
+  font-size: 12px;
+  color: rgba(0, 240, 255, 0.6);
+}
+
+/* ===== Diff View ===== */
+.diffHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: var(--nt-space-2);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+}
+
+.diffStat {
+  font-size: 11px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+}
+
+.diffAdded {
+  color: var(--theme-accent);
+}
+
+.diffRemoved {
+  color: var(--theme-error);
+}
+
+.diffView {
+  max-height: 260px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.2);
+  margin-bottom: var(--nt-space-2);
+}
+
+.diffView::-webkit-scrollbar {
+  width: 4px;
+}
+
+.diffView::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.15);
+  border-radius: 2px;
+}
+
+.diffLine {
+  display: flex;
+  font-size: 12px;
+  line-height: 1.5;
+  min-height: 20px;
+  padding: 0 8px;
+}
+
+.diffLineAdd {
+  background: rgba(0, 255, 0, 0.08);
+}
+
+.diffLineRemove {
+  background: rgba(255, 0, 0, 0.08);
+}
+
+.diffLineEqual {
+  background: transparent;
+}
+
+.diffLinePrefix {
+  width: 16px;
+  flex-shrink: 0;
+  font-weight: 600;
+  text-align: center;
+  user-select: none;
+}
+
+.diffLineAdd .diffLinePrefix {
+  color: var(--theme-accent);
+}
+
+.diffLineRemove .diffLinePrefix {
+  color: var(--theme-error);
+}
+
+.diffLineEqual .diffLinePrefix {
+  color: rgba(106, 106, 138, 0.4);
+}
+
+.diffLineContent {
+  flex: 1;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--theme-text-primary);
+}
+
+.diffLineAdd .diffLineContent {
+  color: var(--theme-accent);
+}
+
+.diffLineRemove .diffLineContent {
+  color: var(--theme-error);
+}
+
+/* ===== Diff Actions ===== */
+.diffActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.acceptBtn,
+.rejectBtn {
+  padding: var(--nt-space-1) var(--nt-space-4);
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid;
+}
+
+.acceptBtn {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: rgba(0, 255, 0, 0.35);
+  color: var(--theme-accent);
+}
+
+.acceptBtn:hover {
+  background: rgba(0, 255, 0, 0.2);
+  border-color: rgba(0, 255, 0, 0.55);
+}
+
+.rejectBtn {
+  background: rgba(255, 0, 0, 0.1);
+  border-color: rgba(255, 0, 0, 0.35);
+  color: var(--theme-error);
+}
+
+.rejectBtn:hover {
+  background: rgba(255, 0, 0, 0.2);
+  border-color: rgba(255, 0, 0, 0.55);
+}

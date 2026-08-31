@@ -1,0 +1,778 @@
+/* ===== Agent Dialog — 终端黑客风格 ===== */
+/* 配色: var(--theme-bg-primary) 底色, var(--theme-accent) 霓虹绿, var(--theme-error) 红色, 等宽字体 */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.dialog {
+  width: 900px;
+  max-width: 95vw;
+  max-height: 85vh;
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.1), 0 0 60px rgba(0, 255, 0, 0.05);
+  animation: slideUp 0.2s ease;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-2) 16px;
+  border-bottom: 1px solid var(--theme-accent);
+  background: var(--theme-bg-primary);
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+}
+
+.headerTitle {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: var(--theme-accent);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.headerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  animation: blink 1s step-end infinite;
+}
+
+.headerShortcut {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(0, 255, 0, 0.4);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  padding: 1px var(--nt-space-2);
+  border-radius: 2px;
+}
+
+.closeBtn {
+  background: none;
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  border-radius: 2px;
+}
+
+.closeBtn:hover {
+  background: color-mix(in srgb, var(--theme-accent) 12%, transparent);
+  border-color: var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+/* ===== Body ===== */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.body::-webkit-scrollbar-track {
+  background: var(--theme-bg-primary);
+}
+
+.body::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* ===== Input Area ===== */
+.inputArea {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  border-radius: 2px;
+  padding: 8px;
+  min-height: 60px;
+}
+
+.contextChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--nt-space-2);
+}
+
+.contextChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px var(--nt-space-2);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: var(--theme-accent);
+  background: rgba(0, 255, 0, 0.08);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 2px;
+}
+
+.contextChipRemove {
+  background: none;
+  border: none;
+  color: var(--theme-accent);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.contextChipRemove:hover {
+  opacity: 1;
+  color: var(--theme-error);
+}
+
+.promptInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  resize: none;
+  outline: none;
+  min-height: 40px;
+  max-height: 120px;
+  line-height: 1.5;
+}
+
+.promptInput::placeholder {
+  color: rgba(0, 255, 0, 0.3);
+}
+
+/* @file autocomplete dropdown */
+.autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-accent);
+  border-top: none;
+  z-index: 10;
+  box-shadow: var(--theme-shadow-sm);
+}
+
+.autocomplete::-webkit-scrollbar {
+  width: 4px;
+}
+
+.autocomplete::-webkit-scrollbar-track {
+  background: var(--theme-bg-primary);
+}
+
+.autocomplete::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 0, 0.2);
+}
+
+.autocompleteItem {
+  padding: 4px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--theme-accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.1s;
+}
+
+.autocompleteItem:hover,
+.autocompleteItemActive {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.autocompleteItemIcon {
+  font-size: 12px;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.autocompleteItemPath {
+  opacity: 0.6;
+  font-size: 10px;
+}
+
+/* ===== Input Actions ===== */
+.inputActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inputHint {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(0, 255, 0, 0.4);
+}
+
+.sendBtn {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: var(--nt-space-2) 16px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--theme-accent) 12%, transparent);
+  border-color: var(--theme-accent);
+  color: var(--theme-accent);
+}
+
+.sendBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ===== Execution Flow Steps ===== */
+.flowSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flowStep {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nt-space-2);
+  padding: 8px 12px;
+  border-left: 2px solid rgba(0, 255, 0, 0.2);
+  animation: stepIn 0.3s ease;
+}
+
+.flowStepActive {
+  border-left-color: var(--theme-accent);
+  background: rgba(0, 255, 0, 0.03);
+}
+
+.flowStepDone {
+  border-left-color: var(--theme-accent);
+  opacity: 0.8;
+}
+
+.flowStepError {
+  border-left-color: var(--theme-error);
+  background: rgba(255, 0, 0, 0.05);
+}
+
+.flowStepIcon {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  width: 20px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.flowStepContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.flowStepTitle {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--theme-accent);
+  margin-bottom: 2px;
+}
+
+.flowStepText {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: rgba(0, 255, 0, 0.6);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 255, 0, 0.2);
+  border-top-color: var(--theme-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+/* Typewriter effect */
+.typewriter {
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ===== Diff Preview ===== */
+.diffSection {
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.diffSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-2) 12px;
+  background: rgba(0, 255, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 255, 0, 0.15);
+  cursor: pointer;
+}
+
+.diffSectionTitle {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--theme-accent);
+  text-transform: uppercase;
+}
+
+.diffSectionToggle {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(0, 255, 0, 0.5);
+}
+
+.diffContent {
+  padding: 8px 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.diffContent::-webkit-scrollbar {
+  width: 4px;
+}
+
+.diffContent::-webkit-scrollbar-track {
+  background: var(--theme-bg-primary);
+}
+
+.diffContent::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 0, 0.15);
+}
+
+.diffLine {
+  padding: 1px 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.diffAdded {
+  color: var(--theme-accent);
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.diffRemoved {
+  color: var(--theme-error);
+  background: rgba(255, 0, 0, 0.05);
+}
+
+.diffUnchanged {
+  color: rgba(0, 255, 0, 0.3);
+}
+
+.diffActions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid rgba(0, 255, 0, 0.15);
+}
+
+.acceptBtn {
+  background: rgba(0, 255, 0, 0.1);
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-accent);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+
+.acceptBtn:hover {
+  background: var(--theme-accent);
+  color: var(--theme-bg-primary);
+}
+
+.rejectBtn {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid var(--theme-error);
+  color: var(--theme-error);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+
+.rejectBtn:hover {
+  background: var(--theme-error);
+  color: var(--theme-bg-primary);
+}
+
+/* ===== Checkpoints ===== */
+.checkpointsSection {
+  border: 1px solid rgba(0, 255, 0, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.checkpointsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-2) 12px;
+  background: rgba(0, 255, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+  cursor: pointer;
+}
+
+.checkpointsTitle {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--theme-accent);
+  text-transform: uppercase;
+}
+
+.checkpointCount {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(0, 255, 0, 0.5);
+}
+
+.checkpointsList {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.checkpointItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-2) 12px;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.06);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.checkpointItem:last-child {
+  border-bottom: none;
+}
+
+.checkpointInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkpointTime {
+  color: rgba(0, 255, 0, 0.4);
+  font-size: 10px;
+}
+
+.checkpointDesc {
+  color: rgba(0, 255, 0, 0.7);
+  margin-top: 2px;
+}
+
+.checkpointFiles {
+  color: rgba(0, 255, 0, 0.4);
+  font-size: 10px;
+  margin-top: 1px;
+}
+
+.rollbackBtn {
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: var(--theme-error);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.rollbackBtn:hover {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+/* ===== Lint Errors ===== */
+.lintSection {
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.lintHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-2) 12px;
+  background: rgba(255, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(255, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.lintTitle {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--theme-error);
+  text-transform: uppercase;
+}
+
+.lintCount {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(255, 0, 0, 0.6);
+}
+
+.lintList {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.lintItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: var(--nt-space-2) 12px;
+  border-bottom: 1px solid rgba(255, 0, 0, 0.06);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}
+
+.lintItem:last-child {
+  border-bottom: none;
+}
+
+.lintSeverity {
+  color: var(--theme-error);
+  font-size: 10px;
+  min-width: 50px;
+  text-transform: uppercase;
+}
+
+.lintMessage {
+  color: rgba(255, 0, 0, 0.8);
+  flex: 1;
+}
+
+.lintLocation {
+  color: rgba(255, 0, 0, 0.4);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.autoFixBtn {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid var(--theme-error);
+  color: var(--theme-error);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  margin: 8px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s;
+  align-self: flex-start;
+}
+
+.autoFixBtn:hover:not(:disabled) {
+  background: var(--theme-error);
+  color: var(--theme-bg-primary);
+}
+
+.autoFixBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ===== Result Summary ===== */
+.resultSummary {
+  padding: 8px 12px;
+  border: 1px solid var(--theme-accent);
+  border-radius: 2px;
+  background: rgba(0, 255, 0, 0.03);
+}
+
+.resultTitle {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--theme-accent);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.resultText {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: rgba(0, 255, 0, 0.7);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.resultFiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: var(--nt-space-2);
+}
+
+.resultFileTag {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: var(--theme-accent);
+  padding: 1px var(--nt-space-2);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 2px;
+}
+
+/* ===== Placeholder ===== */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 12px;
+}
+
+.placeholderIcon {
+  font-size: 48px;
+  opacity: 0.15;
+}
+
+.placeholderText {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: rgba(0, 255, 0, 0.3);
+  text-align: center;
+}
+
+.placeholderHint {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: rgba(0, 255, 0, 0.2);
+}
+
+/* ===== Error ===== */
+.errorBlock {
+  padding: 8px 12px;
+  border: 1px solid var(--theme-error);
+  border-radius: 2px;
+  background: rgba(255, 0, 0, 0.05);
+}
+
+.errorText {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--theme-error);
+}
+
+/* A5 Phase 3 Task 2: 云端 AI 离线降级提示（终端黑客风格，黄色警告色） */
+.offlineHint {
+  padding: var(--nt-space-2) 12px;
+  border: 1px solid var(--theme-warning);
+  border-radius: 2px;
+  background: rgba(255, 179, 0, 0.08);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--theme-warning);
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+}
+
+.offlineHint::before {
+  content: "📴";
+  font-size: 13px;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes stepIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}

@@ -1,0 +1,55 @@
+.tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tab {
+  flex: 1;
+  padding: var(--nt-space-2) 0;
+  background: none;
+  border: none;
+  color: var(--theme-text-muted);
+  font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s;
+  text-align: center;
+}
+
+.tab:hover {
+  color: var(--theme-text-secondary);
+}
+
+.active {
+  color: var(--theme-text-primary);
+}
+
+.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--theme-accent);
+  border-radius: 0;
+  box-shadow:
+    0 0 6px rgba(0, 240, 255, 0.6),
+    0 0 12px rgba(0, 240, 255, 0.3);
+  animation: tab-neon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tab-neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 6px rgba(0, 240, 255, 0.6),
+      0 0 12px rgba(0, 240, 255, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(0, 240, 255, 0.8),
+      0 0 20px rgba(0, 240, 255, 0.5),
+      0 0 30px rgba(0, 240, 255, 0.2);
+  }
+}

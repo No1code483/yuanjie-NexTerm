@@ -1,0 +1,105 @@
+@import '../styles/theme.css';
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+  font-family: var(--nt-font-mono);
+  border: var(--nt-border-width) solid;
+  background-color: rgba(10, 0, 20, 0.9);
+  outline: none;
+}
+
+.button:hover:not(.disabled) {
+  box-shadow:
+    0 0 15px currentColor,
+    0 0 30px currentColor;
+}
+
+.button:active:not(.disabled) {
+  transform: translateY(1px);
+}
+
+.button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 按钮类型样式 */
+.default {
+  color: var(--theme-accent);
+  border-color: rgba(0, 240, 255, 0.5);
+}
+
+.default:hover:not(.disabled) {
+  background-color: rgba(0, 240, 255, 0.15);
+  color: var(--theme-accent);
+  border-color: var(--theme-accent);
+  box-shadow:
+    0 0 18px rgba(0, 240, 255, 0.8),
+    0 0 36px rgba(0, 240, 255, 0.4);
+}
+
+.danger {
+  color: var(--theme-error);
+  border-color: rgba(255, 0, 64, 0.5);
+}
+
+.danger:hover:not(.disabled) {
+  background-color: rgba(255, 0, 64, 0.15);
+  color: var(--theme-error);
+  border-color: var(--theme-error);
+  box-shadow:
+    0 0 18px rgba(255, 0, 64, 0.8),
+    0 0 36px rgba(255, 0, 64, 0.4);
+}
+
+.success {
+  color: var(--theme-secondary);
+  border-color: rgba(176, 38, 255, 0.5);
+}
+
+.success:hover:not(.disabled) {
+  background-color: rgba(176, 38, 255, 0.15);
+  color: var(--theme-secondary);
+  border-color: var(--theme-secondary);
+  box-shadow:
+    0 0 18px rgba(176, 38, 255, 0.8),
+    0 0 36px rgba(176, 38, 255, 0.4);
+}
+
+/* 按钮尺寸样式 */
+.small {
+  padding: var(--nt-button-padding-small);
+  font-size: var(--nt-button-font-size-small);
+  min-width: var(--nt-button-min-width-small);
+  min-height: 24px;
+}
+
+.medium {
+  padding: var(--nt-button-padding-medium);
+  font-size: var(--nt-button-font-size-medium);
+  min-width: var(--nt-button-min-width-medium);
+  min-height: 32px;
+}
+
+.large {
+  padding: var(--nt-button-padding-large);
+  font-size: var(--nt-button-font-size-large);
+  min-width: var(--nt-button-min-width-large);
+  min-height: 40px;
+}
+
+/* 加载状态样式 */
+.loading {
+  position: relative;
+  color: transparent;
+}
+
+.loading::after {
+  content: '加载中...';
+  position: absolute;
+  color: currentColor;
+}

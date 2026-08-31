@@ -1,0 +1,103 @@
+/* Skeleton 骨架屏 - 终端黑客风格 */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.skeleton {
+  display: block;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 240, 255, 0.06) 0%,
+    rgba(0, 240, 255, 0.15) 25%,
+    rgba(0, 240, 255, 0.06) 50%,
+    rgba(0, 240, 255, 0.15) 75%,
+    rgba(0, 240, 255, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 2s ease-in-out infinite;
+  border: 1px solid rgba(0, 240, 255, 0.08);
+}
+
+/* 变体 */
+.text {
+  height: 14px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.text:last-child {
+  margin-bottom: 0;
+}
+
+.textShort {
+  width: 60%;
+}
+
+.textMedium {
+  width: 80%;
+}
+
+.card {
+  width: 100%;
+  min-height: 80px;
+  border-radius: 4px;
+  border-color: rgba(0, 240, 255, 0.12);
+}
+
+.circle {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  border-color: rgba(0, 240, 255, 0.12);
+}
+
+.tableRow {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+}
+
+.tableRow .skeleton {
+  height: 14px;
+}
+
+/* 多行文本容器 */
+.textLines {
+  width: 100%;
+}
+
+/* 列表项 */
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  padding: var(--nt-space-2) 0;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+}
+
+/* 页面骨架容器 */
+.page {
+  padding: 16px;
+}
+
+/* 脉冲模式（无渐变的简化版） */
+.pulse {
+  background: rgba(0, 240, 255, 0.08);
+  background-size: auto;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}

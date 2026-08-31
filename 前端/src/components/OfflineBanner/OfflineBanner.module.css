@@ -1,0 +1,117 @@
+/* ===== OfflineBanner — 离线状态横幅（终端黑客风格）=====
+ * 黑底 var(--theme-bg-primary) + 警示红 var(--theme-error) + 等宽字体 + 发光/闪烁
+ * 在线时收起（height 0 + opacity 0），离线时展开（height 32px）
+ */
+
+.banner {
+  position: relative;
+  width: 100%;
+  background-color: var(--theme-bg-primary);
+  border-bottom: var(--nt-border-width) solid var(--theme-error);
+  box-shadow:
+    0 0 12px rgba(255, 0, 0, 0.4),
+    inset 0 -1px 0 rgba(255, 0, 0, 0.2);
+  font-family: var(--nt-font-mono);
+  color: var(--theme-error);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  /* 高度 + 透明度过渡：在线时收起 */
+  transition: height 0.3s ease, opacity 0.3s ease, border-bottom-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+/* 离线：展开 */
+.visible {
+  height: 32px;
+  opacity: 1;
+}
+
+/* 在线：收起 */
+.hidden {
+  height: 0;
+  opacity: 0;
+  border-bottom-color: transparent;
+  box-shadow: none;
+}
+
+/* 📴 图标：闪烁警示 */
+.icon {
+  font-size: 14px;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 0, 0, 0.8));
+  animation: offlineBlink 1.6s steps(2, start) infinite;
+}
+
+/* 主提示文字：红色发光 */
+.text {
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-shadow:
+    0 0 8px rgba(255, 0, 0, 0.8),
+    0 0 16px rgba(255, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+/* 上次检查时间：暗红辅助文字 */
+.lastChecked {
+  font-size: 11px;
+  color: var(--theme-error);
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* 立即检测按钮 */
+.retryBtn {
+  margin-left: auto;
+  background: transparent;
+  border: var(--nt-border-width) solid var(--theme-error);
+  color: var(--theme-error);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  padding: 2px var(--nt-space-2);
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.retryBtn:hover {
+  background: rgba(255, 0, 0, 0.15);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  color: var(--theme-error);
+  border-color: var(--theme-error);
+}
+
+.retryBtn:active {
+  transform: translateY(1px);
+}
+
+.retryBtn:focus-visible {
+  outline: 1px solid var(--theme-error);
+  outline-offset: 2px;
+}
+
+/* 离线指示图标闪烁 */
+@keyframes offlineBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* C4 §2.5：尊重用户的减弱动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .banner {
+    transition: none;
+  }
+  .icon {
+    animation: none;
+  }
+}

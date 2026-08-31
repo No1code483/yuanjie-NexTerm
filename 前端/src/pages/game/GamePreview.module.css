@@ -1,0 +1,530 @@
+/**
+ * GamePreview 样式
+ *
+ * 视觉风格：青色赛博朋克（--nt-* 变量系统）
+ * 布局：Header + 2×2 Grid
+ * 响应式：900px 以下单列
+ */
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 20px;
+  background:
+    radial-gradient(ellipse at 25% 35%, rgba(0, 240, 255, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 75% 65%, rgba(255, 0, 110, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(176, 38, 255, 0.06) 0%, transparent 60%),
+    var(--nt-black);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  overflow-y: auto;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  border-radius: var(--nt-radius-lg);
+  backdrop-filter: blur(10px);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--nt-font-chinese);
+  font-size: 24px;
+  color: var(--nt-primary);
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nt-text-secondary);
+}
+
+.enterGameBtn {
+  padding: var(--nt-space-2) 20px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(176, 38, 255, 0.1));
+  border: 1.5px solid var(--nt-primary);
+  border-radius: var(--nt-radius-md);
+  color: var(--nt-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+.enterGameBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.18));
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.enterGameBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Grid 2×2 ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  flex: 1;
+}
+
+/* ===== 通用卡片样式（卡片组件内用内联样式补充细节） ===== */
+.card {
+  padding: 20px;
+  background: var(--nt-bg-secondary);
+  border: 1px solid var(--nt-border-color);
+  border-radius: var(--nt-radius-lg);
+  backdrop-filter: blur(10px);
+  transition: all var(--nt-transition-normal);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 280px;
+}
+
+.card:hover {
+  border-color: var(--nt-primary);
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--nt-font-chinese);
+  font-size: 18px;
+  color: var(--nt-primary);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+  border-bottom: 1px solid var(--nt-border-subtle);
+  padding-bottom: 8px;
+}
+
+/* ===== 骨架屏 ===== */
+.skeleton {
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(
+    90deg,
+    var(--nt-text-muted) 0%,
+    rgba(106, 106, 138, 0.2) 50%,
+    var(--nt-text-muted) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--nt-radius-sm);
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== 进度条 ===== */
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: var(--nt-gray-medium);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--nt-primary), var(--nt-secondary));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+/* ===== CTA 卡片（创建世界） ===== */
+.ctaCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 48px;
+  margin: auto;
+  max-width: 560px;
+  background: var(--nt-bg-secondary);
+  border: 1.5px solid var(--nt-border-color);
+  border-radius: var(--nt-radius-lg);
+  backdrop-filter: blur(15px);
+  text-align: center;
+  box-shadow: var(--nt-shadow-primary);
+}
+
+.ctaDesc {
+  margin: 0;
+  color: var(--nt-text-secondary);
+  font-family: var(--nt-font-chinese);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.createWorldBtn {
+  padding: var(--nt-space-4) 32px;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(176, 38, 255, 0.15));
+  border: 1.5px solid var(--nt-primary);
+  border-radius: var(--nt-radius-md);
+  color: var(--nt-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+.createWorldBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(176, 38, 255, 0.25));
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.createWorldBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== 错误提示 ===== */
+.errorText {
+  color: var(--nt-error);
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.errorBanner {
+  padding: var(--nt-space-2) 16px;
+  background: rgba(255, 0, 110, 0.08);
+  border: 1px solid var(--nt-error);
+  border-radius: var(--nt-radius-md);
+  color: var(--nt-error);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.retryBtn,
+.retrySmall {
+  padding: 8px var(--nt-space-5);
+  background: transparent;
+  border: 1px solid var(--nt-primary);
+  border-radius: var(--nt-radius-md);
+  color: var(--nt-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+}
+
+.retryBtn:hover,
+.retrySmall:hover {
+  background: rgba(0, 240, 255, 0.1);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+.retrySmall {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+/* ===== 响应式：三档断点（≥1200px 2×2 / 768-1199px 2×1 / <768px 1×4） ===== */
+
+/* 中屏 768-1199px：2×1 列（保持 2 列但紧凑） */
+@media (max-width: 1199px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .header {
+    padding: 12px 16px;
+  }
+}
+
+/* 窄屏 <768px：1×4 纵向堆叠 */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .enterGameBtn {
+    align-self: center;
+  }
+
+  /* D4.2 NPC 按钮组：窄屏换行 + 居中 */
+  .npcBtn {
+    align-self: center;
+  }
+}
+
+/* ===== D4.2 NPC 按钮 ===== */
+.npcBtn {
+  padding: var(--nt-space-2) var(--nt-space-5);
+  background: linear-gradient(135deg, rgba(176, 38, 255, 0.15), rgba(0, 240, 255, 0.08));
+  border: 1.5px solid var(--nt-secondary, var(--theme-secondary));
+  border-radius: var(--nt-radius-md);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+  letter-spacing: 1px;
+}
+
+.npcBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.15));
+  box-shadow: 0 0 18px rgba(176, 38, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.npcBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 2D/3D 模式切换按钮激活态 */
+.modeBtnActive {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(0, 240, 255, 0.15)) !important;
+  border-color: var(--nt-primary) !important;
+  color: var(--nt-primary) !important;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.55);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+}
+
+/* ===== D4.2 NPC 列表面板浮层 ===== */
+.npcPanelOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: npcFadeIn 0.2s ease-out;
+}
+
+@keyframes npcFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.npcPanel {
+  width: min(440px, 92vw);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--nt-bg-secondary);
+  border: 1.5px solid var(--nt-primary);
+  border-radius: var(--nt-radius-lg);
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.35);
+  overflow: hidden;
+}
+
+.npcPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--nt-space-4) 20px;
+  border-bottom: 1px solid var(--nt-border-subtle);
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(176, 38, 255, 0.05));
+}
+
+.npcPanelTitle {
+  margin: 0;
+  font-family: var(--nt-font-chinese);
+  font-size: 16px;
+  color: var(--nt-primary);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+.npcPanelClose {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--nt-border-color);
+  border-radius: var(--nt-radius-sm);
+  color: var(--nt-text-secondary);
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+}
+
+.npcPanelClose:hover {
+  border-color: var(--nt-error);
+  color: var(--nt-error);
+}
+
+.npcList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.npcEmpty {
+  padding: 32px;
+  text-align: center;
+  color: var(--nt-text-muted);
+  font-size: 13px;
+}
+
+.npcCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--nt-space-4);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--nt-radius-md);
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+  text-align: left;
+  width: 100%;
+}
+
+.npcCard:hover {
+  border-color: var(--nt-primary);
+  background: rgba(0, 240, 255, 0.06);
+  transform: translateX(2px);
+}
+
+.npcAvatar {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.npcMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.npcName {
+  font-family: var(--nt-font-chinese);
+  font-size: 15px;
+  color: var(--nt-primary);
+  font-weight: 600;
+}
+
+.npcRole {
+  font-size: 12px;
+  color: var(--nt-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===== Preview3DView 场景切换器（Task 2.4） ===== */
+.sceneSwitcher {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--nt-space-2);
+  padding: var(--nt-space-2);
+  background: rgba(10, 14, 20, 0.78);
+  border: 1px solid var(--nt-border-color);
+  border-radius: var(--nt-radius-md);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+  box-shadow: var(--theme-shadow-sm);
+}
+
+.sceneBtn {
+  padding: var(--nt-space-2) 12px;
+  background: transparent;
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--nt-radius-sm);
+  color: var(--nt-text-secondary);
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.sceneBtn:hover:not(:disabled) {
+  border-color: var(--nt-primary);
+  color: var(--nt-primary);
+  background: rgba(0, 240, 255, 0.08);
+}
+
+.sceneBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sceneBtnActive {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.12));
+  border-color: var(--nt-primary);
+  color: var(--nt-primary);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.45);
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
+}
+
+.transitioningIndicator {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px var(--nt-space-2);
+  background: rgba(10, 14, 20, 0.78);
+  border: 1px solid var(--nt-primary);
+  border-radius: var(--nt-radius-sm);
+  color: var(--nt-primary);
+  font-family: var(--nt-font-mono);
+  font-size: 11px;
+  z-index: 10;
+  pointer-events: none;
+  animation: transitionPulse 1s ease-in-out infinite;
+}
+
+@keyframes transitionPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

@@ -1,0 +1,175 @@
+/* ========================================
+   SelectionToolbar - 选中文本快捷 AI 工具栏
+   终端科幻风格
+   ======================================== */
+
+/* ===== 工具栏 ===== */
+.toolbar {
+  position: fixed;
+  z-index: 10002;
+  display: flex;
+  gap: 1px;
+  padding: var(--nt-space-1);
+  background: rgba(10, 14, 22, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 8px;
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 12px rgba(0, 240, 255, 0.08);
+  animation: toolbarIn 0.15s ease;
+}
+
+@keyframes toolbarIn {
+  from { opacity: 0; transform: translateY(4px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.toolBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: rgba(200, 220, 240, 0.7);
+  font-size: 11px;
+  font-family: 'Cascadia Code', 'JetBrains Mono', monospace;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  line-height: 1;
+}
+.toolBtn:hover {
+  background: rgba(0, 240, 255, 0.1);
+  color: var(--theme-accent);
+}
+.toolBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toolIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  background: rgba(0, 240, 255, 0.1);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--theme-accent);
+}
+
+.toolBtn:hover .toolIcon {
+  background: rgba(0, 240, 255, 0.2);
+}
+
+.toolLabel {
+  font-size: 11px;
+}
+
+/* ===== 结果面板 ===== */
+.resultPanel {
+  position: fixed;
+  z-index: 10003;
+  width: 320px;
+  max-height: 260px;
+  background: rgba(10, 14, 22, 0.97);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(0, 240, 255, 0.06);
+  overflow: hidden;
+  animation: resultIn 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes resultIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-family: 'Cascadia Code', 'JetBrains Mono', monospace;
+  color: var(--theme-accent);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+  background: rgba(0, 240, 255, 0.04);
+}
+
+.resultTitle {
+  font-size: 11px;
+}
+
+.resultClose {
+  background: none;
+  border: none;
+  color: rgba(255, 100, 100, 0.7);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+  line-height: 1;
+}
+.resultClose:hover {
+  color: var(--theme-error);
+}
+
+.resultBody {
+  padding: var(--nt-space-2) var(--nt-space-4);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.resultText {
+  margin: 0;
+  font-family: 'Cascadia Code', 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  color: rgba(210, 220, 235, 0.9);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ===== 加载动画 ===== */
+.loadingDots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+}
+.loadingDots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  animation: dotBounce 1.2s ease-in-out infinite;
+}
+.loadingDots span:nth-child(2) { animation-delay: 0.15s; }
+.loadingDots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== 滚动条 ===== */
+.resultBody::-webkit-scrollbar {
+  width: 3px;
+}
+.resultBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+.resultBody::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.15);
+  border-radius: 2px;
+}

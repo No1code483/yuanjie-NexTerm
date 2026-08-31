@@ -1,0 +1,46 @@
+{
+  "name": "code-formatter",
+  "display_name": "代码格式化",
+  "version": "1.0.0",
+  "description": "多语言代码格式化器，支持 Rust/cargo fmt、Python/black、JS/prettier 等",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "formatting",
+  "tags": ["format", "lint", "style"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "code-formatter"
+  },
+  "permissions": [
+    {
+      "name": "file_write",
+      "description": "修改文件内容",
+      "requires_approval": true
+    },
+    {
+      "name": "shell_exec",
+      "description": "执行格式化命令",
+      "requires_approval": false
+    }
+  ],
+  "dependencies": [],
+  "skills": ["code-formatter"],
+  "mcp_servers": [],
+  "commands": [
+    {
+      "name": "format_file",
+      "description": "格式化指定文件",
+      "handler": "format_file",
+      "args": {
+        "file_path": "string"
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "event": "on_file_save",
+      "handler": "format_on_save"
+    }
+  ],
+  "enabled": true
+}

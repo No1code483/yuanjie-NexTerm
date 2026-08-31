@@ -1,0 +1,42 @@
+{
+  "name": "deploy-assistant",
+  "display_name": "部署助手",
+  "version": "1.0.0",
+  "description": "Docker/CI/CD 配置生成、部署脚本编写、环境管理",
+  "author": "YuanCode",
+  "license": "MIT",
+  "category": "deployment",
+  "tags": ["docker", "ci", "cd", "deploy", "devops"],
+  "entry": {
+    "skills_dir": "skills",
+    "main": "deploy-assistant"
+  },
+  "permissions": [
+    {
+      "name": "file_write",
+      "description": "写入配置文件",
+      "requires_approval": true
+    },
+    {
+      "name": "shell_exec",
+      "description": "执行部署命令",
+      "requires_approval": true
+    }
+  ],
+  "dependencies": [],
+  "skills": ["deploy-config-generator", "dockerfile-generator"],
+  "mcp_servers": [],
+  "commands": [
+    {
+      "name": "generate_dockerfile",
+      "description": "生成 Dockerfile",
+      "handler": "deploy_dockerfile",
+      "args": {
+        "language": "string",
+        "framework": "string"
+      }
+    }
+  ],
+  "hooks": [],
+  "enabled": true
+}

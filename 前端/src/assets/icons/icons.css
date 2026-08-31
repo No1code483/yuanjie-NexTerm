@@ -1,0 +1,84 @@
+.nt-icon {
+  background-color: transparent;
+  color: var(--nt-green);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all var(--nt-transition-normal);
+  border-radius: var(--nt-radius-sm);
+  padding: 4px;
+}
+
+.nt-icon:hover {
+  filter: drop-shadow(0 0 6px var(--nt-green));
+  background-color: rgba(0, 255, 0, 0.1);
+  transform: scale(1.1);
+  box-shadow: var(--nt-shadow-green);
+}
+
+.nt-icon:active {
+  transform: scale(0.95);
+}
+
+.nt-icon-danger {
+  color: var(--nt-red);
+}
+
+.nt-icon-danger:hover {
+  filter: drop-shadow(0 0 6px var(--nt-red));
+  background-color: rgba(255, 0, 0, 0.1);
+  box-shadow: var(--nt-shadow-red);
+}
+
+.nt-icon-cyan {
+  color: var(--nt-cyan);
+}
+
+.nt-icon-cyan:hover {
+  filter: drop-shadow(0 0 6px var(--nt-cyan));
+  background-color: rgba(0, 255, 255, 0.1);
+  box-shadow: var(--nt-shadow-cyan);
+}
+
+.nt-icon-purple {
+  color: var(--nt-purple);
+}
+
+.nt-icon-purple:hover {
+  filter: drop-shadow(0 0 6px var(--nt-purple));
+  background-color: rgba(204, 0, 255, 0.1);
+  box-shadow: var(--nt-shadow-purple);
+}
+
+.nt-icon-small {
+  width: 16px;
+  height: 16px;
+}
+
+.nt-icon-medium {
+  width: 24px;
+  height: 24px;
+}
+
+.nt-icon-large {
+  width: 32px;
+  height: 32px;
+}
+
+.nt-icon-glow {
+  animation: nt-blink-green 2s infinite;
+}
+
+.nt-icon-danger-glow {
+  animation: nt-blink-red 1s infinite;
+}
+
+@keyframes nt-blink-green {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes nt-blink-red {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

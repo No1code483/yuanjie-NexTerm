@@ -1,0 +1,62 @@
+﻿@font-face {
+  font-family: 'NexTermMono';
+  src: local('JetBrains Mono'), local('Consolas'), local('Monaco'), local('Courier New');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrainsMono-Regular'), local('JetBrains Mono'), local('Consolas'), local('Monaco'), local('Courier New');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrainsMono-Bold'), local('JetBrains Mono'), local('Consolas'), local('Monaco'), local('Courier New');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrainsMono-Italic'), local('JetBrains Mono'), local('Consolas'), local('Monaco'), local('Courier New');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'NexTermChinese';
+  src: local('KaiTi'), local('STKaiti'), local('SimKai'), local('Microsoft YaHei');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NexTermCalligraphy';
+  src: local('KaiTi'), local('STKaiti');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.nt-font-mono {
+  font-family: 'NexTermMono', var(--nt-font-mono);
+}
+
+.nt-font-chinese {
+  font-family: 'NexTermChinese', var(--nt-font-chinese);
+}
+
+.nt-font-calligraphy {
+  font-family: 'NexTermCalligraphy', var(--nt-font-chinese);
+}
+
+.nt-font-title {
+  font-family: 'NexTermCalligraphy', var(--nt-font-chinese);
+  font-weight: 600;
+}
+
+.nt-font-code {
+  font-family: 'NexTermMono', var(--nt-font-mono);
+}
