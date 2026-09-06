@@ -47,7 +47,10 @@ export interface SyncState {
   registerCurrentDevice: (
     id: string,
     deviceName: string,
-    deviceType: 'windows' | 'macos' | 'linux',
+    // 设备形态（desktop/laptop/phone/tablet/server）——BUG-018 起拆分
+    deviceType: string,
+    // 操作系统（windows/macos/linux/other）——BUG-018 新增
+    deviceOs: string,
     publicKey: string,
   ) => Promise<boolean>;
   revokeDevice: (deviceId: string) => Promise<boolean>;
@@ -123,8 +126,8 @@ export const useSyncStore = create<SyncState>((set, get) => ({
     return false;
   },
 
-  registerCurrentDevice: async (id, deviceName, deviceType, publicKey) => {
-    const res = await syncIpc.registerDevice(id, deviceName, deviceType, publicKey, true);
+  registerCurrentDevice: async (id, deviceName, deviceType, deviceOs, publicKey) => {
+    const res = await syncIpc.registerDevice(id, deviceName, deviceType, deviceOs, publicKey, true);
     if (res.code === 0) {
       await get().refreshDevices();
       return true;

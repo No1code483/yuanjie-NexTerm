@@ -35,7 +35,10 @@ export interface SyncQueueStats {
 export interface SyncDevice {
   id: string;
   device_name: string;
+  /** 设备形态（desktop/laptop/phone/tablet/server）——BUG-018 修复后语义 */
   device_type: string;
+  /** 操作系统（windows/macos/linux/other）——BUG-018 新增 */
+  device_os: string;
   public_key: string;
   registered_at: string;
   last_seen_at: string | null;
@@ -106,7 +109,10 @@ export const sync = {
   registerDevice: (
     id: string,
     device_name: string,
+    // 设备形态（desktop/laptop/phone/tablet/server）——BUG-018 起拆分
     device_type: string,
+    // 操作系统（windows/macos/linux/other）——BUG-018 新增
+    device_os: string,
     public_key: string,
     is_current: boolean,
   ) =>
@@ -114,6 +120,7 @@ export const sync = {
       id,
       device_name,
       device_type,
+      device_os,
       public_key,
       is_current,
     }),

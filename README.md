@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Tauri-2.x-orange" alt="Tauri" />
   <img src="https://img.shields.io/badge/Rust-1.8+-brown" alt="Rust" />
   <img src="https://img.shields.io/badge/xterm.js-6.0-green" alt="xterm" />
-  <img src="https://img.shields.io/badge/版本-v1.0.0.0-blueviolet" alt="Version" />
+  <img src="https://img.shields.io/badge/版本-v1.0.0.1-blueviolet" alt="Version" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 

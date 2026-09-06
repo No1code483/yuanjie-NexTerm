@@ -71,11 +71,13 @@ export default function DeviceManager({ visible = true }: DeviceManagerProps) {
       }
       // 2. 注册设备（标记为当前设备）
       const deviceId = generateDeviceId();
-      const deviceType = detectDeviceType();
+      // 当前 UI 只采集操作系统（BUG-018 修复：OS 归 device_os）；设备形态暂缺省 'desktop'
+      const deviceOs = detectDeviceType();
       const ok = await registerCurrentDevice(
         deviceId,
         newDeviceName.trim(),
-        deviceType,
+        'desktop',
+        deviceOs,
         keypairRes.data.public_key_b64,
       );
       if (ok) {
@@ -129,7 +131,8 @@ export default function DeviceManager({ visible = true }: DeviceManagerProps) {
         <div className={styles.deviceList}>
           {devices.map((device) => {
             const isCurrent = device.is_current_device === 1;
-            const deviceType = (device.device_type || 'windows').toLowerCase();
+            // BUG-018 修复：OS 归属 device_os 用于样式色，device_type 为设备形态
+            const deviceOs = (device.device_os || device.device_type || 'windows').toLowerCase();
             return (
               <div
                 key={device.id}
@@ -140,8 +143,8 @@ export default function DeviceManager({ visible = true }: DeviceManagerProps) {
                     {device.device_name}
                     {isCurrent && <span className={styles.currentTag}>当前</span>}
                   </span>
-                  <span className={`${styles.deviceType} ${styles[deviceType] || ''}`}>
-                    {deviceType}
+                  <span className={`${styles.deviceType} ${styles[deviceOs] || ''}`}>
+                    {deviceOs}
                   </span>
                 </div>
                 <div className={styles.deviceMeta}>

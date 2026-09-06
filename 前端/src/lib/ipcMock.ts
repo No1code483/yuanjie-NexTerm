@@ -1972,6 +1972,7 @@ export const mockSync = {
       id: args.id,
       device_name: args.device_name,
       device_type: args.device_type,
+      device_os: args.device_os ?? 'other',
       public_key: args.public_key,
       registered_at: new Date().toISOString(),
       last_seen_at: null,

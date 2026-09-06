@@ -342,8 +342,16 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), AppError> {
     //       直接 ALTER ADD COLUMN。
     apply_migration!(pool, applied, 122, add_user_id_to_terminal_history_tab_layout);
 
+    // ----- BUG-018 修复：sync_devices.device_type 语义冲突（设备形态 vs 操作系统）-----
+    // 方案: 用户裁决 C——表重建。
+    //       - device_type: 设备形态（desktop/laptop/phone/tablet/server），CHECK 改为形态枚举
+    //       - device_os:   操作系统（windows/macos/linux/other），新增列
+    // 说明: 旧库 device_type 存 OS 枚举 → device_os 归位；新 device_type 无形态信息 → 默认 'desktop'
+    // 详情: 测试库/缺陷报告/OPEN/20260831_sync设备类型CHECK语义冲突/
+    apply_migration!(pool, applied, 123, rebuild_sync_devices_device_type);
+
     tracing::info!(
-        "数据库迁移完成（已应用 {} 个迁移，当前版本 v122）",
+        "数据库迁移完成（已应用 {} 个迁移，当前版本 v123）",
         applied.len()
     );
     Ok(())
@@ -2962,5 +2970,18 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         tracing::info!("⏱️ [批次5] timers 表已添加 user_id 字段");
     }
 
+    Ok(())
+}
+
+/// v123: 重建 sync_devices 表，修复 device_type 语义冲突（BUG-018）
+///
+/// 方案 C（用户裁决）：device_type 改为设备形态枚举（desktop/laptop/phone/tablet/server），
+/// 新增 device_os 列存操作系统（windows/macos/linux/other）。
+/// 旧库 device_type 存 OS 枚举 → device_os 归位；新 device_type 无形态信息 → 默认 'desktop'。
+/// 表重建模式与 v86/v89 一致：CREATE _new → INSERT → DROP → RENAME → 重建索引。
+async fn rebuild_sync_devices_device_type(pool: &SqlitePool) -> Result<(), AppError> {
+    let sql = include_str!("../../migrations/0123_rebuild_sync_devices_device_type/up.sql");
+    sqlx::query(sql).execute(pool).await?;
+    tracing::info!("🔗 [BUG-018] sync_devices 表已重建（device_type 形态枚举 + device_os 列）");
     Ok(())
 }

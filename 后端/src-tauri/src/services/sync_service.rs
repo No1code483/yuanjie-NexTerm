@@ -106,7 +106,10 @@ pub struct SyncQueueItem {
 pub struct SyncDevice {
     pub id: String,
     pub device_name: String,
+    /// 设备形态（desktop/laptop/phone/tablet/server）——BUG-018 修复后语义
     pub device_type: String,
+    /// 操作系统（windows/macos/linux/other）——BUG-018 新增
+    pub device_os: String,
     pub public_key: String,
     pub registered_at: String,
     pub last_seen_at: Option<String>,
@@ -351,28 +354,33 @@ pub fn resolve_lww(
 // ============================================================================
 
 /// 注册新设备
+///
+/// - `device_type`: 设备形态（desktop/laptop/phone/tablet/server）
+/// - `device_os`:   操作系统（windows/macos/linux/other）
 pub async fn register_device(
     pool: &SqlitePool,
     id: &str,
     device_name: &str,
     device_type: &str,
+    device_os: &str,
     public_key: &str,
     is_current: bool,
 ) -> Result<(), AppError> {
     sqlx::query(
-        "INSERT INTO sync_devices (id, device_name, device_type, public_key, is_current_device)
-         VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO sync_devices (id, device_name, device_type, device_os, public_key, is_current_device)
+         VALUES (?, ?, ?, ?, ?, ?)",
     )
     .bind(id)
     .bind(device_name)
     .bind(device_type)
+    .bind(device_os)
     .bind(public_key)
     .bind(if is_current { 1 } else { 0 })
     .execute(pool)
     .await
     .map_err(AppError::Database)?;
 
-    tracing::info!("📱 [A5] 设备已注册: {} ({})", device_name, device_type);
+    tracing::info!("📱 [A5] 设备已注册: {} ({}/{})", device_name, device_type, device_os);
     Ok(())
 }
 

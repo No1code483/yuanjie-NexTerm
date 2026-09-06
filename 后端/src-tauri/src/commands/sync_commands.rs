@@ -124,12 +124,16 @@ pub async fn sync_get_queue_stats(
 }
 
 /// 注册新设备
+///
+/// - `device_type`: 设备形态（desktop/laptop/phone/tablet/server）
+/// - `device_os`:   操作系统（windows/macos/linux/other）
 #[tauri::command]
 pub async fn sync_register_device(
     state: State<'_, AppState>,
     id: String,
     device_name: String,
     device_type: String,
+    device_os: String,
     public_key: String,
     is_current: bool,
 ) -> Result<ApiResponse<()>, String> {
@@ -139,6 +143,7 @@ pub async fn sync_register_device(
         &id,
         &device_name,
         &device_type,
+        &device_os,
         &public_key,
         is_current,
     )
