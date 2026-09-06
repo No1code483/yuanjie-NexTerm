@@ -55,9 +55,9 @@
 ### 本地开发
 
 ```bash
-# 1. 安装前端依赖
+# 1. 安装前端依赖（依赖树含 legacy peer 组合，需加 --legacy-peer-deps）
 cd 前端
-npm install
+npm install --legacy-peer-deps
 
 # 2. 安装后端 Tauri CLI
 cd ../后端

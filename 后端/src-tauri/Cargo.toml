@@ -91,21 +91,3 @@ rstest = "0.23"    # 参数化测试，类似 pytest 风格
 wiremock = "0.6"
 # v1.52 性能基线（01_性能优化_首屏200ms计划.md §2.1.1）
 criterion = { version = "0.5", features = ["html_reports", "async_tokio"] }
-
-# v1.52 性能基准测试目标（01_性能优化 §2.1.1）
-# 每个文件为独立 benchmark binary，criterion 自带 harness
-[[bench]]
-name = "startup_bench"
-harness = false
-
-[[bench]]
-name = "db_bench"
-harness = false
-
-[[bench]]
-name = "command_bench"
-harness = false
-
-[[bench]]
-name = "crypto_bench"
-harness = false

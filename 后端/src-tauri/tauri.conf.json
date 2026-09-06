@@ -2,6 +2,10 @@
   "productName": "NexTerm·元界",
   "version": "1.0.1",
   "identifier": "com.nexterm.app",
+  "bundle": {
+    "useLocalToolsDir": true,
+    "icon": ["icons/icon.ico"]
+  },
   "build": {
     "frontendDist": "../../前端/dist",
     "devUrl": "http://localhost:3001",

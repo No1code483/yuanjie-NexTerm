@@ -5,6 +5,9 @@ node_modules/
 target/
 target-nexterm/
 
+# Tauri 构建生成物
+后端/src-tauri/gen/
+
 # 前端构建
 dist/
 build/

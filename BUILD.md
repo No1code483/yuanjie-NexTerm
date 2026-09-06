@@ -41,7 +41,9 @@ cd 后端
 npm run tauri build
 ```
 
-产物输出到 `后端/src-tauri/target/release/bundle/`（NSIS 安装包 / 免安装 exe）。
+产物输出到项目根下 `target-nexterm/release/bundle/`：
+
+- `nsis/NexTerm·元界_1.0.1_x64-setup.exe`（NSIS 安装包，推荐分发格式，无需管理员权限）
 
 ## 各模块自检
 
