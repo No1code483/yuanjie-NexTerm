@@ -1,7 +1,7 @@
 {
   "productName": "NexTerm·元界",
   "version": "1.0.1",
-  "identifier": "com.nexterm.app",
+  "identifier": "com.yuanjie.nexterm",
   "bundle": {
     "useLocalToolsDir": true,
     "icon": ["icons/icon.ico"]

@@ -31,7 +31,7 @@ npm run tauri dev
 
 首次运行会同时编译 Rust 后端（数分钟）。应用启动后：
 
-- 首次启动创建数据库（`%APPDATA%/com.nexterm.app/nexterm.db`）
+- 首次启动创建数据库（`%APPDATA%/com.yuanjie.nexterm/nexterm.db`）
 - 默认无登录用户，可注册本地账号
 
 ## 生产构建
