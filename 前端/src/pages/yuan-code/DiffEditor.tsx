@@ -1,7 +1,7 @@
 import { t } from "i18next";
 import { useCallback, useRef, useState } from 'react';
 import { DiffEditor as MonacoDiffEditor } from '@monaco-editor/react';
-import type { OnMount } from '@monaco-editor/react';
+import type { DiffOnMount } from '@monaco-editor/react';
 import { ipc } from '@/lib/ipc';
 import styles from './YuanCode.module.css';
 interface DiffEditorProps {
@@ -172,7 +172,7 @@ export default function DiffEditor({
       setTimeout(() => setApplyResult(null), 3000);
     }
   }, [modifiedPath, modifiedContent, originalPath]);
-  const handleMount: OnMount = (editor, monaco) => {
+  const handleMount: DiffOnMount = (editor, monaco) => {
     diffEditorRef.current = editor;
     monaco.editor.defineTheme('nexterm-diff-dark', NEXTERM_DIFF_THEME);
     monaco.editor.setTheme('nexterm-diff-dark');
@@ -197,7 +197,7 @@ export default function DiffEditor({
       id: 'next-change',
       label: t("yuan-code.DiffEditor.k5"),
       keybindings: [monaco.KeyCode.F7],
-      run: () => editor.getAction('editor.action.diffReview.next')?.run()
+      run: () => editor.getModifiedEditor().getAction('editor.action.diffReview.next')?.run()
     });
 
     // 导航: 上一个更改
@@ -205,7 +205,7 @@ export default function DiffEditor({
       id: 'prev-change',
       label: t("yuan-code.DiffEditor.k6"),
       keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.F7],
-      run: () => editor.getAction('editor.action.diffReview.prev')?.run()
+      run: () => editor.getModifiedEditor().getAction('editor.action.diffReview.prev')?.run()
     });
   };
   const handleToggleView = useCallback(() => {
@@ -256,7 +256,6 @@ export default function DiffEditor({
         renderLineHighlight: 'line',
         scrollBeyondLastLine: false,
         wordWrap: 'on',
-        tabSize: 4,
         smoothScrolling: true,
         cursorBlinking: 'smooth',
         readOnly: false,

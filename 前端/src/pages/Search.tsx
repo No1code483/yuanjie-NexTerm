@@ -82,7 +82,12 @@ const BOOKMARKS_KEY = 'nexterm_bookmarks';
 function loadBookmarks(): Bookmark[] {
   try {
     const raw = localStorage.getItem(BOOKMARKS_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      return (JSON.parse(raw) as Bookmark[]).map(bookmark => ({
+        ...bookmark,
+        iconUrl: ''
+      }));
+    }
   } catch {/* ignore */}
   return [];
 }
@@ -725,7 +730,7 @@ export default function Search() {
       id: `bkm-${Date.now()}`,
       label: bookmarkName.trim(),
       icon: hostname.charAt(0).toUpperCase(),
-      iconUrl: `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`,
+      iconUrl: '',
       url: activeTab.url
     };
     window.dispatchEvent(new CustomEvent('bookmark-add', {

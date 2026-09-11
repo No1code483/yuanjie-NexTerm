@@ -26,32 +26,34 @@ interface Bookmark {
   iconUrl: string;
   url: string;
 }
-function faviconUrl(hostname: string): string {
-  return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-}
 const BOOKMARKS_KEY = 'nexterm_bookmarks';
 function loadBookmarks(): Bookmark[] {
   try {
     const raw = localStorage.getItem(BOOKMARKS_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      return (JSON.parse(raw) as Bookmark[]).map(bookmark => ({
+        ...bookmark,
+        iconUrl: ''
+      }));
+    }
   } catch {/* ignore */}
   const defaults: Bookmark[] = [{
     id: 'github',
     label: 'GitHub',
     icon: '🐙',
-    iconUrl: faviconUrl('github.com'),
+    iconUrl: '',
     url: 'https://github.com'
   }, {
     id: 'huggingface',
     label: 'HuggingFace',
     icon: '🤗',
-    iconUrl: faviconUrl('huggingface.co'),
+    iconUrl: '',
     url: 'https://huggingface.co'
   }, {
     id: 'owasp',
     label: 'OWASP',
     icon: '🛡️',
-    iconUrl: faviconUrl('owasp.org'),
+    iconUrl: '',
     url: 'https://owasp.org'
   }];
   localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(defaults));

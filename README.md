@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Tauri-2.x-orange" alt="Tauri" />
   <img src="https://img.shields.io/badge/Rust-1.8+-brown" alt="Rust" />
   <img src="https://img.shields.io/badge/xterm.js-6.0-green" alt="xterm" />
-  <img src="https://img.shields.io/badge/版本-v1.0.0.3-blueviolet" alt="Version" />
+  <img src="https://img.shields.io/badge/版本-v1.0.4-blueviolet" alt="Version" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 
@@ -23,7 +23,7 @@
 
 > 本仓库为**开源发布版**，仅包含应用本体源代码与构建说明。开发过程中的规划文档、测试材料、设计素材等不在此公开。
 >
-> **v1.0.0.3** 修复新用户注册失败：注册 IPC 参数改为 Tauri 2 要求的 camelCase `isPermanent`，并沿用 v1.0.0.2 的 Windows 安装包启动黑屏修复。
+> **v1.0.4** 修复打包生产环境资源加载失败：路由懒加载改为字面量动态导入（修复登录后 Home 页白屏）；Monaco Editor 与 PDF.js worker 从 CDN 改为本地依赖加载；移除 Google favicon 外链与不存在的 /vite.svg 引用；生产构建关闭 sourcemap。
 
 ## ✨ 核心功能
 

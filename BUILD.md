@@ -1,6 +1,6 @@
 # NexTerm・元界 构建说明（BUILD.md）
 
-> 适用于开源版 v1.0.0.3。以下命令均在 **Windows** 环境验证。
+> 适用于开源版 v1.0.4。以下命令均在 **Windows** 环境验证。
 
 ## 环境准备
 
@@ -43,7 +43,7 @@ npm run tauri build
 
 产物输出到项目根下 `target-nexterm/release/bundle/`：
 
-- `nsis/NexTerm·元界_1.0.3_x64-setup.exe`（NSIS 安装包，推荐分发格式，无需管理员权限）
+- `nsis/NexTerm·元界_1.0.4_x64-setup.exe`（NSIS 安装包，推荐分发格式，无需管理员权限）
 
 ## 发布验收门禁
 

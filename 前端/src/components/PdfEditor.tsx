@@ -3,7 +3,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import * as pdfjsLib from 'pdfjs-dist';
 import { random } from '@/lib/utils';
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 interface Annotation {
   id: string;
   page: number;

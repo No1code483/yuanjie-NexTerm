@@ -1,6 +1,6 @@
 [package]
 name = "nexterm"
-version = "1.0.3"
+version = "1.0.4"
 description = "NexTerm·元界 后端服务"
 authors = ["NexTerm Team"]
 edition = "2021"

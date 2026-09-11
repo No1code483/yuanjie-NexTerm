@@ -1,6 +1,7 @@
 import { t } from "i18next";
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Editor, { type OnMount, type Monaco } from '@monaco-editor/react';
+import type { editor, IPosition } from 'monaco-editor';
 import type { OpenTab, EditorSettings } from '../YuanCode';
 import { getDiagnostics, toMonacoMarkers, getCompletions, getHover, getDefinition } from '@/lib/ipc-lsp';
 import { ipc } from '@/lib/ipc';
@@ -330,7 +331,7 @@ export default function EditorPanel({
   const handleBeforeMount = useCallback((monaco: Monaco) => {
     // 先尝试重新定义（热更新时主题已存在会报错，需先清除）
     try {
-      monaco.editor._definedThemes?.delete('nexterm-dark');
+      (monaco.editor as any)._definedThemes?.delete('nexterm-dark');
     } catch {/* no-op */}
     try {
       monaco.editor.defineTheme('nexterm-dark', NEXTERM_THEME);
@@ -677,7 +678,7 @@ export default function EditorPanel({
 
     // LSP + 代码片段 补全提供器（含补全记忆 + Markdown 详情）
     const completionProvider = monaco.languages.registerCompletionItemProvider('*', {
-      provideCompletionItems: async (model: Monaco['editor']['ITextModel'], position: Monaco['Position']) => {
+      provideCompletionItems: async (model: editor.ITextModel, position: IPosition) => {
         const word = model.getWordUntilPosition(position);
         const range = {
           startLineNumber: position.lineNumber,
@@ -750,7 +751,7 @@ export default function EditorPanel({
 
     // LSP 悬停提供器（Markdown 渲染）
     const hoverProvider = monaco.languages.registerHoverProvider('*', {
-      provideHover: async (_model: Monaco['editor']['ITextModel'], position: Monaco['Position']) => {
+      provideHover: async (_model: editor.ITextModel, position: IPosition) => {
         const result = await getHover(resolvedFilePath, position.lineNumber - 1, position.column - 1, workspacePath);
         if (!result) return null;
         return {
@@ -771,7 +772,7 @@ export default function EditorPanel({
 
     // LSP 跳转定义提供器
     const definitionProvider = monaco.languages.registerDefinitionProvider('*', {
-      provideDefinition: async (_model: Monaco['editor']['ITextModel'], position: Monaco['Position']) => {
+      provideDefinition: async (_model: editor.ITextModel, position: IPosition) => {
         const locations = await getDefinition(resolvedFilePath, position.lineNumber - 1, position.column - 1, workspacePath);
         return locations.map(loc => ({
           uri: monaco.Uri.parse(loc.uri),
@@ -787,7 +788,7 @@ export default function EditorPanel({
 
     // Quick Fix 代码操作提供器（灯泡图标）
     const codeActionProvider = monaco.languages.registerCodeActionProvider('*', {
-      provideCodeActions: async (model: Monaco['editor']['ITextModel'], _range: any, context: any) => {
+      provideCodeActions: async (model: editor.ITextModel, _range: any, context: any) => {
         const actions: any[] = [];
         const lang = model.getLanguageId();
         for (const marker of context.markers || []) {
@@ -880,7 +881,7 @@ export default function EditorPanel({
 
     // Inlay Hints 提供器（类型推断提示）
     const inlayHintsProvider = monaco.languages.registerInlayHintsProvider('*', {
-      provideInlayHints: async (model: Monaco['editor']['ITextModel'], _range: any) => {
+      provideInlayHints: async (model: editor.ITextModel, _range: any) => {
         const hints: any[] = [];
         const lang = model.getLanguageId();
         const lineCount = model.getLineCount();
@@ -1102,7 +1103,7 @@ export default function EditorPanel({
 
     // 格式化文档提供器
     const formatProvider = monaco.languages.registerDocumentFormattingEditProvider('*', {
-      async provideDocumentFormattingEdits(model: Monaco['editor']['ITextModel']) {
+      async provideDocumentFormattingEdits(model: editor.ITextModel) {
         const lang = model.getLanguageId();
         const content = model.getValue();
         const filePath = resolvedFilePath;
@@ -1180,7 +1181,7 @@ export default function EditorPanel({
 
     // 行内补全提供器 (Ghost Text)
     const inlineProvider = monaco.languages.registerInlineCompletionsProvider('*', {
-      provideInlineCompletions: async (model: Monaco['editor']['ITextModel'], position: Monaco['Position'], _context: any, _token: any) => {
+      provideInlineCompletions: async (model: editor.ITextModel, position: IPosition, _context: any, _token: any) => {
         // A5 Phase 3 Task 2: 离线时跳过云端 AI 补全，回退到 Monaco 本地补全
         if (!isOnlineRef.current) return { items: [] };
         try {
