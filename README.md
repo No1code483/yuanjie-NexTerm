@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Tauri-2.x-orange" alt="Tauri" />
   <img src="https://img.shields.io/badge/Rust-1.8+-brown" alt="Rust" />
   <img src="https://img.shields.io/badge/xterm.js-6.0-green" alt="xterm" />
-  <img src="https://img.shields.io/badge/版本-v1.0.0.2-blueviolet" alt="Version" />
+  <img src="https://img.shields.io/badge/版本-v1.0.0.3-blueviolet" alt="Version" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 
@@ -23,7 +23,7 @@
 
 > 本仓库为**开源发布版**，仅包含应用本体源代码与构建说明。开发过程中的规划文档、测试材料、设计素材等不在此公开。
 >
-> **v1.0.0.2** 修复 Windows 安装包启动黑屏：SQLite 表重建改为单连接事务并清理失败残留，Tauri release 默认启用 `custom-protocol`，移除会制造循环 ESM 初始化的 Vite 强制分包。
+> **v1.0.0.3** 修复新用户注册失败：注册 IPC 参数改为 Tauri 2 要求的 camelCase `isPermanent`，并沿用 v1.0.0.2 的 Windows 安装包启动黑屏修复。
 
 ## ✨ 核心功能
 

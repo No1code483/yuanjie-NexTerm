@@ -18,7 +18,7 @@ export const auth = {
   }>('register', {
     username,
     password,
-    is_permanent: true
+    isPermanent: true
   }),
   verifyToken: () => ipc.invoke<UserInfo>('auth_verify_token'),
   logout: () => ipc.invoke('logout'),
