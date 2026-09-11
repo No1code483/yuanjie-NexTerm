@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Tauri-2.x-orange" alt="Tauri" />
   <img src="https://img.shields.io/badge/Rust-1.8+-brown" alt="Rust" />
   <img src="https://img.shields.io/badge/xterm.js-6.0-green" alt="xterm" />
-  <img src="https://img.shields.io/badge/版本-v1.0.0.1-blueviolet" alt="Version" />
+  <img src="https://img.shields.io/badge/版本-v1.0.0.2-blueviolet" alt="Version" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 
@@ -22,6 +22,8 @@
 **NexTerm・元界** 是一款采用**终端黑客美学（Terminal Hacker Aesthetic）**设计的桌面应用，面向开发者和技术爱好者。项目融合 AI 对话、知识管理、终端模拟、在线笔记、游戏化学习等多种能力，提供独特的命令行风格交互体验。
 
 > 本仓库为**开源发布版**，仅包含应用本体源代码与构建说明。开发过程中的规划文档、测试材料、设计素材等不在此公开。
+>
+> **v1.0.0.2** 修复 Windows 安装包启动黑屏：SQLite 表重建改为单连接事务并清理失败残留，Tauri release 默认启用 `custom-protocol`，移除会制造循环 ESM 初始化的 Vite 强制分包。
 
 ## ✨ 核心功能
 

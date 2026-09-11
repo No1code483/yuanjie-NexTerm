@@ -65,6 +65,7 @@ CREATE INDEX IF NOT EXISTS idx_mcp_servers_user_id ON mcp_servers(user_id);
 
 -- news_sources: UNIQUE(url) → UNIQUE(user_id, url)
 -- 原表字段：id, name, url, category, feed_type（无 created_at/updated_at）
+DROP TABLE IF EXISTS news_sources_new;
 CREATE TABLE news_sources_new (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL DEFAULT 1,
@@ -82,6 +83,7 @@ CREATE INDEX IF NOT EXISTS idx_news_sources_user_id ON news_sources(user_id);
 
 -- custom_themes: UNIQUE(name) → UNIQUE(user_id, name)
 -- 原表字段：id, name, base_theme(DEFAULT 'terminal'), variables, created_at, updated_at
+DROP TABLE IF EXISTS custom_themes_new;
 CREATE TABLE custom_themes_new (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL DEFAULT 1,
@@ -101,6 +103,7 @@ CREATE INDEX IF NOT EXISTS idx_custom_themes_user_id ON custom_themes(user_id);
 -- model_routing_rules: UNIQUE(task_type) → UNIQUE(user_id, task_type)
 -- 原表字段：id, task_type, provider, model_name, temperature(nullable), max_tokens(nullable),
 --           is_enabled(DEFAULT 1), is_cloud_only(DEFAULT 1), priority(DEFAULT 100), created_at, updated_at
+DROP TABLE IF EXISTS model_routing_rules_new;
 CREATE TABLE model_routing_rules_new (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL DEFAULT 1,

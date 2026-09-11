@@ -1,6 +1,6 @@
 # NexTerm・元界 构建说明（BUILD.md）
 
-> 适用于开源版 v1.0.0.1。以下命令均在 **Windows** 环境验证。
+> 适用于开源版 v1.0.0.2。以下命令均在 **Windows** 环境验证。
 
 ## 环境准备
 
@@ -43,7 +43,17 @@ npm run tauri build
 
 产物输出到项目根下 `target-nexterm/release/bundle/`：
 
-- `nsis/NexTerm·元界_1.0.1_x64-setup.exe`（NSIS 安装包，推荐分发格式，无需管理员权限）
+- `nsis/NexTerm·元界_1.0.2_x64-setup.exe`（NSIS 安装包，推荐分发格式，无需管理员权限）
+
+## 发布验收门禁
+
+正式发布前必须基于最终 NSIS 产物执行：
+
+1. 使用干净的 `%APPDATA%/com.yuanjie.nexterm/` 完成安装与首次启动。
+2. 确认生产页面源为 `http://tauri.localhost/`，不得回退到 `localhost:3001`。
+3. 确认数据库迁移完成、无 `*_new` 临时表残留，关键表含预期 `user_id` 与复合唯一约束。
+4. 确认窗口真实显示登录页或已认证主界面；仅进程、窗口或 WebView2 子进程存活不算通过。
+5. 对最终安装包生成 SHA256，并与 Release 资产一同发布。
 
 ## 各模块自检
 

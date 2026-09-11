@@ -2687,10 +2687,19 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
     alter_add_user_id(pool, "news_cache", "idx_news_cache_user_id").await?;
     alter_add_user_id(pool, "mcp_servers", "idx_mcp_servers_user_id").await?;
 
-    // === 3 张有 UNIQUE 约束的表：重建表 ===
+    // === 3 张有 UNIQUE 约束的表：在同一连接的事务中重建 ===
+    let mut tx = pool.begin().await.map_err(AppError::Database)?;
 
     // --- news_sources: UNIQUE(url) → UNIQUE(user_id, url) ---
-    if !has_user_id(pool, "news_sources").await? {
+    let columns = sqlx::query("PRAGMA table_info(news_sources);")
+        .fetch_all(&mut *tx)
+        .await
+        .map_err(AppError::Database)?;
+    if !columns.iter().any(|r| r.get::<String, _>("name") == "user_id") {
+        sqlx::query("DROP TABLE IF EXISTS news_sources_new;")
+            .execute(&mut *tx)
+            .await
+            .map_err(AppError::Database)?;
         sqlx::query(
             "CREATE TABLE news_sources_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2702,33 +2711,41 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
                 UNIQUE(user_id, url)
             );",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
         sqlx::query(
             "INSERT INTO news_sources_new (user_id, name, url, category, feed_type)
              SELECT 1, name, url, category, feed_type FROM news_sources;",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
         sqlx::query("DROP TABLE news_sources;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("ALTER TABLE news_sources_new RENAME TO news_sources;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_news_sources_user_id ON news_sources(user_id);")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         tracing::info!("📰 [批次6] news_sources 表已重建（UNIQUE(url) → UNIQUE(user_id, url)）");
     }
 
     // --- custom_themes: UNIQUE(name) → UNIQUE(user_id, name) ---
-    if !has_user_id(pool, "custom_themes").await? {
+    let columns = sqlx::query("PRAGMA table_info(custom_themes);")
+        .fetch_all(&mut *tx)
+        .await
+        .map_err(AppError::Database)?;
+    if !columns.iter().any(|r| r.get::<String, _>("name") == "user_id") {
+        sqlx::query("DROP TABLE IF EXISTS custom_themes_new;")
+            .execute(&mut *tx)
+            .await
+            .map_err(AppError::Database)?;
         sqlx::query(
             "CREATE TABLE custom_themes_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2741,33 +2758,41 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
                 UNIQUE(user_id, name)
             );",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
         sqlx::query(
             "INSERT INTO custom_themes_new (user_id, name, base_theme, variables, created_at, updated_at)
              SELECT 1, name, base_theme, variables, created_at, updated_at FROM custom_themes;",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
         sqlx::query("DROP TABLE custom_themes;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("ALTER TABLE custom_themes_new RENAME TO custom_themes;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_custom_themes_user_id ON custom_themes(user_id);")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         tracing::info!("🎨 [批次6] custom_themes 表已重建（UNIQUE(name) → UNIQUE(user_id, name)）");
     }
 
     // --- model_routing_rules: UNIQUE(task_type) → UNIQUE(user_id, task_type) ---
-    if !has_user_id(pool, "model_routing_rules").await? {
+    let columns = sqlx::query("PRAGMA table_info(model_routing_rules);")
+        .fetch_all(&mut *tx)
+        .await
+        .map_err(AppError::Database)?;
+    if !columns.iter().any(|r| r.get::<String, _>("name") == "user_id") {
+        sqlx::query("DROP TABLE IF EXISTS model_routing_rules_new;")
+            .execute(&mut *tx)
+            .await
+            .map_err(AppError::Database)?;
         sqlx::query(
             "CREATE TABLE model_routing_rules_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2785,7 +2810,7 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
                 UNIQUE(user_id, task_type)
             );",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
         sqlx::query(
@@ -2794,24 +2819,25 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
              SELECT 1, task_type, provider, model_name, temperature, max_tokens, is_enabled, is_cloud_only, priority, created_at, updated_at
              FROM model_routing_rules;",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
         sqlx::query("DROP TABLE model_routing_rules;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("ALTER TABLE model_routing_rules_new RENAME TO model_routing_rules;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_model_routing_rules_user_id ON model_routing_rules(user_id);")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         tracing::info!("🛣️ [批次6] model_routing_rules 表已重建（UNIQUE(task_type) → UNIQUE(user_id, task_type)）");
     }
 
+    tx.commit().await.map_err(AppError::Database)?;
     Ok(())
 }
 
@@ -2895,9 +2921,11 @@ async fn add_user_id_to_terminal_history_tab_layout(pool: &SqlitePool) -> Result
 async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppError> {
     use sqlx::Row;
 
+    let mut tx = pool.begin().await.map_err(AppError::Database)?;
+
     // === journals 表：重建以改 UNIQUE(date) → UNIQUE(user_id, date) ===
     let journal_cols = sqlx::query("PRAGMA table_info(journals);")
-        .fetch_all(pool)
+        .fetch_all(&mut *tx)
         .await
         .map_err(AppError::Database)?;
     let journal_names: Vec<String> = journal_cols
@@ -2905,7 +2933,10 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         .map(|r| r.get::<String, _>("name"))
         .collect();
     if !journal_names.contains(&"user_id".to_string()) {
-        // 1. 创建新表（user_id + UNIQUE(user_id, date)）
+        sqlx::query("DROP TABLE IF EXISTS journals_new;")
+            .execute(&mut *tx)
+            .await
+            .map_err(AppError::Database)?;
         sqlx::query(
             "CREATE TABLE journals_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2917,33 +2948,30 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
                 UNIQUE(user_id, date)
             );",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
-        // 2. 复制现有数据（user_id 强制为 1）
         sqlx::query(
             "INSERT INTO journals_new (user_id, date, content, created_at, updated_at)
              SELECT 1, date, content, created_at, updated_at FROM journals;",
         )
-        .execute(pool)
+        .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
-        // 3. 删除旧表并重命名
         sqlx::query("DROP TABLE journals;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("ALTER TABLE journals_new RENAME TO journals;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
-        // 4. 创建索引
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_journals_user_id ON journals(user_id);")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_journals_user_date ON journals(user_id, date);")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         tracing::info!("📅 [批次5] journals 表已重建（UNIQUE(date) → UNIQUE(user_id, date)）");
@@ -2951,7 +2979,7 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
 
     // === timers 表：无 UNIQUE 约束，直接 ALTER ===
     let timer_cols = sqlx::query("PRAGMA table_info(timers);")
-        .fetch_all(pool)
+        .fetch_all(&mut *tx)
         .await
         .map_err(AppError::Database)?;
     let timer_names: Vec<String> = timer_cols
@@ -2960,16 +2988,17 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         .collect();
     if !timer_names.contains(&"user_id".to_string()) {
         sqlx::query("ALTER TABLE timers ADD COLUMN user_id INTEGER NOT NULL DEFAULT 1;")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_timers_user_id ON timers(user_id);")
-            .execute(pool)
+            .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
         tracing::info!("⏱️ [批次5] timers 表已添加 user_id 字段");
     }
 
+    tx.commit().await.map_err(AppError::Database)?;
     Ok(())
 }
 

@@ -14,6 +14,8 @@
 --   timers 表无 UNIQUE 约束，直接 ALTER ADD COLUMN 即可。
 
 -- ===== journals 表：重建以改 UNIQUE(date) → UNIQUE(user_id, date) =====
+DROP TABLE IF EXISTS journals_new;
+
 CREATE TABLE journals_new (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL DEFAULT 1,
