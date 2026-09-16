@@ -13,11 +13,13 @@ export const knowledge = {
     name
   }),
   moveCategory: (id: number, parentId: number | null) => ipc.invoke('move_kb_category', {
-    id,
-    parent_id: parentId
+    request: {
+      id,
+      target_parent_id: parentId
+    }
   }),
   getItems: (categoryId?: number) => ipc.invoke<any[]>('get_kb_entries', {
-    category_id: categoryId
+    categoryId: categoryId
   }),
   getAllItems: () => ipc.invoke<any[]>('get_all_kb_entries'),
   getCategoryCounts: () => ipc.invoke<any[]>('get_kb_category_counts'),
@@ -49,21 +51,21 @@ export const knowledge = {
   }),
   getTagStats: () => ipc.invoke<any[]>('get_kb_tag_stats'),
   getEntryTags: (entryId: number) => ipc.invoke<any[]>('get_kb_entry_tags', {
-    entry_id: entryId
+    entryId: entryId
   }),
   setEntryTags: (entryId: number, tagIds: number[]) => ipc.invoke('set_kb_entry_tags', {
-    entry_id: entryId,
-    tag_ids: tagIds
+    entryId: entryId,
+    tagIds: tagIds
   }),
   getEntriesByTag: (tagId: number) => ipc.invoke<any[]>('get_kb_entries_by_tag', {
-    tag_id: tagId
+    tagId: tagId
   }),
   toggleFavorite: (entryId: number) => ipc.invoke<boolean>('toggle_kb_favorite', {
-    entry_id: entryId
+    entryId: entryId
   }),
   getFavorites: () => ipc.invoke<any[]>('get_kb_favorites'),
   recordAccess: (entryId: number) => ipc.invoke('record_kb_access', {
-    entry_id: entryId
+    entryId: entryId
   }),
   getRecent: (limit?: number) => ipc.invoke<any[]>('get_kb_recent', {
     limit
@@ -80,12 +82,12 @@ export const knowledge = {
     }
   }),
   batchAddTag: (entryIds: number[], tagId: number) => ipc.invoke<number>('batch_add_kb_tag', {
-    entry_ids: entryIds,
-    tag_id: tagId
+    entryIds: entryIds,
+    tagId: tagId
   }),
   batchRemoveTag: (entryIds: number[], tagId: number) => ipc.invoke<number>('batch_remove_kb_tag', {
-    entry_ids: entryIds,
-    tag_id: tagId
+    entryIds: entryIds,
+    tagId: tagId
   }),
   addTrackedPath: (path: string, categoryId: number, library: string) => ipc.invoke('kb_add_tracked_path', {
     path,

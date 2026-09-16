@@ -65,6 +65,7 @@ CREATE INDEX IF NOT EXISTS idx_mcp_servers_user_id ON mcp_servers(user_id);
 
 -- news_sources: UNIQUE(url) → UNIQUE(user_id, url)
 -- 原表字段：id, name, url, category, feed_type（无 created_at/updated_at）
+-- 防御性清理：上次失败迁移可能残留 *_new 表，避免 CREATE 报"已存在"
 DROP TABLE IF EXISTS news_sources_new;
 CREATE TABLE news_sources_new (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

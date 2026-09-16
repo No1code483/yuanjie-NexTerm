@@ -42,7 +42,9 @@ export default function GitPanel({
     setError('');
     try {
       const res = await ipc.invoke<GitStatusResult>('git_status', {
-        workspace_path: workspacePath
+        request: {
+          workspace_path: workspacePath
+        }
       });
       if (res.code === 0 && res.data) {
         setStatus(res.data);
@@ -60,7 +62,9 @@ export default function GitPanel({
     if (!workspacePath) return;
     try {
       const res = await ipc.invoke<GitBranchesResult>('git_branches', {
-        workspace_path: workspacePath
+        request: {
+          workspace_path: workspacePath
+        }
       });
       if (res.code === 0 && res.data) {
         setBranches(res.data);
@@ -73,8 +77,10 @@ export default function GitPanel({
     if (!workspacePath) return;
     try {
       const res = await ipc.invoke<GitCommit[]>('git_log', {
-        workspace_path: workspacePath,
-        count: 20
+        request: {
+          workspace_path: workspacePath,
+          count: 20
+        }
       });
       if (res.code === 0 && res.data) {
         setCommits(res.data);
@@ -94,21 +100,27 @@ export default function GitPanel({
 
   const handleStageFile = async (filePath: string) => {
     await ipc.invoke('git_stage_file', {
-      workspace_path: workspacePath,
-      file_path: filePath
+      request: {
+        workspace_path: workspacePath,
+        file_path: filePath
+      }
     });
     refreshAll();
   };
   const handleUnstageFile = async (filePath: string) => {
     await ipc.invoke('git_unstage_file', {
-      workspace_path: workspacePath,
-      file_path: filePath
+      request: {
+        workspace_path: workspacePath,
+        file_path: filePath
+      }
     });
     refreshAll();
   };
   const handleStageAll = async () => {
     await ipc.invoke('git_stage_all', {
-      workspace_path: workspacePath
+      request: {
+        workspace_path: workspacePath
+      }
     });
     refreshAll();
   };
@@ -116,8 +128,10 @@ export default function GitPanel({
     if (!commitMessage.trim()) return;
     setError('');
     const res = await ipc.invoke<string>('git_commit', {
-      workspace_path: workspacePath,
-      message: commitMessage.trim()
+      request: {
+        workspace_path: workspacePath,
+        message: commitMessage.trim()
+      }
     });
     if (res.code === 0) {
       setCommitMessage('');
@@ -130,9 +144,11 @@ export default function GitPanel({
     if (!branches) return;
     setError('');
     const res = await ipc.invoke('git_push', {
-      workspace_path: workspacePath,
-      remote: 'origin',
-      branch: branches.current
+      request: {
+        workspace_path: workspacePath,
+        remote: 'origin',
+        branch: branches.current
+      }
     });
     if (res.code !== 0) {
       setError(res.message || t("yuan-code.GitPanel.k4"));
@@ -142,9 +158,11 @@ export default function GitPanel({
     if (!branches) return;
     setError('');
     const res = await ipc.invoke('git_pull', {
-      workspace_path: workspacePath,
-      remote: 'origin',
-      branch: branches.current
+      request: {
+        workspace_path: workspacePath,
+        remote: 'origin',
+        branch: branches.current
+      }
     });
     if (res.code !== 0) {
       setError(res.message || t("yuan-code.GitPanel.k5"));
@@ -155,8 +173,10 @@ export default function GitPanel({
   const handleCheckout = async (branch: string) => {
     setError('');
     const res = await ipc.invoke('git_checkout', {
-      workspace_path: workspacePath,
-      branch
+      request: {
+        workspace_path: workspacePath,
+        branch
+      }
     });
     if (res.code === 0) {
       refreshAll();
@@ -167,7 +187,9 @@ export default function GitPanel({
   const handleInit = async () => {
     setError('');
     const res = await ipc.invoke('git_init', {
-      workspace_path: workspacePath
+      request: {
+        workspace_path: workspacePath
+      }
     });
     if (res.code === 0) {
       refreshAll();
@@ -184,8 +206,10 @@ export default function GitPanel({
     setExpandedDiff(filePath);
     try {
       const res = await ipc.invoke<string>('git_diff_file', {
-        workspace_path: workspacePath,
-        file_path: filePath
+        request: {
+          workspace_path: workspacePath,
+          file_path: filePath
+        }
       });
       if (res.code === 0 && res.data) {
         setDiffContent(res.data);

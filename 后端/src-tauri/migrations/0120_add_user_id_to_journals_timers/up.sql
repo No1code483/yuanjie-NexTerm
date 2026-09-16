@@ -14,6 +14,7 @@
 --   timers 表无 UNIQUE 约束，直接 ALTER ADD COLUMN 即可。
 
 -- ===== journals 表：重建以改 UNIQUE(date) → UNIQUE(user_id, date) =====
+-- 防御性清理：上次失败迁移可能残留 *_new 表，避免 CREATE 报"已存在"
 DROP TABLE IF EXISTS journals_new;
 
 CREATE TABLE journals_new (

@@ -1,4 +1,4 @@
-﻿// ipc/core.ts — IPC 核心基础设施（从 ipc.ts 拆分，T2.1.6）
+// ipc/core.ts — IPC 核心基础设施（从 ipc.ts 拆分，T2.1.6）
 // 包含：IPCache / IPCService / ipc 单例 / ApiResponse 类型 / USE_MOCK
 
 import { t } from "i18next";
@@ -435,6 +435,7 @@ class IPCService {
       'logout': 'auth',
       'recover_by_phrase': 'auth',
       'auth_verify_token': 'auth',
+      'auth_restore_session': 'auth',
       'auth_get_permissions': 'auth',
       'auth_reset_password': 'auth',
       'get_todos': 'home',
@@ -703,6 +704,7 @@ class IPCService {
       'logout': 'logout',
       'recover_by_phrase': 'verifyRecoveryPhrase',
       'auth_verify_token': 'verifyToken',
+      'auth_restore_session': 'restoreSession',
       'auth_get_permissions': 'getPermissions',
       'auth_reset_password': 'resetPassword',
       'get_todos': 'getTodos',

@@ -352,20 +352,20 @@ export default function LoginModal({
 
   // ==================== 渲染函数 ====================
 
-  const renderLoginForm = () => <form onSubmit={handleLogin}>
+  const renderLoginForm = () => <form onSubmit={handleLogin} data-testid="login-form">
       <div className={styles.formGroup}>
         <label className={styles.label}>{t("common.username")}</label>
-        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="" className={styles.input} autoFocus />
+        <input type="text" value={username} onChange={e => setUsername(e.target.value)} placeholder="" className={styles.input} autoFocus data-testid="login-username-input" />
       </div>
 
       <div className={styles.formGroup}>
         <label className={styles.label}>{t("common.password")}</label>
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="" className={styles.input} onKeyDown={e => e.key === 'Enter' && handleLogin(e)} />
+        <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="" className={styles.input} onKeyDown={e => e.key === 'Enter' && handleLogin(e)} data-testid="login-password-input" />
       </div>
 
       {error && renderError()}
 
-      <button type="submit" disabled={isLoading} className={styles.primaryButton}>
+      <button type="submit" disabled={isLoading} className={styles.primaryButton} data-testid="login-submit-button">
         {isLoading ? t("LoginModal.k19") : t("LoginModal.k20")}
       </button>
     </form>;
@@ -571,7 +571,7 @@ export default function LoginModal({
         </button>
       </div>
     </form>;
-  const renderError = () => <div className={styles.errorMessage}>
+  const renderError = () => <div className={styles.errorMessage} role="alert" data-testid="login-error-message">
       {error}
     </div>;
 
@@ -598,7 +598,8 @@ export default function LoginModal({
     }
   };
   return <div className={styles.modalOverlay}>
-      <div className={styles.modalContainer}>
+      {/* BUG-026：为 E2E 测试提供稳定定位锚点（E2E选择器规范：testid 优先） */}
+      <div className={styles.modalContainer} role="dialog" data-testid="login-modal">
         {mode !== 'login' && <h2 className={styles.title}>
             {getModeTitle()}
           </h2>}

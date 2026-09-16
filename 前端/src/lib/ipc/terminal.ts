@@ -3,7 +3,7 @@ import { ipc } from './core';
 
 export const terminal = {
   createSession: (type: 'terminal' | 'cmd') => ipc.invoke<string>('terminal_create_session', {
-    session_type: type
+    sessionType: type
   }),
   createWslSession: (distro?: string, shell?: string) => ipc.invoke<string>('terminal_create_wsl_session', {
     distro,
@@ -11,19 +11,19 @@ export const terminal = {
   }),
   detectWsl: () => ipc.invoke<any>('terminal_detect_wsl'),
   executeCommand: (sessionId: string, command: string) => ipc.invoke('terminal_write_input', {
-    session_id: sessionId,
+    sessionId: sessionId,
     input: command
   }),
   executeBuiltin: (command: string) => ipc.invoke<any>('terminal_execute_builtin', {
     command
   }),
   resize: (sessionId: string, rows: number, cols: number) => ipc.invoke('terminal_resize', {
-    session_id: sessionId,
+    sessionId: sessionId,
     rows,
     cols
   }),
   closeSession: (sessionId: string) => ipc.invoke('terminal_kill_session', {
-    session_id: sessionId
+    sessionId: sessionId
   })
 };
 
@@ -36,12 +36,12 @@ export const linux = {
   }),
   viewFile: (version: string, filePath: string) => ipc.invoke<any>('linux_view_file', {
     version,
-    file_path: filePath
+    filePath: filePath
   }),
   searchSource: (version: string, query: string, maxResults: number) => ipc.invoke<any>('linux_search_source', {
     version,
     query,
-    max_results: maxResults
+    maxResults: maxResults
   }),
   downloadKernel: (version: string) => ipc.invoke<any>('linux_download_kernel', {
     version
@@ -59,12 +59,12 @@ export const linux = {
   getIsoProgress: () => ipc.invoke<any>('linux_get_iso_progress'),
   // === 构建与配置 ===
   buildKernel: (sourceDir: string, arch: string, jobs?: number) => ipc.invoke<any>('linux_build_kernel', {
-    source_dir: sourceDir,
+    sourceDir: sourceDir,
     arch,
     jobs
   }),
   analyzeConfig: (sourceDir: string) => ipc.invoke<any>('linux_analyze_config', {
-    source_dir: sourceDir
+    sourceDir: sourceDir
   }),
   // === 模块与日志 ===
   listModules: () => ipc.invoke<any>('linux_list_modules'),
@@ -73,7 +73,7 @@ export const linux = {
   }),
   // === 性能与测试 ===
   perfProfile: (durationSecs?: number) => ipc.invoke<any>('linux_perf_profile', {
-    duration_secs: durationSecs
+    durationSecs: durationSecs
   }),
   runBenchmark: () => ipc.invoke<any>('linux_run_benchmark'),
   runStress: () => ipc.invoke<any>('linux_run_stress'),
@@ -82,13 +82,13 @@ export const linux = {
     all
   }),
   dockerContainerStart: (containerId: string) => ipc.invoke<any>('docker_container_start', {
-    container_id: containerId
+    containerId: containerId
   }),
   dockerContainerStop: (containerId: string) => ipc.invoke<any>('docker_container_stop', {
-    container_id: containerId
+    containerId: containerId
   }),
   dockerContainerLogs: (containerId: string, tail?: number) => ipc.invoke<string>('docker_container_logs', {
-    container_id: containerId,
+    containerId: containerId,
     tail
   }),
   dockerListImages: () => ipc.invoke<any[]>('docker_list_images'),

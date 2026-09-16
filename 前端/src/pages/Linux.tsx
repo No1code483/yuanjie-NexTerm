@@ -314,7 +314,7 @@ export default function Linux() {
   const handleDockerStart = useCallback(async (containerId: string) => {
     try {
       await ipc.invoke('docker_container_start', {
-        container_id: containerId
+        containerId: containerId
       });
       await loadDockerContainers();
     } catch (e) {
@@ -324,7 +324,7 @@ export default function Linux() {
   const handleDockerStop = useCallback(async (containerId: string) => {
     try {
       await ipc.invoke('docker_container_stop', {
-        container_id: containerId
+        containerId: containerId
       });
       await loadDockerContainers();
     } catch (e) {
@@ -336,7 +336,7 @@ export default function Linux() {
     setDockerLogs(null);
     try {
       const res = await ipc.invoke<string>('docker_container_logs', {
-        container_id: containerId,
+        containerId: containerId,
         tail: 100
       });
       if (res?.data) setDockerLogs({

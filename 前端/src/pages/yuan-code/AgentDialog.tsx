@@ -431,8 +431,8 @@ export default function AgentDialog({
         terminal_commands: string[];
       }>('yuan_agent_execute', {
         prompt: finalPrompt,
-        context_files: contextPaths,
-        workspace_path: workspacePath
+        contextFiles: contextPaths,
+        workspacePath: workspacePath
       });
       if (res.code === 0 && res.data) {
         const data = res.data;

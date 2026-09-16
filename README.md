@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Tauri-2.x-orange" alt="Tauri" />
   <img src="https://img.shields.io/badge/Rust-1.8+-brown" alt="Rust" />
   <img src="https://img.shields.io/badge/xterm.js-6.0-green" alt="xterm" />
-  <img src="https://img.shields.io/badge/版本-v1.0.4-blueviolet" alt="Version" />
+  <img src="https://img.shields.io/badge/版本-v1.0.5-blueviolet" alt="Version" />
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
 </p>
 
@@ -23,7 +23,7 @@
 
 > 本仓库为**开源发布版**，仅包含应用本体源代码与构建说明。开发过程中的规划文档、测试材料、设计素材等不在此公开。
 >
-> **v1.0.4** 修复打包生产环境资源加载失败：路由懒加载改为字面量动态导入（修复登录后 Home 页白屏）；Monaco Editor 与 PDF.js worker 从 CDN 改为本地依赖加载；移除 Google favicon 外链与不存在的 /vite.svg 引用；生产构建关闭 sourcemap。
+> **v1.0.5** 修复前端 IPC 传参大小写失配（BUG-028）：前端 IPC 封装参数键统一为 Tauri 2 要求的 camelCase，并对单结构体入参命令补 `request` 包装——修复游戏页 2D 四卡片/3D 世界「invalid args worldId」报错，同时恢复知识库标签、终端会话、同步队列等 12 个模块长期静默失败的 IPC 调用；并补齐此前发版遗漏同步的 v1 修复：启动期会话恢复（BUG-023）、性能指标上报参数（BUG-016）、回收站恢复幂等（BUG-020）、AI 昵称生成死锁（BUG-025）、登录页中英混杂与选择器锚点（BUG-024/026）、安装包首启迁移事务修复。
 
 ## ✨ 核心功能
 

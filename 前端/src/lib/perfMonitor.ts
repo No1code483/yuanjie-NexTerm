@@ -21,11 +21,14 @@
  */
 
 // ===== 类型定义 =====
+// 注意：字段名必须为 camelCase —— Tauri 2 IPC 参数绑定默认要求 camelCase 键名
+// （后端 record_perf_metric 的 Rust snake_case 参数在 IPC 层期望 metricName 等 camelCase 键）
+// BUG-016：原 snake_case 键名导致后端收不到参数，所有指标被静默丢弃
 interface PerfMetricRecord {
-  metric_name: string
-  metric_value_ms: number
+  metricName: string
+  metricValueMs: number
   route?: string
-  command_name?: string
+  commandName?: string
   metadata?: string
 }
 
@@ -113,10 +116,10 @@ export function recordMetric(
   }
 
   const record: PerfMetricRecord = {
-    metric_name: metricName,
-    metric_value_ms: Math.round(metricValueMs),
+    metricName: metricName,
+    metricValueMs: Math.round(metricValueMs),
     route,
-    command_name: commandName,
+    commandName: commandName,
     metadata: metadata ? JSON.stringify(metadata) : undefined,
   }
   reportQueue.push(record)

@@ -33,7 +33,7 @@ export default function ViewModeList({
           });
         } else if (mode === 'tag' && filterId) {
           res = await ipc.invoke<KbEntry[]>('get_kb_entries_by_tag', {
-            tag_id: filterId
+            tagId: filterId
           });
         }
         if (res?.code === 0 && res.data) setEntries(res.data);

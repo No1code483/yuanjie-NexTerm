@@ -97,7 +97,7 @@ export default function TodoPanel() {
         title: updates.title || todo.title,
         description: updates.description !== undefined ? updates.description : todo.description,
         priority: updates.priority || todo.priority,
-        due_date: updates.due_date !== undefined ? updates.due_date : todo.due_date
+        dueDate: updates.due_date !== undefined ? updates.due_date : todo.due_date
       });
       if (result.code === 0) {
         setTodos(prev => prev.map(t => t.id === id ? {

@@ -2688,6 +2688,9 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
     alter_add_user_id(pool, "mcp_servers", "idx_mcp_servers_user_id").await?;
 
     // === 3 张有 UNIQUE 约束的表：在同一连接的事务中重建 ===
+    // 修复：原先逐条 .execute(pool) 会经 20 连接池分派到不同连接，
+    // WAL 模式下各连接 schema 快照不一致，导致 "there is already another table
+    // or index with this name" 崩溃。必须绑定单连接事务执行整个重建序列。
     let mut tx = pool.begin().await.map_err(AppError::Database)?;
 
     // --- news_sources: UNIQUE(url) → UNIQUE(user_id, url) ---
@@ -2921,6 +2924,8 @@ async fn add_user_id_to_terminal_history_tab_layout(pool: &SqlitePool) -> Result
 async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppError> {
     use sqlx::Row;
 
+    // 整个批次5（journals 重建 + timers ALTER）绑定单连接事务执行，
+    // 避免连接池多连接分派导致的 schema 快照不一致（同 v121 修复原因）。
     let mut tx = pool.begin().await.map_err(AppError::Database)?;
 
     // === journals 表：重建以改 UNIQUE(date) → UNIQUE(user_id, date) ===
@@ -2933,6 +2938,7 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         .map(|r| r.get::<String, _>("name"))
         .collect();
     if !journal_names.contains(&"user_id".to_string()) {
+        // 1. 创建新表（user_id + UNIQUE(user_id, date)）；先防御性清理残留
         sqlx::query("DROP TABLE IF EXISTS journals_new;")
             .execute(&mut *tx)
             .await
@@ -2951,6 +2957,7 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
+        // 2. 复制现有数据（user_id 强制为 1）
         sqlx::query(
             "INSERT INTO journals_new (user_id, date, content, created_at, updated_at)
              SELECT 1, date, content, created_at, updated_at FROM journals;",
@@ -2958,6 +2965,7 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         .execute(&mut *tx)
         .await
         .map_err(AppError::Database)?;
+        // 3. 删除旧表并重命名
         sqlx::query("DROP TABLE journals;")
             .execute(&mut *tx)
             .await
@@ -2966,6 +2974,7 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
             .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
+        // 4. 创建索引
         sqlx::query("CREATE INDEX IF NOT EXISTS idx_journals_user_id ON journals(user_id);")
             .execute(&mut *tx)
             .await

@@ -247,8 +247,10 @@ export default function ImageEditor({
         invoke
       } = await import('@tauri-apps/api/core');
       await invoke('imageedit_save', {
-        path: filePath,
-        base64_data: base64
+        request: {
+          path: filePath,
+          base64_data: base64
+        }
       });
       setUnsaved(false);
       showStatus('success', t("components.ImageEditor.k2"));

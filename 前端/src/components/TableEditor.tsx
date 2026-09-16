@@ -49,14 +49,16 @@ export default function TableEditor({
         ipc
       } = await import('@/lib/ipc');
       const res = await ipc.invoke<any>('tableedit_write', {
-        path: filePath,
-        ext: fileExt,
-        sheets: sheetsRef.current.map(s => ({
-          name: s.name,
-          rows: s.rows,
-          row_count: s.row_count,
-          col_count: s.col_count
-        }))
+        request: {
+          path: filePath,
+          ext: fileExt,
+          sheets: sheetsRef.current.map(s => ({
+            name: s.name,
+            rows: s.rows,
+            row_count: s.row_count,
+            col_count: s.col_count
+          }))
+        }
       });
       if (res.code === 0) {
         setUnsaved(false);
@@ -90,14 +92,16 @@ export default function TableEditor({
           ipc
         } = await import('@/lib/ipc');
         await ipc.invoke<any>('tableedit_write', {
-          path: filePath,
-          ext: fileExt,
-          sheets: sheetsRef.current.map(s => ({
-            name: s.name,
-            rows: s.rows,
-            row_count: s.row_count,
-            col_count: s.col_count
-          }))
+          request: {
+            path: filePath,
+            ext: fileExt,
+            sheets: sheetsRef.current.map(s => ({
+              name: s.name,
+              rows: s.rows,
+              row_count: s.row_count,
+              col_count: s.col_count
+            }))
+          }
         });
       } catch {
         /* silent */
@@ -210,10 +214,12 @@ export default function TableEditor({
         ipc
       } = await import('@/lib/ipc');
       const res = await ipc.invoke<any>('tableedit_export_csv', {
-        path: filePath,
-        ext: fileExt,
-        rows: sheetsRef.current[activeSheet]?.rows || [],
-        sheet_name: sheetsRef.current[activeSheet]?.name || ''
+        request: {
+          path: filePath,
+          ext: fileExt,
+          rows: sheetsRef.current[activeSheet]?.rows || [],
+          sheet_name: sheetsRef.current[activeSheet]?.name || ''
+        }
       });
       if (res.code === 0) {
         showStatus('success', t("components.TableEditor.k2", {

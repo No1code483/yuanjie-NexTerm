@@ -492,7 +492,7 @@ export default function AgentPanel({
   const handleStopAgent = useCallback(async (agentId: string) => {
     try {
       await ipc.invoke('yuan_agent_abort', {
-        agent_id: agentId,
+        agentId: agentId,
         reason: t("yuan-code.AgentPanel.k22")
       });
     } catch {/* 忽略 */}

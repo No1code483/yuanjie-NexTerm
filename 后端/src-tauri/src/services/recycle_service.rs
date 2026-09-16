@@ -60,7 +60,15 @@ pub async fn restore_items(pool: &SqlitePool, user_id: i64, ids: &[i64]) -> Resu
     let mut tx = pool.begin().await.map_err(AppError::Database)?;
 
     for &id in ids {
-        let item = recycle_repo::get_item_by_id(&mut *tx, id, user_id).await?;
+        // 幂等语义（BUG-020）：对不存在/已恢复的 ID 跳过并继续处理其余 ID，
+        // 而非整体报错回滚。返回值为实际恢复数，调用方可据此感知部分失败。
+        let item = match recycle_repo::get_item_by_id(&mut *tx, id, user_id).await? {
+            Some(item) => item,
+            None => {
+                tracing::debug!(id = id, "回收站项目不存在，跳过恢复");
+                continue;
+            }
+        };
 
         if let Some(ref metadata_json) = item.metadata_json {
             restore_to_source(&mut *tx, &item.item_type, metadata_json, user_id).await?;

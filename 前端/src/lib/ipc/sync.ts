@@ -88,11 +88,11 @@ export const sync = {
     device_id?: string,
   ) =>
     ipc.invoke<number>('sync_enqueue', {
-      table_name,
-      record_id,
+      tableName: table_name,
+      recordId: record_id,
       operation,
       payload,
-      device_id: device_id ?? null,
+      deviceId: device_id ?? null,
     }),
 
   fetchPending: (limit: number = 100) =>
@@ -101,7 +101,7 @@ export const sync = {
   markSynced: (id: number) => ipc.invoke('sync_mark_synced', { id }),
 
   markFailed: (id: number, error_msg: string) =>
-    ipc.invoke('sync_mark_failed', { id, error_msg }),
+    ipc.invoke('sync_mark_failed', { id, errorMsg: error_msg }),
 
   getQueueStats: () => ipc.invoke<SyncQueueStats>('sync_get_queue_stats'),
 
@@ -118,23 +118,23 @@ export const sync = {
   ) =>
     ipc.invoke('sync_register_device', {
       id,
-      device_name,
-      device_type,
-      device_os,
-      public_key,
-      is_current,
+      deviceName: device_name,
+      deviceType: device_type,
+      deviceOs: device_os,
+      publicKey: public_key,
+      isCurrent: is_current,
     }),
 
   listDevices: () => ipc.invoke<SyncDevice[]>('sync_list_devices'),
 
   unregisterDevice: (device_id: string) =>
-    ipc.invoke('sync_unregister_device', { device_id }),
+    ipc.invoke('sync_unregister_device', { deviceId: device_id }),
 
   // Phase 2-4 新增
   testTransport: (backend_type: 'webdav' | 's3', config: Record<string, unknown>) =>
     ipc.invoke<boolean>('sync_test_transport', {
-      backend_type,
-      config_json: JSON.stringify(config),
+      backendType: backend_type,
+      configJson: JSON.stringify(config),
     }),
 
   runOnce: () => ipc.invoke<SyncRunResult>('sync_run_once'),
@@ -151,7 +151,7 @@ export const sync = {
     ipc.invoke('sync_resolve_conflict', {
       id,
       resolution,
-      resolved_payload: resolved_payload ?? null,
+      resolvedPayload: resolved_payload ?? null,
     }),
 
   // Phase 4 ECDH / E2EE
@@ -161,7 +161,7 @@ export const sync = {
   e2eeEncrypt: (payload: string, peer_public_key_b64: string) =>
     ipc.invoke<EncryptedPayload>('sync_e2ee_encrypt', {
       payload,
-      peer_public_key_b64,
+      peerPublicKeyB64: peer_public_key_b64,
     }),
 
   e2eeValidate: (encrypted: EncryptedPayload) =>
@@ -178,8 +178,8 @@ export const sync = {
   /** 记录配置变更到 sync_queue（配置本地立即生效由前端处理） */
   recordConfigChange: (config_key: string, config_value: string) =>
     ipc.invoke<void>('sync_record_config_change', {
-      config_key,
-      config_value,
+      configKey: config_key,
+      configValue: config_value,
     }),
 
   /** 网络恢复时 flush 配置队列（将 failed 重置为 pending），返回受影响行数 */

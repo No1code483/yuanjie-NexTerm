@@ -60,22 +60,26 @@ export const xin = {
     offset
   }),
   dialogueCreate: (personaId?: string) => ipc.invoke<any>('xin_v3_dialogue_create', {
-    persona_id: personaId
+    personaId: personaId
   }),
   dialogueGet: (convId: string) => ipc.invoke<any>('xin_v3_dialogue_get', {
-    conversation_id: convId
+    conversationId: convId
   }),
   dialogueDelete: (convId: string) => ipc.invoke<void>('xin_v3_dialogue_delete', {
-    conversation_id: convId
+    conversationId: convId
   }),
   dialogueSend: (convId: string, content: string, options?: XinDialogueSendOptions) => ipc.invoke<any>('xin_v3_dialogue_send', {
-    conversation_id: convId,
-    content,
-    ...options
+    message: content,
+    conversationId: convId,
+    modelId: options?.model_id,
+    personaId: options?.persona_id,
+    skillsEnabled: options?.skills_enabled,
+    stream: options?.stream,
+    attachments: options?.attachments
   }), // D3.1: options 可传 model_id: number (ai_models.id)，不传则后端用第一个可用模型
       // D3.4b: options.attachments 可传 XinAttachment[] 实现多模态输入（图片/文本/视频）
   dialogueStop: (convId: string) => ipc.invoke<void>('xin_v3_dialogue_stop', {
-    conversation_id: convId
+    conversationId: convId
   }),
   dialogueSearch: (query: string, limit: number = 20) => ipc.invoke<any>('xin_v3_dialogue_search', {
     query,
@@ -87,21 +91,21 @@ export const xin = {
     config: partial
   }),
   compactionGetRecords: (convId: string, limit: number = 30) => ipc.invoke<any[]>('xin_v3_compaction_get_records', {
-    conversation_id: convId,
+    conversationId: convId,
     limit
   }),
   compactionNeedsCheck: (convId: string) => ipc.invoke<any>('xin_v3_compaction_needs_check', {
-    conversation_id: convId
+    conversationId: convId
   }),
   compactionAuto: (convId: string) => ipc.invoke<void>('xin_v3_compaction_auto', {
-    conversation_id: convId
+    conversationId: convId
   }),
   compactionManual: (convId: string, messages: {
     id: string;
     role: string;
     content: string;
   }[]) => ipc.invoke<void>('xin_v3_compaction_manual', {
-    conversation_id: convId,
+    conversationId: convId,
     messages
   }),
   // === 梦境（dream） ===
@@ -114,36 +118,38 @@ export const xin = {
   dreamRunRem: () => ipc.invoke<any>('xin_v3_dream_run_rem'),
   // === 断点（checkpoint） ===
   checkpointList: (convId: string) => ipc.invoke<any[]>('xin_v3_checkpoint_list', {
-    conversation_id: convId
+    conversationId: convId
   }),
   checkpointSave: (convId: string, label: string) => ipc.invoke<any>('xin_v3_checkpoint_save', {
-    conversation_id: convId,
-    label
+    conversationId: convId,
+    title: label
   }),
   checkpointRestore: (checkpointId: string) => ipc.invoke<void>('xin_v3_checkpoint_restore', {
-    checkpoint_id: checkpointId
+    checkpointId: checkpointId
   }),
   checkpointDelete: (checkpointId: string) => ipc.invoke<void>('xin_v3_checkpoint_delete', {
-    checkpoint_id: checkpointId
+    checkpointId: checkpointId
   }),
   // === 复盘（review） ===
   reviewGenerate: (period: string, personaId: string) => ipc.invoke<any>('xin_v3_review_generate', {
-    period,
-    persona_id: personaId
+    request: {
+      period_type: period,
+      persona_id: personaId
+    }
   }),
   reviewTopicTrends: (personaId: string, period: string, days: number = 7) => ipc.invoke<any>('xin_v3_review_topic_trends', {
-    persona_id: personaId,
-    period,
-    days
+    personaId: personaId,
+    periodType: period,
+    buckets: days
   }),
   reviewGrowthTrajectory: (personaId: string, period: string, days: number = 7) => ipc.invoke<any>('xin_v3_review_growth_trajectory', {
-    persona_id: personaId,
-    period,
-    days
+    personaId: personaId,
+    periodType: period,
+    buckets: days
   }),
   reviewHeatmap: (personaId: string, period: string) => ipc.invoke<any>('xin_v3_review_heatmap', {
-    persona_id: personaId,
-    period
+    personaId: personaId,
+    periodType: period
   }),
   // === 工具 ===
   estimateTokens: (text: string) => ipc.invoke<number>('xin_v3_estimate_tokens', {
@@ -151,7 +157,7 @@ export const xin = {
   }),
   listSkills: () => ipc.invoke<any[]>('xin_v3_list_skills'),
   executeSkill: (skillId: string, input: string) => ipc.invoke<any>('xin_v3_execute_skill', {
-    skill_id: skillId,
+    skillId: skillId,
     input
   }),
   listTools: () => ipc.invoke<any[]>('xin_v3_list_tools'),
@@ -234,9 +240,9 @@ export const xin = {
     text: string;
     engine: string;
   }>('xin_voice_input', {
-    audio_path: audioPath,
+    audioPath: audioPath,
     language,
-    model_id: modelId
+    modelId: modelId
   }),
   // D3.2 TTS：合成语音到文件，返回本地路径（前端用 convertFileSrc 转 URL 后用 <audio> 播放）
   tts: (text: string, voice?: string, speed?: number, pitch?: number) => ipc.invoke<{
@@ -356,7 +362,7 @@ export const realtime = {
   /** 推送 PCM 音频块（samples 为 i16 数组，每块 20-30ms） */
   pushChunk: (samples: number[], timestampMs: number) => ipc.invoke<RealtimeState>('xin_realtime_push_chunk', {
     samples,
-    timestamp_ms: timestampMs
+    timestampMs: timestampMs
   }),
   /** 查询当前会话状态 */
   getState: () => ipc.invoke<RealtimeState>('xin_realtime_get_state')

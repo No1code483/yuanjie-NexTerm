@@ -211,7 +211,7 @@ export default function NexTermTerminal({
       }
       console.log('[Terminal] 🔗 正在连接后端 PTY 会话...');
       const result = await ipc.invoke<string>('terminal_create_session', {
-        session_type: sessionType
+        sessionType: sessionType
       });
       if (result.data) {
         setSessionId(result.data);
@@ -239,7 +239,7 @@ export default function NexTermTerminal({
     try {
       if (sessionId && window.__TAURI__) {
         await ipc.invoke('terminal_kill_session', {
-          session_id: sessionId
+          sessionId: sessionId
         });
         console.log(`[Terminal] ✅ PTY 会话已终止: ${sessionId}`);
       }
@@ -294,7 +294,7 @@ export default function NexTermTerminal({
       terminal.current.onData(data => {
         if (isConnected && sessionId && window.__TAURI__) {
           ipc.invoke('terminal_write_input', {
-            session_id: sessionId,
+            sessionId: sessionId,
             input: data
           }).catch(err => {
             console.error('[Terminal] ❌ 写入输入失败:', err);
@@ -375,7 +375,7 @@ export default function NexTermTerminal({
         const rows = terminal.current.rows;
         if (cols > 0 && rows > 0) {
           ipc.invoke('terminal_resize', {
-            session_id: sessionId,
+            sessionId: sessionId,
             cols: cols,
             rows: rows
           }).catch(err => {

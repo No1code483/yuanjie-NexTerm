@@ -59,9 +59,11 @@ export default function PptEditor({
         invoke
       } = await import('@tauri-apps/api/core');
       await invoke('pptedit_update_slide', {
-        path: filePath,
-        slide_index: activeSlide,
-        text_content: currentSlide.text_content
+        request: {
+          path: filePath,
+          slide_index: activeSlide,
+          text_content: currentSlide.text_content
+        }
       });
       setUnsaved(false);
       showStatus('success', t("components.PptEditor.k1"));
@@ -141,9 +143,11 @@ export default function PptEditor({
         invoke
       } = await import('@tauri-apps/api/core');
       await invoke('pptedit_reorder', {
-        path: filePath,
-        slide_index: activeSlide,
-        new_index: targetIndex
+        request: {
+          path: filePath,
+          slide_index: activeSlide,
+          new_index: targetIndex
+        }
       });
       setSlides(prev => {
         const next = [...prev];

@@ -218,9 +218,9 @@ export default function FloatingXin() {
     setSending(true);
     try {
       const res = await ipc.invoke<any>('xin_v3_dialogue_send', {
-        conversation_id: null,
-        content: text,
-        persona_id: 'caring_friend',
+        conversationId: null,
+        message: text,
+        personaId: 'caring_friend',
         stream: false
       });
       if (res?.data?.content) {

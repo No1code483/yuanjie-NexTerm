@@ -21,6 +21,11 @@ export const auth = {
     isPermanent: true
   }),
   verifyToken: () => ipc.invoke<UserInfo>('auth_verify_token'),
+  // BUG-023 修复：App.tsx 启动期会话恢复调用（此前缺失导致 restoreSession 必然 TypeError）
+  restoreSession: (token: string) => ipc.invoke<{
+    user: UserInfo;
+    token: string;
+  }>('auth_restore_session', { token }),
   logout: () => ipc.invoke('logout'),
   getPermissions: () => ipc.invoke<BackendPermission[]>('auth_get_permissions'),
   verifyRecoveryPhrase: (username: string, words: string[], newPassword: string) => ipc.invoke<{
@@ -28,8 +33,8 @@ export const auth = {
     token: string;
   }>('recover_by_phrase', {
     username,
-    recovery_phrase: words.join(' '),
-    new_password: newPassword
+    recoveryPhrase: words.join(' '),
+    newPassword: newPassword
   }),
   resetPassword: (oldPassword: string, newPassword: string) => ipc.invoke('auth_reset_password', {
     request: {
@@ -40,7 +45,7 @@ export const auth = {
   // P2: 会话管理
   sessionList: () => ipc.invoke<any[]>('session_list'),
   sessionRevoke: (sessionId: string) => ipc.invoke<any>('session_revoke', {
-    session_id: sessionId
+    sessionId: sessionId
   }),
   // P2: 2FA 双因素认证
   auth2faSetup: () => ipc.invoke<{

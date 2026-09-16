@@ -71,7 +71,6 @@ function App() {
   useTranslation();
   const {
     isAuthenticated,
-    token,
     login: storeLogin
   } = useAuthStore();
   // C4 §2.3.1 键盘焦点管理：给 body 添加 using-keyboard class（供 :focus-visible 之外的逻辑判断输入模式）
@@ -99,13 +98,26 @@ function App() {
   }, [isInitialized]);
   const initializeAuth = async () => {
     try {
-      console.log('[App] � 开始初始化认证...');
+      console.log('[App] 🚀 开始初始化认证...');
+      // BUG-023 修复：等待 zustand persist 异步水合完成后再判断 token。
+      // token 经 tauriStorage 异步恢复，useEffect 立即执行时往往尚未水合，
+      // 旧逻辑会误判「未找到 token」提前显示登录页（dev 热重载随机弹回的根因），
+      // 同时导致 restoreSession 从未真正执行。
+      if (!useAuthStore.persist.hasHydrated()) {
+        await new Promise<void>((resolve) => {
+          const unsub = useAuthStore.persist.onFinishHydration(() => {
+            unsub();
+            resolve();
+          });
+        });
+      }
+      const token = useAuthStore.getState().token;
       if (!token) {
         console.log('[App] 未找到 token，显示登录界面');
         setIsInitialized(true);
         return;
       }
-      console.log('[App] � 发现已保存的 token，尝试恢复会话...');
+      console.log('[App] 📡 发现已保存的 token，尝试恢复会话...');
       const result = await (auth as any).restoreSession(token);
       if (result.code === 0 && result.data) {
         console.log('[App] ✅ 会话恢复成功');

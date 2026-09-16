@@ -24,7 +24,7 @@ export const newsSource = {
     name,
     url,
     category,
-    feed_type: feedType
+    feedType: feedType
   }),
   deleteNewsSource: (id: number) => ipc.invoke('delete_news_source', {
     id
@@ -49,7 +49,7 @@ export const system = {
 
 export const extension = {
   getEntry: (moduleName: string) => ipc.invoke<any>('extension_get_entry', {
-    module_name: moduleName
+    module: moduleName
   }),
   listModules: () => ipc.invoke<any[]>('extension_list_modules')
 };

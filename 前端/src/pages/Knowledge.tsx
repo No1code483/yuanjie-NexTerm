@@ -410,7 +410,7 @@ export default function Knowledge() {
     try {
       if (forEntryId) {
         const r = await ipc.invoke<KbTag[]>('get_kb_entry_tags', {
-          entry_id: forEntryId
+          entryId: forEntryId
         });
         if (r.code === 0 && r.data) {
           setEntryTags(prev => {
@@ -773,9 +773,9 @@ export default function Knowledge() {
     try {
       const res = await ipc.invoke<KbCategory>('add_kb_category', {
         name: newFolderName.trim(),
-        parent_id: newFolderParentId,
+        parentId: newFolderParentId,
         library: currentLibrary,
-        sort_order: 0
+        sortOrder: 0
       });
       if (res.code === 0) {
         showStatus('success', t("Knowledge.k9", {
@@ -1147,7 +1147,7 @@ export default function Knowledge() {
   const handleToggleFavorite = async (entryId: number) => {
     try {
       const res = await ipc.invoke('toggle_kb_favorite', {
-        entry_id: entryId
+        entryId: entryId
       });
       if (res.code === 0) loadAll();else showStatus('error', res.message || t("common.failed"));
     } catch {
@@ -1200,8 +1200,8 @@ export default function Knowledge() {
       const existing = entryTags.get(entryId)?.map(t => t.id) || [];
       const ids = [...new Set([...existing, tagId])];
       const res = await ipc.invoke('set_kb_entry_tags', {
-        entry_id: entryId,
-        tag_ids: ids
+        entryId: entryId,
+        tagIds: ids
       });
       if (res.code === 0) {
         loadEntryTags(entryId);
@@ -1216,8 +1216,8 @@ export default function Knowledge() {
       const existing = entryTags.get(entryId)?.map(t => t.id) || [];
       const ids = existing.filter(id => id !== tagId);
       const res = await ipc.invoke('set_kb_entry_tags', {
-        entry_id: entryId,
-        tag_ids: ids
+        entryId: entryId,
+        tagIds: ids
       });
       if (res.code === 0) {
         loadEntryTags(entryId);
@@ -1474,8 +1474,8 @@ export default function Knowledge() {
     try {
       const ids = Array.from(selectedEntryIds);
       const res = await ipc.invoke('batch_add_kb_tag', {
-        entry_ids: ids,
-        tag_id: tagId
+        entryIds: ids,
+        tagId: tagId
       });
       if (res.code === 0) {
         showStatus('success', t("Knowledge.k52", {
@@ -1494,8 +1494,8 @@ export default function Knowledge() {
     try {
       const ids = Array.from(selectedEntryIds);
       const res = await ipc.invoke('batch_remove_kb_tag', {
-        entry_ids: ids,
-        tag_id: tagId
+        entryIds: ids,
+        tagId: tagId
       });
       if (res.code === 0) {
         showStatus('success', t("Knowledge.k55", {
@@ -1603,8 +1603,10 @@ export default function Knowledge() {
     }
     try {
       const res = await ipc.invoke<any>('tableedit_read', {
-        path: url,
-        ext
+        request: {
+          path: url,
+          ext
+        }
       });
       if (res.code === 0 && res.data) {
         setTableEditSheets(res.data.sheets || []);
@@ -1685,7 +1687,7 @@ export default function Knowledge() {
   };
   const handleOpenFileViewer = async (entry: KbEntry) => {
     ipc.invoke('record_kb_access', {
-      entry_id: entry.id
+      entryId: entry.id
     }).catch(() => {});
     // 记录活动日志：打开知识库文件
     intelligence.logActivity('1', new Date().toISOString().replace('T', ' ').slice(0, 19), 'knowledge', t("components.intelligence.ActivityPanel.k13"), `name:${entry.name},path_url:${entry.path_url},source_path:${entry.source_path || ''}`).catch(() => {});
@@ -2036,7 +2038,7 @@ export default function Knowledge() {
   };
   const handleOpenEntry = (entry: KbEntry) => {
     ipc.invoke('record_kb_access', {
-      entry_id: entry.id
+      entryId: entry.id
     }).catch(() => {});
     // 记录活动日志：打开知识库条目
     intelligence.logActivity('1', new Date().toISOString().replace('T', ' ').slice(0, 19), 'knowledge', entry.entry_type === 'link' ? t("components.intelligence.ActivityPanel.k14") : t("components.intelligence.ActivityPanel.k15"), `name:${entry.name},path_url:${entry.path_url},source_path:${entry.source_path || ''}`).catch(() => {});
@@ -2858,9 +2860,9 @@ export default function Knowledge() {
       const res = await ipc.invoke<{
         suggestion: string;
       }>('kb_ai_recommend_category', {
-        entry_id: entryId,
-        entry_name: entryName,
-        entry_content: entryContent
+        entryId: entryId,
+        entryName: entryName,
+        entryContent: entryContent
       });
       if (res.code === 0 && res.data) {
         setAiCategorySuggestion(res.data.suggestion);

@@ -31,11 +31,13 @@ pub async fn get_items(
 /// 按 id + user_id 查询单个回收站项目
 ///
 /// 多用户隔离（批次 6）：必须同时匹配 user_id，防止跨用户读取。
+/// 返回 Ok(None) 表示项目不存在（BUG-020：restore_items 幂等语义——对不存在 ID
+/// 跳过计 0 而非返回 NotFound，支持重试/重复恢复请求）
 pub async fn get_item_by_id(
     executor: impl sqlx::Executor<'_, Database = sqlx::Sqlite>,
     id: i64,
     user_id: i64,
-) -> Result<RecycleBinItem, AppError> {
+) -> Result<Option<RecycleBinItem>, AppError> {
     sqlx::query_as::<_, RecycleBinItem>(
         "SELECT id, user_id, original_path, item_type, item_id, title, metadata_json,
                 file_size, deleted_by, deleted_at, auto_delete_at
@@ -46,8 +48,7 @@ pub async fn get_item_by_id(
     .bind(user_id)
     .fetch_optional(executor)
     .await
-    .map_err(AppError::Database)?
-    .ok_or(AppError::NotFound)
+    .map_err(AppError::Database)
 }
 
 /// 新增回收站项目

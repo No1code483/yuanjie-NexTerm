@@ -69,7 +69,7 @@ export const home = {
   }),
   updateTimerState: (id: number, isRunning: boolean, elapsed: number) => ipc.invoke('update_timer_state', {
     id,
-    is_running: isRunning,
+    isRunning: isRunning,
     elapsed
   }),
   deleteTimer: (id: number) => ipc.invoke('delete_timer', {
@@ -82,7 +82,7 @@ export const home = {
   aiSummarizeNews: (newsId: number, title: string, content: string) => ipc.invoke<{
     summary: string;
   }>('home_ai_summarize_news', {
-    news_id: newsId,
+    newsId: newsId,
     title,
     content
   }),

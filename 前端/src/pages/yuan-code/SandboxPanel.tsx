@@ -244,11 +244,13 @@ export default function SandboxPanel() {
     setSaving(true);
     try {
       await ipc.invoke('yuan_sandbox_save', {
-        safety_level: safetyLevel,
-        permissions,
-        resources,
-        allowed_languages: allowedLanguages,
-        allowed_domains: allowedDomains
+        request: {
+          safety_level: safetyLevel,
+          permissions,
+          resources,
+          allowed_languages: allowedLanguages,
+          allowed_domains: allowedDomains
+        }
       });
     } catch {
       /* 后端未就绪时静默处理 */

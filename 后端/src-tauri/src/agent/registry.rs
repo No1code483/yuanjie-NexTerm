@@ -96,8 +96,8 @@ impl AgentRegistry {
             ));
         }
 
-        // 生成唯一昵称
-        let nickname = self.generate_nickname(agent_name, agent_role);
+        // 生成唯一昵称（传入已持有的锁守卫，避免重入死锁）
+        let nickname = self.generate_nickname(agent_name, agent_role, &agents);
         let agent_id = format!("agent_{}", self.total_count.fetch_add(1, Ordering::Relaxed));
 
         agents.agent_map.insert(
@@ -208,14 +208,13 @@ impl AgentRegistry {
     }
 
     /// 生成唯一昵称 — 对标 Codex format_agent_nickname
-    fn generate_nickname(&self, agent_name: &str, agent_role: &str) -> String {
+    /// （agents 为调用方已持有的 active_agents 锁守卫引用，避免重入死锁）
+    fn generate_nickname(&self, agent_name: &str, agent_role: &str, agents: &ActiveAgents) -> String {
         let candidates = self
             .role_registry
             .get(agent_role)
             .map(|r| r.nickname_candidates.clone())
             .unwrap_or_default();
-
-        let agents = self.active_agents.lock().unwrap();
 
         // 如果角色有候选昵称，随机选一个未使用的
         if !candidates.is_empty() {

@@ -203,7 +203,9 @@ export default function YuanCode() {
     ipc.invoke<{
       branch: string;
     }>('git_status', {
-      workspace_path: workspacePath
+      request: {
+        workspace_path: workspacePath
+      }
     }).then(res => {
       if (res.code === 0 && res.data) {
         setGitBranch(res.data.branch);

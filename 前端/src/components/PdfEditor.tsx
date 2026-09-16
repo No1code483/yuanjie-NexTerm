@@ -253,8 +253,10 @@ export default function PdfEditor({
         invoke
       } = await import('@tauri-apps/api/core');
       await invoke('pdfedit_save', {
-        path: filePath,
-        base64_data: base64
+        request: {
+          path: filePath,
+          base64_data: base64
+        }
       });
       setUnsaved(false);
       showStatus('success', t("components.PdfEditor.k3", {

@@ -514,17 +514,19 @@ export interface CreateCollabSessionRequest {
 
 export const yuanCode = {
   listFiles: (workspacePath: string, excludePatterns?: string[]) => ipc.invoke<YuanFileNode[]>('yuan_list_files', {
-    workspace_path: workspacePath,
-    exclude_patterns: excludePatterns
+    request: {
+      workspace_path: workspacePath,
+      exclude_patterns: excludePatterns
+    }
   }),
   // ============================================================
   // D1 v3.1 Task 3.5: 云端 API Key 管理（ModelSelector 后端）
   // ============================================================
   cloudApiList: () => ipc.invoke<CloudApiKeyInfo[]>('cloud_api_list'),
-  cloudApiUpsert: (request: UpsertCloudApiKeyRequest) => ipc.invoke<CloudApiKeyInfo>('cloud_api_upsert', request),
+  cloudApiUpsert: (request: UpsertCloudApiKeyRequest) => ipc.invoke<CloudApiKeyInfo>('cloud_api_upsert', { request }),
   cloudApiSetEnabled: (id: number, isEnabled: boolean) => ipc.invoke<void>('cloud_api_set_enabled', {
     id,
-    is_enabled: isEnabled
+    isEnabled
   }),
   cloudApiDelete: (id: number) => ipc.invoke<void>('cloud_api_delete', {
     id
@@ -532,7 +534,7 @@ export const yuanCode = {
   cloudApiProviders: () => ipc.invoke<CloudProviderInfo[]>('cloud_api_providers'),
   cloudApiTestConnection: (provider: string, modelName: string) => ipc.invoke<CloudConnectionTestResult>('cloud_api_test_connection', {
     provider,
-    model_name: modelName
+    modelName
   }),
   // ============================================================
   // D1 v3.2 Task 3.4.1: 模型路由配置（按任务类型选模型，强制云端 API 用于编程）
@@ -543,20 +545,20 @@ export const yuanCode = {
   }),
   modelRoutingSetEnabled: (id: number, isEnabled: boolean) => ipc.invoke<void>('model_routing_set_enabled', {
     id,
-    is_enabled: isEnabled
+    isEnabled
   }),
   modelRoutingDelete: (id: number) => ipc.invoke<void>('model_routing_delete', {
     id
   }),
   modelRoutingResolve: (taskType: string) => ipc.invoke<ResolvedRouteInfo>('model_routing_resolve', {
-    task_type: taskType
+    taskType
   }),
   modelRoutingTaskTypes: () => ipc.invoke<TaskTypeInfo[]>('model_routing_task_types'),
   // ============================================================
   // D1 v3.2 Task 3.4.2: Yuan Code 底层智能监测（非侵入式、可关闭）
   // ============================================================
   yuanCodeMonitorRecordEvent: (eventType: string, detail?: string) => ipc.invoke<void>('yuan_code_monitor_record_event', {
-    event_type: eventType,
+    eventType,
     detail
   }),
   yuanCodeMonitorStatus: () => ipc.invoke<YuanCodeMonitorStatus>('yuan_code_monitor_status'),
@@ -566,23 +568,23 @@ export const yuanCode = {
   // ============================================================
   collabSessionCreate: (name: string, workspaceRoot: string) => ipc.invoke<CollabSessionInfo>('collab_session_create', {
     name,
-    workspace_root: workspaceRoot
+    workspaceRoot
   }),
   collabSessionList: () => ipc.invoke<CollabSessionSummaryInfo[]>('collab_session_list'),
   collabSessionGet: (sessionId: string) => ipc.invoke<CollabSessionInfo | null>('collab_session_get', {
-    session_id: sessionId
+    sessionId
   }),
   collabSessionJoin: (sessionId: string) => ipc.invoke<CollabSessionInfo>('collab_session_join', {
-    session_id: sessionId
+    sessionId
   }),
   collabSessionLeave: (sessionId: string) => ipc.invoke<void>('collab_session_leave', {
-    session_id: sessionId
+    sessionId
   }),
   collabSessionClose: (sessionId: string) => ipc.invoke<void>('collab_session_close', {
-    session_id: sessionId
+    sessionId
   }),
   collabSessionUpdateCursor: (sessionId: string, cursor: CollabCursor | null) => ipc.invoke<CollabSessionInfo>('collab_session_update_cursor', {
-    session_id: sessionId,
+    sessionId,
     cursor
   }),
   // ============================================================
@@ -606,64 +608,73 @@ export const yuanCode = {
       agent_id: agentId
     }
   }),
-  agentV3Review: (request: AgentV3ReviewRequest) => ipc.invoke<AgentV3ReviewResponse>('yuan_v3_agent_review', request),
+  agentV3Review: (request: AgentV3ReviewRequest) => ipc.invoke<AgentV3ReviewResponse>('yuan_v3_agent_review', { request }),
   agentV3SafetyCheck: (agentId: string) => ipc.invoke<AgentV3SafetyCheck>('yuan_v3_agent_safety_check', {
-    agent_id: agentId
+    agentId
   }),
   agentV3Status: (agentId: string) => ipc.invoke<AgentV3Status>('yuan_v3_agent_status', {
-    agent_id: agentId
+    agentId
   }),
   agentV3List: () => ipc.invoke<AgentV3Status[]>('yuan_v3_agent_list'),
   agentV3Destroy: (agentId: string) => ipc.invoke<void>('yuan_v3_agent_destroy', {
-    agent_id: agentId
+    agentId
   }),
   readFile: (path: string) => ipc.invoke<{
     name: string;
     content: string;
     language: string;
   }>('yuan_read_file', {
-    path
+    request: { path }
   }),
   writeFile: (path: string, content: string) => ipc.invoke<void>('yuan_write_file', {
-    path,
-    content
+    request: { path, content }
   }),
   createItem: (parentPath: string, name: string, isDir: boolean) => ipc.invoke<void>('yuan_create_item', {
-    parent_path: parentPath,
-    name,
-    is_dir: isDir
+    request: {
+      parent_path: parentPath,
+      name,
+      is_dir: isDir
+    }
   }),
   execute: (code: string, language: string, timeoutSeconds?: number) => ipc.invoke<YuanExecutionResult>('yuan_execute', {
-    code,
-    language,
-    timeout_seconds: timeoutSeconds ?? 30
+    request: {
+      code,
+      language,
+      timeout_seconds: timeoutSeconds ?? 30
+    }
   }),
   ioCancel: (executionId: string) => ipc.invoke<void>('yuan_io_cancel', {
-    execution_id: executionId
+    executionId
   }),
   ioKill: (executionId: string) => ipc.invoke<void>('yuan_io_kill', {
-    execution_id: executionId,
-    signal: 'SIGKILL'
+    request: {
+      execution_id: executionId,
+      signal: 'SIGKILL'
+    }
   }),
   ioStdin: (executionId: string, data: string) => ipc.invoke<void>('yuan_io_stdin', {
-    execution_id: executionId,
-    data
+    request: {
+      execution_id: executionId,
+      data
+    }
   }),
   agentDeploy: (config: Record<string, unknown>) => ipc.invoke<{
     success: boolean;
     message: string;
-  }>('yuan_agent_deploy', config),
+  }>('yuan_agent_deploy', { request: config }),
   sandboxSave: (config: Record<string, unknown>) => ipc.invoke<void>('yuan_sandbox_save', {
-    config
+    request: config
   }),
   skillExport: (data: string) => ipc.invoke<void>('yuan_skill_export', {
     data
   }),
-  settingsSave: (config: Record<string, unknown>) => ipc.invoke<void>('yuan_settings_save', config),
+  settingsSave: (config: Record<string, unknown>) => ipc.invoke<void>('yuan_settings_save', { settings: config }),
   // 文件操作 (已实现后端)
   deleteItem: (path: string, permanently?: boolean) => ipc.invoke<void>('yuan_delete_item', {
-    path,
-    permanently
+    request: {
+      path,
+      permanently
+    }
   }),
   renameItem: (oldPath: string, newPath: string) => ipc.invoke<void>('yuan_rename_item', {
     old_path: oldPath,
@@ -671,20 +682,28 @@ export const yuanCode = {
   }),
   // 代码分析与补全 (已实现后端)
   highlight: (code: string, language: string) => ipc.invoke<HighlightResult>('yuan_highlight', {
-    code,
-    language
+    request: {
+      content: code,
+      language
+    }
   }),
-  complete: (request: CodeCompletionRequest) => ipc.invoke<CodeCompletionResult>('yuan_complete', request),
-  completeStream: (request: CodeCompletionRequest) => ipc.invoke<CodeCompletionResult>('yuan_complete_stream', request),
-  analyze: (request: CodeAnalysisRequest) => ipc.invoke<CodeAnalysisResult>('yuan_analyze', request),
+  complete: (request: CodeCompletionRequest) => ipc.invoke<CodeCompletionResult>('yuan_complete', { request }),
+  completeStream: (request: CodeCompletionRequest) => ipc.invoke<CodeCompletionResult>('yuan_complete_stream', { request }),
+  analyze: (request: CodeAnalysisRequest) => ipc.invoke<CodeAnalysisResult>('yuan_analyze', { request }),
   // 代码片段 (已实现后端)
-  saveSnippet: (request: SaveSnippetRequest) => ipc.invoke<CodeSnippet>('yuan_save_snippet', request),
+  saveSnippet: (request: SaveSnippetRequest) => ipc.invoke<CodeSnippet>('yuan_save_snippet', { request }),
   getSnippets: (language?: string) => ipc.invoke<CodeSnippet[]>('yuan_get_snippets', {
     language
   }),
   updateSnippet: (id: string, request: UpdateSnippetRequest) => ipc.invoke<CodeSnippet>('yuan_update_snippet', {
-    id,
-    ...request
+    request: {
+      id,
+      name: request.name,
+      language: request.language,
+      code: request.code,
+      description: request.description,
+      tags: request.tags
+    }
   }),
   deleteSnippet: (id: string) => ipc.invoke<void>('yuan_delete_snippet', {
     id
@@ -695,16 +714,18 @@ export const yuanCode = {
   }),
   // Diff 与文件操作 (已实现后端)
   computeDiff: (original: string, modified: string) => ipc.invoke<DiffResult>('yuan_compute_diff', {
-    original,
-    modified
+    request: {
+      original_content: original,
+      modified_content: modified
+    }
   }),
-  replaceFiles: (request: ReplaceFilesRequest) => ipc.invoke<number>('yuan_replace_files', request),
-  copyMove: (request: CopyMoveParams) => ipc.invoke<void>('yuan_copy_move', request),
+  replaceFiles: (request: ReplaceFilesRequest) => ipc.invoke<number>('yuan_replace_files', { request }),
+  copyMove: (request: CopyMoveParams) => ipc.invoke<void>('yuan_copy_move', { request }),
   getFileInfo: (path: string) => ipc.invoke<FileInfoResult>('yuan_get_file_info', {
-    path
+    request: { path }
   }),
   // 工作区会话 (已实现后端)
-  saveWorkspace: (request: SaveWorkspaceRequest) => ipc.invoke<WorkspaceSession>('yuan_save_workspace', request),
+  saveWorkspace: (request: SaveWorkspaceRequest) => ipc.invoke<WorkspaceSession>('yuan_save_workspace', { request }),
   loadWorkspace: (id: string) => ipc.invoke<WorkspaceSession>('yuan_load_workspace', {
     id
   }),
@@ -715,17 +736,17 @@ export const yuanCode = {
   // === 提示词系统 (yuan_prompt_commands) ===
   listTemplates: () => ipc.invoke<PromptTemplateMeta[]>('yuan_prompt_list_templates'),
   getTemplate: (templateType: string) => ipc.invoke<PromptTemplateMeta | null>('yuan_prompt_get_template', {
-    template_type: templateType
+    templateType
   }),
   renderTemplate: (request: RenderPromptRequest) => ipc.invoke<RenderPromptResult>('yuan_prompt_render', {
     request
   }),
   setCustomTemplate: (templateType: string, content: string) => ipc.invoke<void>('yuan_prompt_set_custom_template', {
-    template_type: templateType,
+    templateType,
     content
   }),
   removeCustomTemplate: (templateType: string) => ipc.invoke<void>('yuan_prompt_remove_custom_template', {
-    template_type: templateType
+    templateType
   }),
   setVariableDefault: (name: string, value: string) => ipc.invoke<void>('yuan_prompt_set_variable_default', {
     name,
@@ -733,19 +754,19 @@ export const yuanCode = {
   }),
   discoverAgentsMd: (cwd?: string, projectRoot?: string) => ipc.invoke<AgentsMdFile[]>('yuan_agents_discover', {
     cwd,
-    project_root: projectRoot
+    projectRoot
   }),
   getInstructionSources: (cwd?: string, projectRoot?: string) => ipc.invoke<string[]>('yuan_agents_sources', {
     cwd,
-    project_root: projectRoot
+    projectRoot
   }),
   assembleInstructions: (agentsFiles: AgentsMdFile[], userInstructions?: string, maxBytes?: number) => ipc.invoke<HierarchicalInstructions>('yuan_agents_assemble', {
-    agents_files: agentsFiles,
-    user_instructions: userInstructions,
-    max_bytes: maxBytes
+    agentsFiles,
+    userInstructions,
+    maxBytes
   }),
   setMaxBytes: (maxBytes: number) => ipc.invoke<void>('yuan_agents_set_max_bytes', {
-    max_bytes: maxBytes
+    maxBytes
   }),
   getMaxBytes: () => ipc.invoke<number>('yuan_agents_get_max_bytes'),
   assembleSystemPrompt: (request: AssembleSystemPromptRequest) => ipc.invoke<AssembleSystemPromptResult>('yuan_prompt_assemble', {
@@ -785,10 +806,10 @@ export const yuanCompact = {
     request
   }),
   getSession: (sessionId: string) => ipc.invoke<any>('yuan_compact_session', {
-    session_id: sessionId
+    sessionId
   }),
   reset: (sessionId: string) => ipc.invoke<void>('yuan_compact_reset', {
-    session_id: sessionId
+    sessionId
   }),
   stats: (messages: {
     id: string;
@@ -809,7 +830,7 @@ export const yuanCompact = {
     role: string;
     content: string;
   }[]) => ipc.invoke<any>('yuan_compact_auto', {
-    session_id: sessionId,
+    sessionId,
     messages
   }),
   manual: (sessionId: string, messages: {
@@ -817,16 +838,18 @@ export const yuanCompact = {
     role: string;
     content: string;
   }[], config?: Record<string, unknown>) => ipc.invoke<any>('yuan_compact_manual', {
-    session_id: sessionId,
-    messages,
-    config
+    request: {
+      session_id: sessionId,
+      messages,
+      config
+    }
   }),
   force: (sessionId: string, messages: {
     id: string;
     role: string;
     content: string;
   }[], config?: Record<string, unknown>) => ipc.invoke<any>('yuan_compact_force', {
-    session_id: sessionId,
+    sessionId,
     messages,
     config
   })
@@ -843,10 +866,10 @@ export const yuanGoal = {
     request
   }),
   get: (goalId: number) => ipc.invoke<any>('yuan_goal_get', {
-    goal_id: goalId
+    goalId
   }),
   list: (sessionId: string) => ipc.invoke<any[]>('yuan_goal_list', {
-    session_id: sessionId
+    sessionId
   }),
   update: (request: {
     id: number;
@@ -858,30 +881,32 @@ export const yuanGoal = {
     request
   }),
   start: (goalId: number) => ipc.invoke<any>('yuan_goal_start', {
-    goal_id: goalId
+    goalId
   }),
   pause: (goalId: number) => ipc.invoke<any>('yuan_goal_pause', {
-    goal_id: goalId
+    goalId
   }),
   complete: (goalId: number, resultJson?: string) => ipc.invoke<any>('yuan_goal_complete', {
-    goal_id: goalId,
-    result_json: resultJson
+    goalId,
+    resultJson
   }),
   abort: (goalId: number, reason: string) => ipc.invoke<any>('yuan_goal_abort', {
-    goal_id: goalId,
+    goalId,
     reason
   }),
   delete: (goalId: number) => ipc.invoke<void>('yuan_goal_delete', {
-    goal_id: goalId
+    goalId
   }),
   consumeTokens: (goalId: number, tokens: number, modelId?: string) => ipc.invoke<any>('yuan_goal_consume_tokens', {
-    goal_id: goalId,
-    tokens,
-    model_id: modelId
+    request: {
+      goal_id: goalId,
+      tokens,
+      model_id: modelId
+    }
   }),
   updateProgress: (goalId: number, progressPct: number) => ipc.invoke<any>('yuan_goal_update_progress', {
-    goal_id: goalId,
-    progress_pct: progressPct
+    goalId,
+    progressPct
   }),
   saveCheckpoint: (goalId: number, cp: {
     description: string;
@@ -892,10 +917,10 @@ export const yuanGoal = {
     checkpoint: cp
   }),
   buildContinuation: (goalId: number) => ipc.invoke<any>('yuan_goal_build_continuation', {
-    goal_id: goalId
+    goalId
   }),
   checkpointsCount: (goalId: number) => ipc.invoke<number>('yuan_goal_checkpoints_count', {
-    goal_id: goalId
+    goalId
   })
 };
 
@@ -1053,13 +1078,13 @@ export const yuanMcp = {
   listBuiltinTools: () => ipc.invoke<McpRegisteredTool[]>('yuan_mcp_list_builtin_tools'),
   callBuiltinTool: (serverName: string, toolName: string, args?: Record<string, unknown>) =>
     ipc.invoke<McpToolCallResult>('yuan_mcp_call_builtin_tool', {
-      server_name: serverName,
-      tool_name: toolName,
+      serverName,
+      toolName,
       arguments: args ?? null
     }),
   configureBuiltin: (serverName: string, config: Record<string, unknown>) =>
     ipc.invoke<void>('yuan_mcp_configure_builtin', {
-      server_name: serverName,
+      serverName,
       config
     }),
 
@@ -1070,14 +1095,14 @@ export const yuanMcp = {
   listServers: () => ipc.invoke<McpServerStatus[]>('yuan_mcp_list_servers'),
   listPersistedServers: () => ipc.invoke<McpServerRecord[]>('yuan_mcp_list_persisted_servers'),
   saveServerConfig: (server: McpServerRegistration, autoConnect: boolean) =>
-    ipc.invoke<void>('yuan_mcp_save_server_config', { server, auto_connect: autoConnect }),
+    ipc.invoke<void>('yuan_mcp_save_server_config', { server, autoConnect }),
   deleteServerConfig: (serverId: string) =>
-    ipc.invoke<void>('yuan_mcp_delete_server_config', { server_id: serverId }),
+    ipc.invoke<void>('yuan_mcp_delete_server_config', { serverId }),
   setServerEnabled: (serverId: string, enabled: boolean) =>
-    ipc.invoke<void>('yuan_mcp_set_server_enabled', { server_id: serverId, enabled }),
+    ipc.invoke<void>('yuan_mcp_set_server_enabled', { serverId, enabled }),
   connectServer: (serverId: string) =>
-    ipc.invoke<McpServerStatus>('yuan_mcp_connect_server', { server_id: serverId }),
+    ipc.invoke<McpServerStatus>('yuan_mcp_connect_server', { serverId }),
   disconnectServer: (serverId: string) =>
-    ipc.invoke<void>('yuan_mcp_disconnect_server', { server_id: serverId })
+    ipc.invoke<void>('yuan_mcp_disconnect_server', { serverId })
 };
 

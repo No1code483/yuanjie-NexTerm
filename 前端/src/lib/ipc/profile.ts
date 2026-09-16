@@ -26,7 +26,7 @@ export const profile = {
   addQuote: (content: string, source?: string, quoteType?: string) => ipc.invoke('add_quote', {
     content,
     source: source || null,
-    quote_type: quoteType || 'daily'
+    quoteType: quoteType || 'daily'
   }),
   checkQuoteDuplicate: (content: string) => ipc.invoke<any[]>('check_quote_duplicate', {
     content
@@ -58,7 +58,7 @@ export const profile = {
     request: data
   }),
   createTempAccount: (username: string, duration: '1h' | '24h' | '7d') => ipc.invoke('create_temp_account', {
-    duration_hours: duration === '1h' ? 1 : duration === '24h' ? 24 : 168,
+    durationHours: duration === '1h' ? 1 : duration === '24h' ? 24 : 168,
     username
   }),
   savePersonalInfo: (json: string) => ipc.invoke('save_personal_info', {
@@ -68,25 +68,25 @@ export const profile = {
   aiPolishResume: (resumeId: number, content: string) => ipc.invoke<{
     content: string;
   }>('profile_ai_polish_resume', {
-    resume_id: resumeId,
+    resumeId: resumeId,
     content
   }),
   aiSpellCheckResume: (resumeId: number, content: string) => ipc.invoke<{
     content: string;
   }>('profile_ai_spell_check_resume', {
-    resume_id: resumeId,
+    resumeId: resumeId,
     content
   }),
   aiGenerateResume: (resumeId: number, content: string) => ipc.invoke<{
     content: string;
   }>('profile_ai_generate_resume', {
-    resume_id: resumeId,
+    resumeId: resumeId,
     content
   }),
   aiQuoteCheck: (quoteId: number) => ipc.invoke<{
     result: string;
   }>('profile_ai_quote_check', {
-    quote_id: quoteId
+    quoteId: quoteId
   }),
   aiQuoteComplete: (content: string) => ipc.invoke<{
     completion: string;

@@ -127,6 +127,17 @@ export const mockAuth = {
       message: t("lib.ipcMock.k8")
     };
   },
+  // BUG-023 修复：启动期会话恢复 Mock（Mock 层无持久会话，返回失效引导重新登录）
+  async restoreSession(): Promise<ApiResponse<{
+    user: UserInfo;
+    token: string;
+  }>> {
+    await delay(MOCK_DELAY / 2);
+    return {
+      code: 1001,
+      message: t("lib.ipcMock.k6")
+    };
+  },
   async getPermissions(args: any): Promise<ApiResponse<BackendPermission[]>> {
     await delay(MOCK_DELAY);
     const role = args?.role || 'admin';

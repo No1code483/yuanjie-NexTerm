@@ -28,7 +28,7 @@ export const intelligence = {
     offset
   }),
   markSuggestion: (suggestionId: number, action: string) => ipc.invoke<void>('intelligence_v4_mark_suggestion', {
-    suggestion_id: suggestionId,
+    suggestionId: suggestionId,
     action
   }),
   // ===== 行为分析 =====
@@ -69,10 +69,10 @@ export const intelligence = {
     page: number;
     page_size: number;
   }>('intelligence_v4_query_activity_logs', {
-    user_id: params.userId,
+    userId: params.userId,
     module: params.module,
-    start_time: params.startTime,
-    end_time: params.endTime,
+    startTime: params.startTime,
+    endTime: params.endTime,
     limit: params.limit,
     offset: params.offset
   }),
@@ -207,7 +207,7 @@ export const intelligence = {
     template: string;
     suggestions: string[];
   }>('intelligence_v4_journal_fill', {
-    today_events: todayEvents
+    todayEvents: todayEvents
   }),
   timerRemind: (currentElapsedSecs: number, taskType?: string) => ipc.invoke<{
     suggest_break: boolean;
@@ -215,8 +215,8 @@ export const intelligence = {
     suggestions: string[];
     optimal_session_minutes: number;
   }>('intelligence_v4_timer_remind', {
-    current_elapsed_secs: currentElapsedSecs,
-    task_type: taskType
+    currentElapsedSecs: currentElapsedSecs,
+    taskType: taskType
   }),
   terminalComplete: (partialInput?: string, currentDir?: string, recentHistory?: string[]) => ipc.invoke<Array<{
     command: string;
@@ -237,7 +237,7 @@ export const intelligence = {
     reason: string;
     description: string;
   }>('intelligence_kb_classify', {
-    entry_id: entryId,
+    entryId: entryId,
     content
   }),
   gameRecommend: (playDurationTodaySecs?: number, currentTimeHour?: number, recentGames?: string[]) => ipc.invoke<{
@@ -247,9 +247,9 @@ export const intelligence = {
     today_total_minutes: number;
     suggest_daily_limit_minutes: number;
   }>('intelligence_v4_game_recommend', {
-    play_duration_today_secs: playDurationTodaySecs,
-    current_time_hour: currentTimeHour,
-    recent_games: recentGames
+    playDurationTodaySecs: playDurationTodaySecs,
+    currentTimeHour: currentTimeHour,
+    recentGames: recentGames
   }),
   searchAnalyze: (query: string) => ipc.invoke<{
     original_query: string;
