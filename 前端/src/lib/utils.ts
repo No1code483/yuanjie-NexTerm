@@ -77,6 +77,8 @@ export const time = {
       const isoStr = typeof iso === 'number' ? new Date(iso).toISOString() : String(iso);
       const normalized = isoStr.replace(' ', 'T');
       const d = normalized.includes('Z') || normalized.includes('+') ? new Date(normalized) : new Date(normalized + 'Z');
+      // 无效输入（空串/非法字符串）解析为 Invalid Date，不抛异常，需显式回退原值
+      if (Number.isNaN(d.getTime())) return String(iso);
       return d.toLocaleString('zh-CN', {
         month: '2-digit',
         day: '2-digit',

@@ -10,8 +10,8 @@
  */
 
 import { useState, useEffect } from 'react'
-import { useAuthStore } from '@/stores/authStore'
-import { auth } from '@/lib/ipc'
+import { useAuthStore } from '@/kernel/state/authStore'
+import { auth } from '@/plugins/customs/auth/ipc/auth'
 import type { 
   Role, 
   ResourceName, 
@@ -92,6 +92,7 @@ const DEFAULT_PERMISSIONS: Record<Role, PermissionsMatrix> = {
     search:           { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
     xin:              { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
     spyglass:         { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
+    sync:             { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
   },
   user: {
     // ===== 主模块 (普通用户权限) =====
@@ -118,6 +119,7 @@ const DEFAULT_PERMISSIONS: Record<Role, PermissionsMatrix> = {
     search:           { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
     xin:              { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
     spyglass:         { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
+    sync:             { can_read: true,  can_write: true,  can_delete: false, can_modify: true },
   },
   guest: {
     // ===== 主模块 (临时账号权限 - 整合原有硬编码规则) =====
@@ -150,6 +152,7 @@ const DEFAULT_PERMISSIONS: Record<Role, PermissionsMatrix> = {
     search:           { can_read: true,  can_write: false, can_delete: false, can_modify: false }, // 搜索只读
     xin:              { can_read: true,  can_write: false, can_delete: false, can_modify: false }, // 小欣只读
     spyglass:         { can_read: false, can_write: false, can_delete: false, can_modify: false }, // 无底层智能权限
+    sync:             { can_read: false, can_write: false, can_delete: false, can_modify: false }, // 无同步权限
   }
 }
 

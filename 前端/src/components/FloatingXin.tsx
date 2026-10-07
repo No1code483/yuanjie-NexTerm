@@ -1,7 +1,7 @@
 import { t } from "i18next";
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ipc } from '@/lib/ipc';
+import { xinOrchestration } from '@/plugins/boards/xin/features/orchestration/ipc';
 import styles from './FloatingXin.module.css';
 
 // ===== 类型定义 =====
@@ -217,10 +217,8 @@ export default function FloatingXin() {
     setInput('');
     setSending(true);
     try {
-      const res = await ipc.invoke<any>('xin_v3_dialogue_send', {
-        conversationId: null,
-        message: text,
-        personaId: 'caring_friend',
+      const res = await xinOrchestration.dialogueSend(null, text, {
+        persona_id: 'caring_friend',
         stream: false
       });
       if (res?.data?.content) {

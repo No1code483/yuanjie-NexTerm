@@ -129,6 +129,20 @@ pub async fn update_todo(
     Ok(result.rows_affected())
 }
 
-pub async fn get_todo_for_delete(pool: &SqlitePool, id: i64) -> Result<Option<Todo>, AppError> {
-    find_by_id(pool, id).await
+/// 删除前预读（越权收口，1b-3 裁定 30-A）：主体条件与读/改/切口径一致，
+/// `user_id IS NULL` 为迁移 v22 补列前的历史行（`ADD COLUMN user_id INTEGER` 无 DEFAULT），
+/// 对无主行沿用既有宽容策略；他人非 NULL 行一律不可预读。
+pub async fn get_todo_for_delete(
+    pool: &SqlitePool,
+    id: i64,
+    user_id: i64,
+) -> Result<Option<Todo>, AppError> {
+    sqlx::query_as::<_, Todo>(
+        "SELECT * FROM todos WHERE id = ? AND (user_id = ? OR user_id IS NULL)",
+    )
+    .bind(id)
+    .bind(user_id)
+    .fetch_optional(pool)
+    .await
+    .map_err(AppError::Database)
 }

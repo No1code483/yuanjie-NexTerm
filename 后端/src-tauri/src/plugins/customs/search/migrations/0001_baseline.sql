@@ -1,0 +1,3 @@
+-- customs.search 基线迁移（批次6b S1）
+-- search 插件不直接拥有 DB 表，无需登记 kernel_table_ownership。
+-- 此处留空用于插件注册链的完整性。

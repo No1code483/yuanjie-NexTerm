@@ -13,7 +13,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { ipc } from '@/lib/ipc'
+import { systemtools } from '@/plugins/customs/systemtools'
 
 interface LLMConfig {
   provider: string
@@ -56,7 +56,7 @@ export function useIntelligence(): UseIntelligenceReturn {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-ipc.invoke<any>('get_system_config', { key: 'intelligence_frontend_settings' }).then(res => {
+systemtools.getInfo('intelligence_frontend_settings').then(res => {
       if (res?.code === 0 && res?.data?.config_value) {
         try {
           const parsed = JSON.parse(res.data.config_value)

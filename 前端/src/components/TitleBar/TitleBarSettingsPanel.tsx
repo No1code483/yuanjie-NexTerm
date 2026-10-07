@@ -10,7 +10,7 @@
  */
 
 import { t } from 'i18next';
-import { useTitleBarStore, DEFAULT_SHORTCUTS } from '@/stores/titleBarStore';
+import { useTitleBarStore, DEFAULT_SHORTCUTS } from '@/kernel/state/titleBarStore';
 import styles from './TitleBarSettingsPanel.module.css';
 
 export function TitleBarSettingsPanel() {

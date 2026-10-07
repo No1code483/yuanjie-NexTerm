@@ -3,9 +3,10 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ipc } from '@/lib/ipc';
 import { intelligence } from '@/lib/ipc';
-import { useAuthStore } from '@/stores/authStore';
-import { useFloatingOrbStore } from '@/stores/floatingOrbStore';
-import { useNotifStore } from '@/stores/notifStore';
+import { systemtools } from '@/plugins/customs/systemtools';
+import { useAuthStore } from '@/kernel/state/authStore';
+import { useFloatingOrbStore } from '@/kernel/state/floatingOrbStore';
+import { useNotifStore } from '@/kernel/state/notifStore';
 import styles from './FloatingBall.module.css';
 
 // ===== 页面静态建议（原有功能）=====
@@ -87,7 +88,7 @@ function getPageSuggestions(path: string): Suggestion[] {
     text: t("components.FloatingBall.k16"),
     action: 'add_bookmark'
   }];
-  if (path.startsWith('/profile')) return [{
+  if (path.startsWith('/home/profile')) return [{
     icon: '📄',
     text: t("components.FloatingBall.k17"),
     action: 'edit_resume'
@@ -480,9 +481,7 @@ export default function FloatingBall() {
   // 检查开关状态
   const checkEnabled = useCallback(async () => {
     try {
-      const res = await ipc.invoke<any>('get_system_config', {
-        key: 'intelligence_frontend_settings'
-      });
+      const res = await systemtools.getInfo('intelligence_frontend_settings');
       if (res?.code === 0 && res?.data?.config_value) {
         const parsed = JSON.parse(res.data.config_value);
         const masterOn = parsed.toggles?.master_switch !== false;

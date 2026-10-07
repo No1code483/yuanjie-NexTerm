@@ -13,7 +13,7 @@ import { t } from "i18next";
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useThemeStore, PRESET_THEMES, type ThemeName } from '../../stores/themeStore';
+import { useThemeStore, PRESET_THEMES, type ThemeName } from '@/kernel/state/themeStore';
 import { ThemeEditor } from '../ThemeEditor/ThemeEditor';
 import { FontManager } from '../FontManager/FontManager';
 import { useSystemTheme } from '../../hooks/useSystemTheme';

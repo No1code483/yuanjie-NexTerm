@@ -1,0 +1,315 @@
+/* F6 插件管理页 —— token 映射严格对照
+ * 已有功能/20_插件化重构/02_核心机制设计/03_前端插件架构设计.md 附录：F6 插件管理页素材研读要点（2026-09-07）
+ * （linear changelog-row / raycast command-palette-row；2026-09-29 简化：去级别徽标 / ID / 版本号 / 启动报告面板） */
+
+/* 页面容器：linear canvas 锚面（--nt-black + --nt-space-6 内边距） */
+.page {
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--nt-space-6);
+  background-color: var(--nt-black);
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-mono);
+  box-sizing: border-box;
+}
+
+/* 头部：标题 + 副标题 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--nt-space-5);
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--nt-text-bright);
+}
+
+.subtitle {
+  margin: var(--nt-space-1) 0 0;
+  font-size: 11px;
+  color: var(--nt-text-muted);
+}
+
+/* 插件列表（linear changelog-row：底边 1px hairline，非整行描边） */
+.listBox {
+  border-top: 1px solid var(--theme-gray-ultra-light);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-4);
+  padding: var(--nt-space-3) var(--nt-space-2);
+  border-bottom: 1px solid var(--theme-gray-ultra-light);
+}
+
+.row:hover {
+  background: var(--theme-gray-ultra-light);
+}
+
+/* 行内布局（raycast command-palette-row：左图标+名称 / 中状态徽标 / 右开关） */
+.rowLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.pluginIcon {
+  color: var(--nt-primary);
+  font-size: 12px;
+}
+
+.pluginName {
+  color: var(--nt-text-primary);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowMid {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-3);
+  flex-shrink: 0;
+}
+
+/* 状态徽标（linear status-badge：抬升底 pill + 语义色文本） */
+.stateBadge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: var(--theme-bg-elevated);
+  font-size: 11px;
+}
+
+.stateEnabled {
+  color: var(--nt-success);
+}
+
+.stateDisabled {
+  color: var(--nt-warning);
+}
+
+.stateRegistered {
+  color: var(--nt-text-muted);
+}
+
+.stateError {
+  color: var(--nt-error);
+}
+
+/* 启停开关（激活 = --nt-primary + 发光；禁用 = 同底降透明度） */
+.toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--theme-gray-ultra-light);
+  background: var(--theme-bg-tertiary);
+  cursor: pointer;
+}
+
+.toggleOn {
+  background: var(--nt-primary);
+  border-color: var(--nt-primary);
+  box-shadow: var(--theme-shadow-primary);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: var(--nt-text-muted);
+  transition: left 0.15s ease;
+}
+
+.toggleOn .toggleThumb {
+  left: 18px;
+  background: var(--nt-black);
+}
+
+.toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 错误原因行（显式失败不静默；语义色文本 + 左边框，不硬编码底色破主题） */
+.errorNote {
+  margin: 0 0 var(--nt-space-3);
+  padding: var(--nt-space-2) var(--nt-space-3);
+  border-left: 2px solid var(--nt-error);
+  color: var(--nt-error);
+  font-size: 11px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* 加载/空态 */
+.empty {
+  padding: var(--nt-space-6);
+  text-align: center;
+  color: var(--nt-text-muted);
+  font-size: 12px;
+}
+
+/* 顶部错误条 */
+.errorBar {
+  margin-bottom: var(--nt-space-4);
+  padding: var(--nt-space-2) var(--nt-space-3);
+  border: 1px solid var(--nt-error);
+  color: var(--nt-error);
+  font-size: 12px;
+}
+
+/* ===== 手稿 20260926 ③ 层级化改造：分组目录进全局侧边栏（PluginManagerNav），主内容区通栏 ===== */
+
+/* 导航容器（嵌入全局侧边栏：占满宽度，纵排分组） */
+.navRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.navLoading {
+  padding: var(--nt-space-3) 0;
+  text-align: center;
+  color: var(--nt-text-muted);
+  font-size: 11px;
+}
+
+.sidebarGroupTitle {
+  margin: var(--nt-space-3) 0 var(--nt-space-1);
+  padding: 0 var(--nt-space-2);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--nt-text-muted);
+}
+
+.sidebarGroupTitle:first-child {
+  margin-top: 0;
+}
+
+/* 目录项（raycast command-palette-row：左状态点 + 名称 + 尾注） */
+.sidebarItem {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  width: 100%;
+  padding: var(--nt-space-2);
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  color: var(--nt-text-secondary);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebarItem:hover {
+  background: var(--theme-gray-ultra-light);
+  color: var(--nt-text-primary);
+}
+
+.sidebarItemActive {
+  border-left-color: var(--nt-primary);
+  background: var(--theme-gray-ultra-light);
+  color: var(--nt-text-bright);
+}
+
+.sidebarItemName {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 状态圆点（语义色 token 同源，不新造色） */
+.stateDot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--nt-text-muted);
+}
+
+.dotEnabled {
+  background: var(--nt-success);
+}
+
+.dotDisabled {
+  background: var(--nt-warning);
+}
+
+.dotError {
+  background: var(--nt-error);
+}
+
+.dotRegistered {
+  background: var(--nt-text-muted);
+}
+
+/* 主内容区板块头部（选中板块的控制行） */
+.boardHeader {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* ===== 手稿 20260926 三大分类 + n 级层级钻取 ===== */
+
+/* 面包屑（祖先链可点返回；当前项高亮） */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--nt-space-2);
+  margin-bottom: var(--nt-space-2);
+  font-size: 12px;
+}
+
+.breadcrumbLink {
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--nt-text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.breadcrumbLink:hover {
+  color: var(--nt-primary);
+}
+
+.breadcrumbSep {
+  color: var(--nt-text-muted);
+}
+
+.breadcrumbCurrent {
+  color: var(--nt-text-bright);
+}
+
+/* 可钻入的行名（有下级子插件，点入查看其子插件） */
+.drillName {
+  padding: 0;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.drillName:hover {
+  color: var(--nt-primary);
+}

@@ -25,7 +25,7 @@
 
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useThemeStore } from '../stores/themeStore';
+import { useThemeStore } from '../kernel/state/themeStore';
 
 /**
  * 可配置模块级主题的目标模块列表。
@@ -49,15 +49,18 @@ export const MODULE_THEME_TARGETS: ReadonlyArray<{ key: string; labelKey: string
 const VALID_MODULE_KEYS = new Set(MODULE_THEME_TARGETS.map(t => t.key));
 
 /**
- * 从路径提取主模块名（取第一段）
+ * 从路径提取主模块名（取第一段；/home 下的二级模块段优先）
  * 例：/terminal/yuancode → 'terminal'
  *     /ai/chat/123 → 'ai'
+ *     /home/profile → 'profile'（个人中心/回收站归位为首页子插件后仍保留自身模块主题）
  *     / → null
  */
 export function getModuleNameFromPath(pathname: string): string | null {
-  const match = pathname.match(/^\/([^/]+)/);
-  if (!match) return null;
-  const seg = match[1];
+  const segments = pathname.match(/^\/([^/]+)(?:\/([^/]+))?/);
+  if (!segments) return null;
+  const [, seg, sub] = segments;
+  // 首页子插件（如 /home/profile、/home/recycle）：二级段为合法模块名时优先返回，保留原模块主题
+  if (seg === 'home' && sub != null && VALID_MODULE_KEYS.has(sub)) return sub;
   // 仅返回已知模块；未知路径（如根 / 或 404）返回 null，表示使用全局主题
   return VALID_MODULE_KEYS.has(seg) ? seg : null;
 }

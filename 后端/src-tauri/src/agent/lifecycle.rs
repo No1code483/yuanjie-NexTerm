@@ -22,7 +22,7 @@ use crate::agent::types::{
 };
 use crate::crypto::mek_manager::MekManager;
 use crate::error::app_error::AppError;
-use crate::services::cloud_api_router::{CloudApiRouter, ProgrammingRequest};
+use crate::plugins::_legacy::services::cloud_api_router::{CloudApiRouter, ProgrammingRequest};
 
 /// Agent 生命周期 trait — 对标 codex_thread 的统一抽象
 ///

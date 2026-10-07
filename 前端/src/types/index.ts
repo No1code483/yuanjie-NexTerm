@@ -2,6 +2,13 @@
  * RBAC 权限系统类型定义
  * 对齐后端 permissions 表和 07_安全体系.md
  */
+// ==================== 系统配置类型 (对齐后端 SystemConfig 模型) ====================
+export interface SystemConfig {
+  id: number
+  config_key: string
+  config_value: string
+  updated_at: number
+}
 
 // ==================== 权限维度 (四维) ====================
 export type PermissionAction = 'read' | 'write' | 'delete' | 'modify'
@@ -32,6 +39,7 @@ export type ResourceName =
   | 'search'         // 搜索
   | 'xin'            // 小欣
   | 'spyglass'       // 底层智能
+  | 'sync'          // 同步（设备管理 / 冲突解决）
 
 // ==================== 角色定义 ====================
 export type Role = 'admin' | 'user' | 'guest'

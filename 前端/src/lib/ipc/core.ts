@@ -14,9 +14,11 @@ import { getLocalizedErrorMessage } from '../errorCodeI18n';
  * 
  * 使用方式:
  * import { ipc } from '@/lib/ipc'
- * const result = await ipc.invoke('login', { username, password })
+ * const result = await ipc.invoke('system_get_config', { key })
  * 
- * 命令名必须与后端 Tauri Command 函数名一致
+ * 未迁移模块的命令名与后端 Tauri Command 函数名一致；已迁移插件（boards.profile /
+ * customs.auth 等）统一走内核 dispatcher（`plugin:kernel|kernel_dispatch` + `<短码>:plugin:<命令名>`），
+ * 由插件公开 client 封装，不再直接 invoke 旧命令名。
  */
 
 // 扩展 Window 接口以支持 Tauri 环境检测
@@ -59,6 +61,7 @@ const SENSITIVE_KEY_PATTERNS = [
   'private_key',
   'public_key', // 公钥虽非机密，但日志无需打印完整内容
   'recovery_phrase',
+  'recoveryphrase', // 插件命名空间按 camelCase 传参（auth 批次1a-1 取齐 Tauri 默认绑定）
   'mnemonic',
   'seed',
   'passphrase',
@@ -66,6 +69,7 @@ const SENSITIVE_KEY_PATTERNS = [
   'authorization',
   'auth',
   'session_id', // 会话 ID 可被劫持
+  'sessionid', // 同上，camelCase 形态
   'csrf_token',
 ];
 
@@ -140,7 +144,7 @@ function sanitizeArgs(args: unknown): unknown {
 //
 // 豁免范围（严格对齐后端 `auth_commands.rs` 无 require_auth 的入口 + perf 命令）：
 //   1. 登录/注册/恢复入口：login / register / create_temp_account / recover_by_phrase
-//   2. 2FA 登录入口：login_2fa / auth_2fa_login_verify
+//   2. 2FA 登录入口：auth_2fa_login_verify
 //   3. 会话恢复入口（启动期调用）：auth_verify_token / auth_restore_session
 //   4. 启动期性能记录：record_perf_metric（设计要求登录前记录启动耗时）
 //
@@ -148,26 +152,42 @@ function sanitizeArgs(args: unknown): unknown {
 //       auth_2fa_setup / auth_2fa_verify / auth_2fa_enable / auth_2fa_disable /
 //       auth_2fa_status 等命令均需登录后调用，token 失效时应正常触发自动登出，
 //       故不豁免。
+//
+// ⭐ 阶段3 批次1a-1：auth 命令已迁入插件命名空间，经内核 dispatcher 传输
+//    （传输命令 'plugin:kernel|kernel_dispatch'，逻辑名 'au:plugin:<命令名>'）。
+//    豁免判定需先剥离命名空间前缀还原旧命令名，否则登录/会话恢复会被 1005 误踢。
 // ============================================================================
 const AUTH_COMMAND_ALLOWLIST = new Set<string>([
   'login',
   'register',
   'create_temp_account',
   'recover_by_phrase',
-  'login_2fa',
   'auth_2fa_login_verify',
   'auth_verify_token',
   'auth_restore_session',
   'record_perf_metric',
 ]);
 
+/** 内核 dispatcher 传输命令（与 @/kernel/ipc/namespace 的 KERNEL_DISPATCH 一致；
+ *  此处内联常量避免静态引入 tauri 依赖） */
+const KERNEL_DISPATCH = 'plugin:kernel|kernel_dispatch';
+
+/** 插件命名空间逻辑名：'<短码>:plugin:<旧命令名>' */
+const PLUGIN_LOGICAL_CMD = /^[a-z]{2}:plugin:(.+)$/;
+
 /**
  * 判断命令是否为认证入口（豁免 1005 自动登出拦截）
  *
- * @param command Tauri 命令名
+ * @param command Tauri 命令名（可能是内核 dispatcher）
+ * @param args 调用参数（dispatcher 时用于取逻辑名）
  * @returns true 表示该命令不应触发自动登出（认证入口本身或启动期必需）
  */
-function isAuthCommand(command: string): boolean {
+function isAuthCommand(command: string, args?: any): boolean {
+  if (command === KERNEL_DISPATCH) {
+    const logical = typeof args?.cmd === 'string' ? args.cmd : '';
+    const matched = PLUGIN_LOGICAL_CMD.exec(logical);
+    return matched != null && AUTH_COMMAND_ALLOWLIST.has(matched[1]);
+  }
   return AUTH_COMMAND_ALLOWLIST.has(command);
 }
 
@@ -178,7 +198,7 @@ function isAuthCommand(command: string): boolean {
 // 功能：
 // - TTL 30s 自动过期
 // - LRU 淘汰策略（容量 100）
-// - 仅对 get_*/list_*/search_*/count_*/kb_get_*/game_get_*/ai_get_*/auth_get_*
+// - 仅对 get_*/list_*/search_*/count_*/game_get_*/ai_get_*/auth_get_*
 //   等读取类命令自动启用
 // - 写操作（add_/update_/delete_/set_/create_/remove_/save_/toggle_/record_ 等）
 //   自动清空缓存（保守策略，避免脏数据）
@@ -213,7 +233,7 @@ class IPCache {
 
   /** 判断命令是否可缓存（仅读取类命令） */
   static isCacheable(command: string): boolean {
-    return /^(get_|list_|search_|count_|kb_get_|game_get_|game_story_get|game_story_list|ai_get_|auth_get_|profile_get_|perf_get_|yuan_get_|yuan_list_|yuan_search_|sync_get_|sync_list_|sync_fetch_pending)/.test(command);
+    return /^(get_|list_|search_|count_|game_get_|game_story_get|game_story_list|ai_get_|auth_get_|profile_get_|perf_get_|yuan_get_|yuan_list_|yuan_search_|sync_get_|sync_list_|sync_fetch_pending)/.test(command);
   }
 
   /** 判断命令是否为写操作（需要清空缓存） */
@@ -254,7 +274,7 @@ class IPCache {
     this.cache.delete(key);
   }
 
-  /** 失效匹配前缀的所有 key（例：invalidatePattern('get_kb_entries') 失效 'get_kb_entries:...' 等） */
+  /** 失效匹配前缀的所有 key（例：invalidatePattern('get_conversations') 失效 'get_conversations:...' 等） */
   invalidatePattern(prefix: string): void {
     for (const key of Array.from(this.cache.keys())) {
       if (key === prefix || key.startsWith(`${prefix}:`)) {
@@ -349,10 +369,10 @@ class IPCService {
       // 当 require_auth 失败（token 过期/无效/会话失效）时，自动登出并跳转登录页，
       // 避免用户卡在错误状态。例外：auth_commands 自身（login/register/restoreSession 等）
       // 不触发自动登出，否则会导致登录页本身被踢出。
-      if (result.code === 1005 && !isAuthCommand(command)) {
+      if (result.code === 1005 && !isAuthCommand(command, args)) {
         console.warn('[IPC] 🔐 认证失败，自动登出并跳转登录页');
         // 动态导入避免循环依赖
-        import('../../stores/authStore').then(({ useAuthStore }) => {
+        import('../../kernel/state/authStore').then(({ useAuthStore }) => {
           useAuthStore.getState().logout();
         }).catch((e) => {
           console.error('[IPC] 自动登出失败:', e);
@@ -383,7 +403,7 @@ class IPCService {
     this.cache.invalidate(IPCache.buildKey(command, args));
   }
 
-  /** 失效匹配前缀的所有缓存（例：invalidatePattern('get_kb_entries') 失效 'get_kb_entries:...' 等） */
+  /** 失效匹配前缀的所有缓存（例：invalidatePattern('get_conversations') 失效 'get_conversations:...' 等） */
   invalidateCachePattern(prefix: string): void {
     this.cache.invalidatePattern(prefix);
   }
@@ -438,78 +458,8 @@ class IPCService {
       'auth_restore_session': 'auth',
       'auth_get_permissions': 'auth',
       'auth_reset_password': 'auth',
-      'get_todos': 'home',
-      'add_todo': 'home',
-      'toggle_todo': 'home',
-      'delete_todo': 'home',
-      'get_news': 'home',
-      'get_news_by_category': 'home',
-      'fetch_news': 'home',
-      'add_news': 'home',
-      'mark_news_read': 'home',
-      'clear_old_news': 'home',
-      'get_journal': 'home',
-      'save_journal': 'home',
-      'delete_journal': 'home',
-      'get_timers': 'home',
-      'create_timer': 'home',
-      'update_timer_state': 'home',
-      'delete_timer': 'home',
-      'timer_action': 'home',
-      'get_ai_models': 'ai',
-      'add_ai_model': 'ai',
-      'update_ai_model': 'ai',
-      'delete_ai_model': 'ai',
-      'get_ai_agents': 'ai',
-      'add_ai_agent': 'ai',
-      'delete_ai_agent': 'ai',
-      'get_conversations': 'ai',
-      'get_messages': 'ai',
-      'get_participants': 'ai',
-      'send_message': 'ai',
-      'run_orchestrator': 'ai',
-      'ai_get_orchestration_status': 'ai',
-      'ai_end_group_chat': 'ai',
-      'get_kb_categories': 'knowledge',
-      'add_kb_category': 'knowledge',
-      'delete_kb_category': 'knowledge',
-      'get_kb_entries': 'knowledge',
-      'add_kb_entry': 'knowledge',
-      'delete_kb_entry': 'knowledge',
-      'search_kb_entries': 'knowledge',
-      'kb_import_folder': 'knowledge',
-      'kb_import_multi_folders': 'knowledge',
-      'get_kb_category_counts': 'knowledge',
-      'get_kb_tags': 'knowledge',
-      'add_kb_tag': 'knowledge',
-      'update_kb_tag': 'knowledge',
-      'delete_kb_tag': 'knowledge',
-      'get_kb_tag_stats': 'knowledge',
-      'get_kb_entry_tags': 'knowledge',
-      'set_kb_entry_tags': 'knowledge',
-      'get_kb_entries_by_tag': 'knowledge',
-      'toggle_kb_favorite': 'knowledge',
-      'get_kb_favorites': 'knowledge',
-      'record_kb_access': 'knowledge',
-      'get_kb_recent': 'knowledge',
-      'batch_delete_kb_entries': 'knowledge',
-      'batch_move_kb_entries': 'knowledge',
-      'batch_add_kb_tag': 'knowledge',
-      'batch_remove_kb_tag': 'knowledge',
-      'kb_add_tracked_path': 'knowledge',
-      'kb_get_tracked_paths': 'knowledge',
-      'kb_remove_tracked_path': 'knowledge',
-      'kb_add_scanned_files': 'knowledge',
-      'kb_scan_directory': 'knowledge',
-      'kb_check_paths': 'knowledge',
-      'kb_get_templates': 'knowledge',
-      'kb_create_template': 'knowledge',
-      'kb_update_template': 'knowledge',
-      'kb_delete_template': 'knowledge',
-      'kb_get_backlinks': 'knowledge',
-      'kb_get_outgoing_links': 'knowledge',
-      'kb_get_snapshots': 'knowledge',
-      'kb_restore_snapshot': 'knowledge',
+      // 批次2b（S7）：ai 板块全部命令已迁入插件（2b-1 模型/Agent/编排，2b-2 会话面）；
+      // 原 ai 命令的 mock 模块映射随旧封装移除（ipcMock.ts ai 段保留，登记 kb 同口径）。
       'intelligence_v4_kb_classify': 'intelligence',
       'intelligence_v4_log_activity': 'intelligence',
       'intelligence_v4_batch_log_activity': 'intelligence',
@@ -574,17 +524,6 @@ class IPCService {
       'save_personal_info': 'profile',
       'get_personal_info': 'profile',
       'create_temp_account': 'profile',
-      'get_news_sources': 'profile',
-      'add_news_source': 'profile',
-      'delete_news_source': 'profile',
-      'get_system_config': 'system',
-      'set_system_config': 'system',
-      'get_all_system_configs': 'system',
-      'system_open_file': 'system',
-      'system_open_url': 'system',
-      'system_get_app_info': 'system',
-      'extension_get_entry': 'extension',
-      'extension_list_modules': 'extension',
       'yuan_list_files': 'yuanCode',
       'yuan_read_file': 'yuanCode',
       'yuan_write_file': 'yuanCode',
@@ -707,79 +646,8 @@ class IPCService {
       'auth_restore_session': 'restoreSession',
       'auth_get_permissions': 'getPermissions',
       'auth_reset_password': 'resetPassword',
-      'get_todos': 'getTodos',
-      'add_todo': 'createTodo',
-      'toggle_todo': 'updateTodo',
-      'delete_todo': 'deleteTodo',
-      'get_news': 'getNews',
-      'get_news_by_category': 'getNewsByCategory',
-      'fetch_news': 'fetchNews',
-      'add_news': 'addNews',
-      'mark_news_read': 'markNewsRead',
-      'clear_old_news': 'clearOldNews',
-      'get_journal': 'getLogs',
-      'save_journal': 'saveLog',
-      'delete_journal': 'deleteLog',
-      'get_timers': 'getTimers',
-      'create_timer': 'createTimer',
-      'update_timer_state': 'updateTimerState',
-      'delete_timer': 'deleteTimer',
-      'timer_action': 'timerAction',
-      'get_ai_models': 'getModels',
-      'add_ai_model': 'createModel',
-      'update_ai_model': 'updateModel',
-      'delete_ai_model': 'deleteModel',
-      'get_ai_agents': 'getAgents',
-      'add_ai_agent': 'createAgent',
-      'delete_ai_agent': 'deleteAgent',
-      'get_conversations': 'getSessions',
-      'get_messages': 'getMessages',
-      'get_participants': 'getParticipants',
-      'send_message': 'sendMessage',
-      'run_orchestrator': 'startGroupChat',
-      'ai_get_orchestration_status': 'getOrchestrationStatus',
-      'ai_end_group_chat': 'endGroupChat',
-      'get_kb_categories': 'getCategories',
-      'add_kb_category': 'addCategory',
-      'delete_kb_category': 'deleteCategory',
-      'get_kb_entries': 'getItems',
-      'add_kb_entry': 'createItem',
-      'delete_kb_entry': 'deleteItem',
-      'search_kb_entries': 'search',
-      'kb_import_folder': 'importFolder',
-      'kb_import_multi_folders': 'importFolders',
-      'get_kb_category_counts': 'getCategoryCounts',
-      'get_kb_tags': 'getTags',
-      'add_kb_tag': 'addTag',
-      'update_kb_tag': 'updateTag',
-      'delete_kb_tag': 'deleteTag',
-      'get_kb_tag_stats': 'getTagStats',
-      'get_kb_entry_tags': 'getEntryTags',
-      'set_kb_entry_tags': 'setEntryTags',
-      'get_kb_entries_by_tag': 'getEntriesByTag',
-      'toggle_kb_favorite': 'toggleFavorite',
-      'get_kb_favorites': 'getFavorites',
-      'record_kb_access': 'recordAccess',
-      'get_kb_recent': 'getRecent',
-      'batch_delete_kb_entries': 'batchDeleteEntries',
-      'batch_move_kb_entries': 'batchMoveEntries',
-      'batch_add_kb_tag': 'batchAddTag',
-      'batch_remove_kb_tag': 'batchRemoveTag',
-      'kb_add_tracked_path': 'addTrackedPath',
-      'kb_get_tracked_paths': 'getTrackedPaths',
-      'kb_remove_tracked_path': 'removeTrackedPath',
-      'kb_add_scanned_files': 'addScannedFiles',
-      'kb_scan_directory': 'scanDirectory',
-      'kb_check_paths': 'checkPaths',
-      'kb_get_templates': 'getTemplates',
-      'kb_create_template': 'createTemplate',
-      'kb_update_template': 'updateTemplate',
-      'kb_delete_template': 'deleteTemplate',
-      'kb_get_backlinks': 'getBacklinks',
-      'kb_get_outgoing_links': 'getOutgoingLinks',
-      'kb_get_snapshots': 'getSnapshots',
-      'kb_restore_snapshot': 'restoreSnapshot',
-      'intelligence_v4_kb_classify': 'classifyKbEntry',
+      // 批次2b（S7）：同 getMockModule，ai 板块全部命令 mock 方法映射随旧封装移除
+      'intelligence_v4_kb_classify': 'kbClassify',
       'intelligence_v4_kb_summarize': 'kbSummarize',
       'intelligence_v4_kb_tags': 'kbTags',
       'intelligence_v4_log_activity': 'logActivity',
@@ -844,17 +712,6 @@ class IPCService {
       'save_personal_info': 'savePersonalInfo',
       'get_personal_info': 'getPersonalInfo',
       'create_temp_account': 'createTempAccount',
-      'get_news_sources': 'getNewsSources',
-      'add_news_source': 'addNewsSource',
-      'delete_news_source': 'deleteNewsSource',
-      'get_system_config': 'getInfo',
-      'set_system_config': 'setConfig',
-      'get_all_system_configs': 'getAllConfigs',
-      'system_open_file': 'openFile',
-      'system_open_url': 'openUrl',
-      'system_get_app_info': 'getAppInfo',
-      'extension_get_entry': 'getEntry',
-      'extension_list_modules': 'listModules',
       'yuan_list_files': 'listFiles',
       'yuan_read_file': 'readFile',
       'yuan_write_file': 'writeFile',

@@ -1,3 +1,5 @@
+// 离线依赖修复（吸收自 v1 线 819e9d4）：改为**本地打包** monaco-editor + 注册本地 worker，
+// 消除 jsdelivr CDN 依赖 —— 打包生产环境无外网时 CDN 加载失败会导致编辑器整体不可用。
 import { loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';

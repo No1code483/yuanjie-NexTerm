@@ -20,9 +20,9 @@ import { t } from "i18next";
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { invoke } from '@tauri-apps/api/core';
+import { systemtools } from '@/plugins/customs/systemtools';
 import { windowControl, checkIsTauri } from '@/lib/tauri';
-import { useTitleBarStore, type WindowButtonType, type ScreenshotRegion, DEFAULT_SHORTCUTS } from '@/stores/titleBarStore';
+import { useTitleBarStore, type WindowButtonType, type ScreenshotRegion, DEFAULT_SHORTCUTS } from '@/kernel/state/titleBarStore';
 import styles from './TitleBar.module.css';
 
 export function TitleBar() {
@@ -101,7 +101,7 @@ export function TitleBar() {
   const handleTogglePin = useCallback(async () => {
     togglePin();
     try {
-      await invoke('window_set_always_on_top', { alwaysOnTop: useTitleBarStore.getState().isPinned });
+      await systemtools.setWindowAlwaysOnTop(useTitleBarStore.getState().isPinned);
     } catch { /* 非关键功能，静默失败 */ }
   }, [togglePin]);
 
@@ -118,7 +118,7 @@ export function TitleBar() {
   /** C3.2：截图入口 — 调用后端 window_screenshot 命令（后端会 dispatch 'nexterm:screenshot' 事件） */
   const handleScreenshot = useCallback(async () => {
     try {
-      await invoke('window_screenshot');
+      await systemtools.screenshot();
       // 后端会通过 eval 派发 'nexterm:screenshot' 事件，由下方 useEffect 接收
     } catch {
       // 后端命令失败时，直接进入区域选择模式（前端兜底）

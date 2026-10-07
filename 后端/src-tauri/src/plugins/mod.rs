@@ -1,12 +1,16 @@
+// 插件化重构阶段1（B8）：v2 插件目录（boards），与旧 v1 PluginLoader 双轨并存
+// 阶段3 批次1a-1：新增 customs（L3 定制级）目录与 customs.auth 插件
+// 阶段4 D5（2026-09-25）：旧 commands/ + services/ 整树快迁收编为 _legacy
+pub mod _legacy;
+pub mod boards;
+pub mod customs;
 pub mod registry;
 
 use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::error::app_error::AppError;
-use crate::models::plugin::{
-    PluginManifest, PluginRuntime, PluginState,
-};
+use crate::models::plugin::{PluginManifest, PluginRuntime, PluginState};
 
 use self::registry::PluginRegistry;
 
@@ -47,14 +51,12 @@ impl PluginLoader {
                 continue;
             }
 
-            let entries = fs::read_dir(search_path).map_err(|e| {
-                AppError::Internal(format!("无法读取插件目录: {}", e))
-            })?;
+            let entries = fs::read_dir(search_path)
+                .map_err(|e| AppError::Internal(format!("无法读取插件目录: {}", e)))?;
 
             for entry in entries {
-                let entry = entry.map_err(|e| {
-                    AppError::Internal(format!("无法读取插件条目: {}", e))
-                })?;
+                let entry =
+                    entry.map_err(|e| AppError::Internal(format!("无法读取插件条目: {}", e)))?;
 
                 let path = entry.path();
                 if path.is_dir() {
@@ -80,13 +82,11 @@ impl PluginLoader {
             )));
         }
 
-        let manifest_content = fs::read_to_string(&manifest_path).map_err(|e| {
-            AppError::Internal(format!("无法读取 plugin.json: {}", e))
-        })?;
+        let manifest_content = fs::read_to_string(&manifest_path)
+            .map_err(|e| AppError::Internal(format!("无法读取 plugin.json: {}", e)))?;
 
-        let manifest: PluginManifest = serde_json::from_str(&manifest_content).map_err(|e| {
-            AppError::Internal(format!("plugin.json 格式错误: {}", e))
-        })?;
+        let manifest: PluginManifest = serde_json::from_str(&manifest_content)
+            .map_err(|e| AppError::Internal(format!("plugin.json 格式错误: {}", e)))?;
 
         // 验证版本
         self.validate_manifest(&manifest)?;
@@ -124,8 +124,14 @@ impl PluginLoader {
             return Err(AppError::Internal("插件名称过长".into()));
         }
         // 验证名称格式
-        if !manifest.name.chars().all(|c| c.is_alphanumeric() || c == '-' || c == '_') {
-            return Err(AppError::Internal("插件名称只能包含字母、数字、连字符和下划线".into()));
+        if !manifest
+            .name
+            .chars()
+            .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
+        {
+            return Err(AppError::Internal(
+                "插件名称只能包含字母、数字、连字符和下划线".into(),
+            ));
         }
         Ok(())
     }

@@ -61,6 +61,7 @@ pub async fn init_default_permissions(pool: &SqlitePool) -> Result<(), AppError>
         ("admin", "search", true, true, false, true),
         ("admin", "xin", true, true, false, true),
         ("admin", "spyglass", true, true, false, true),
+        ("admin", "sync", true, true, false, true),
 
         // ===== user: 普通永久账号（有限制）=====
         ("user", "home", true, true, false, true),
@@ -80,6 +81,7 @@ pub async fn init_default_permissions(pool: &SqlitePool) -> Result<(), AppError>
         ("user", "search", true, true, false, true),
         ("user", "xin", true, true, false, true),
         ("user", "spyglass", true, true, false, true),
+        ("user", "sync", true, true, false, true),
 
         // ===== guest: 临时账号（只读为主）=====
         ("guest", "home", true, false, false, false),
@@ -99,6 +101,7 @@ pub async fn init_default_permissions(pool: &SqlitePool) -> Result<(), AppError>
         ("guest", "search", true, false, false, false),
         ("guest", "xin", true, false, false, false),
         ("guest", "spyglass", false, false, false, false),
+        ("guest", "sync", false, false, false, false),
     ];
 
     for (role, resource, can_read, can_write, can_delete, can_modify) in defaults {

@@ -387,15 +387,19 @@ pub async fn get_realtime_stats_for_today(
     .flatten();
 
     let todo_total: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM todos WHERE date = date('now')",
+        "SELECT COUNT(*) FROM todos WHERE date = date('now')
+           AND (user_id = ? OR user_id IS NULL)",
     )
+    .bind(user_id)
     .fetch_one(pool)
     .await
     .unwrap_or(0);
 
     let todo_completed: i64 = sqlx::query_scalar(
-        "SELECT COUNT(*) FROM todos WHERE date = date('now') AND completed = 1",
+        "SELECT COUNT(*) FROM todos WHERE date = date('now') AND completed = 1
+           AND (user_id = ? OR user_id IS NULL)",
     )
+    .bind(user_id)
     .fetch_one(pool)
     .await
     .unwrap_or(0);
@@ -480,6 +484,48 @@ mod tests {
         .await
         .unwrap();
         pool
+    }
+
+    /// 跨主体隔离（1b-3 裁定 31-A）：今日待办统计必须收敛在当前主体内，否则
+    /// `todo_ratio` 会把他人的待办计入本用户的 `current_productivity_score`。
+    #[tokio::test]
+    async fn realtime_stats_todo_ratio_is_isolated_across_users() {
+        let pool = setup_test_pool().await;
+        sqlx::query(
+            r#"CREATE TABLE todos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                title TEXT NOT NULL,
+                completed INTEGER DEFAULT 0,
+                date TEXT
+            );"#,
+        )
+        .execute(&pool)
+        .await
+        .unwrap();
+
+        // 用户 1：1 条今日未完成待办 → todo_ratio = 0
+        sqlx::query(
+            "INSERT INTO todos (user_id, title, completed, date) \
+             VALUES (1, 'owner-todo', 0, date('now'))",
+        )
+        .execute(&pool)
+        .await
+        .unwrap();
+
+        // score = focus_ratio*0.4 + todo_ratio*0.35 + kb_regularity*0.25；
+        // 本夹具无 activity_logs → focus_ratio = 0、kb_regularity = 1.0
+        let owner = get_realtime_stats_for_today(&pool, "1").await.unwrap();
+        assert_eq!(
+            owner.current_productivity_score, 25.0,
+            "原主待办未完成 → todo_ratio 为 0（0 + 0 + 0.25 = 25）"
+        );
+
+        let other = get_realtime_stats_for_today(&pool, "2").await.unwrap();
+        assert_eq!(
+            other.current_productivity_score, 60.0,
+            "他人主体无待办时 todo_ratio 必须为 1.0（0 + 0.35 + 0.25 = 60），不得计入原主待办"
+        );
     }
 
     /// T2.11 SQL 注入测试：验证经典注入 payload 被参数化查询正确处理

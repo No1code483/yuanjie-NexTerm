@@ -19,7 +19,7 @@ import { t } from "i18next";
 import React, { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { ROUTES, getRouteTitle, getRouteResource } from './routes';
-import { useAuthStore } from '../stores/authStore';
+import { useAuthStore } from '../kernel/state/authStore';
 import { usePermissions } from '../hooks/usePermissions';
 interface AuthGuardProps {
   children: ReactNode;

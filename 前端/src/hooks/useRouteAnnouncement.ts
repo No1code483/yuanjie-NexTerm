@@ -22,8 +22,9 @@ const ROUTE_NAMES: Record<string, string> = {
   '/terminal': '终端',
   '/xin': '小欣',
   '/game': '游戏',
-  '/profile': '个人中心',
-  '/recycle': '回收站',
+  // 个人中心 / 回收站随层级归位为首页子路由（手稿 20260926）
+  '/home/profile': '个人中心',
+  '/home/recycle': '回收站',
   '/search': '搜索',
   '/spyglass': '底层智能',
 };

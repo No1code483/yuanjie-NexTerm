@@ -2,22 +2,32 @@ import { t } from "i18next";
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import LoginModal from './pages/LoginModal';
-import router from './routes/router';
-import { TimerProvider } from './contexts/TimerContext';
-import { HighContrastProvider, useHighContrast } from './contexts/HighContrastContext';
+import LoginModal from '@/plugins/customs/auth/LoginModal';
+import router, { legacyRoutes } from './routes/router';
+import { TimerProvider } from './plugins/boards/home/features/timer/context';
 import ErrorBoundary from './components/ErrorBoundary';
 import CyberpunkOverlay from './components/CyberpunkOverlay';
 import OfflineBanner from './components/OfflineBanner/OfflineBanner';
 import { SkeletonPage, SkeletonCard, SkeletonText } from './components/ui/Skeleton';
-import { useAuthStore } from './stores/authStore';
-import { auth } from './lib/ipc';
+import { useAuthStore } from './kernel/state/authStore';
+import { auth } from './plugins/customs/auth/ipc/auth';
 import { initPerfMonitor, markStartupBegin, markStartupEnd } from './lib/perfMonitor';
 // T2.1.7: Monaco Editor loader 配置（side-effect import，配置加载路径，Monaco 本身在 <Editor> 挂载时才加载）
 import './lib/monaco';
 import { useFocusManagement } from './hooks/useFocusManagement';
-import { useA11yStore } from './stores/a11yStore';
+import { useA11yStore } from './kernel/state/a11yStore';
 import { initAriaAnnouncer } from './utils/ariaAnnouncer';
+// 插件化重构（v2 并轨后）：插件路由为唯一路径 —— App 启动即经 buildApp 装配插件路由与导航，
+// 静态路由表（routes/router.tsx）仅保留根路径重定向与 404 兜底
+import { createBrowserRouter } from 'react-router-dom';
+import { listen } from '@tauri-apps/api/event';
+import Layout from './layouts/Layout';
+import { buildApp } from './kernel/registry/buildApp';
+// BUG-035：SlotRenderer 的 useRegistry 依赖 RegistryProvider 上下文（缺失时首页
+// 新闻/待办/日志/计时 modal 渲染即抛 'useRegistry 必须在 <RegistryProvider> 内使用' 白屏）
+import { RegistryProvider } from './kernel/registry/context';
+import PluginManagerPage from './kernel/plugin-manager/PluginManagerPage';
+import type { KernelEvent } from './kernel/types';
 
 // 页面懒加载时的骨架屏回退
 const PageLoadingFallback = () => <SkeletonPage>
@@ -65,6 +75,8 @@ markStartupBegin();
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   const initRef = useRef(false);
+  // 插件路由实例（null = 未启用/未就绪 → 回退现有 router）
+  const [pluginRouter, setPluginRouter] = useState<ReturnType<typeof createBrowserRouter> | null>(null);
   // C2.4：useTranslation hook 触发语言切换时的全局重渲染
   // 在根节点订阅 i18n 变化，语言切换时整个组件树重渲染，
   // 子组件使用全局 t() 时会自动返回新语言的值。
@@ -90,6 +102,58 @@ function App() {
     initializeAuth();
   }, []);
 
+  // 插件路由装配：buildApp 装配插件路由（包裹现有 Layout 外壳），失败降级回退现有路由
+  // F6：订阅内核 state-changed → 重跑 buildApp 重建路由/导航（07 契约 §九交互）；
+  //     管理页 route 注入（内核级归属，管理插件的 UI 不得被被管理插件持有）
+  useEffect(() => {
+    let cancelled = false;
+    const rebuild = () => {
+      buildApp()
+        .then(({ router: routes, registry, navTree }) => {
+          if (cancelled) return;
+          const legacyFallback = legacyRoutes.filter((route) => route.path === '*');
+          const nextRouter = createBrowserRouter([{
+            path: '/',
+            // BUG-035：整棵路由树包在 RegistryProvider 内——Home 页 SlotRenderer
+            // （home.news/todo/journal/timer 插槽）经 useRegistry 读取插槽组件；
+            // navTree 同源注入，供 Layout 侧边栏注册表驱动（K3）
+            element: <RegistryProvider registry={registry} navTree={navTree}><Layout /></RegistryProvider>,
+            children: [
+              ...legacyRoutes.filter((route) => route.path !== '*'),
+              ...routes.filter((route) => route.index !== true),
+              // 插件管理页（内核级归属，防管理死锁；手稿 20260926 ②：入口置于全局侧边栏）
+              { path: '/plugin-manager', element: <PluginManagerPage /> },
+              ...legacyFallback,
+            ],
+          }]);
+          const currentLocation = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+          void nextRouter.navigate(currentLocation, { replace: true });
+          setPluginRouter(nextRouter);
+        })
+        .catch((e) => console.warn('[plugin] buildApp 失败，回退现有路由:', e));
+    };
+    rebuild();
+    const unlisten = listen<KernelEvent>('k://event', (ev) => {
+      if (ev.payload.name === 'kernel:plugin.state-changed') rebuild();
+    });
+    return () => {
+      cancelled = true;
+      void unlisten.then((fn) => fn());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const navigateForGate = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.altKey && event.shiftKey && event.key === 'G') {
+        window.history.pushState({}, '', '/hello');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+    };
+    window.addEventListener('keydown', navigateForGate);
+    return () => window.removeEventListener('keydown', navigateForGate);
+  }, []);
+
   // 首屏就绪后标记启动结束（v1.52 性能基线）
   useEffect(() => {
     if (isInitialized) {
@@ -99,7 +163,7 @@ function App() {
   const initializeAuth = async () => {
     try {
       console.log('[App] 🚀 开始初始化认证...');
-      // BUG-023 修复：等待 zustand persist 异步水合完成后再判断 token。
+      // BUG-023 修复（吸收自 v1 线 f5e6179）：等待 zustand persist 异步水合完成后再判断 token。
       // token 经 tauriStorage 异步恢复，useEffect 立即执行时往往尚未水合，
       // 旧逻辑会误判「未找到 token」提前显示登录页（dev 热重载随机弹回的根因），
       // 同时导致 restoreSession 从未真正执行。
@@ -118,7 +182,7 @@ function App() {
         return;
       }
       console.log('[App] 📡 发现已保存的 token，尝试恢复会话...');
-      const result = await (auth as any).restoreSession(token);
+      const result = await auth.restoreSession(token);
       if (result.code === 0 && result.data) {
         console.log('[App] ✅ 会话恢复成功');
         storeLogin(result.data.user, result.data.token);
@@ -178,7 +242,7 @@ function App() {
         {t("app.k4")}
       </button>
     </div>;
-  return <HighContrastProvider>
+  return <>
     <ErrorBoundary fallback={renderErrorFallback()}>
       {/* C4 §2.3.3 跳过导航链接：键盘用户可跳过 Layout 顶部导航直接进入主内容（#main-content 在 Layout 内） */}
       <a href="#main-content" className="skip-link">{t('common.skipToMain')}</a>
@@ -190,18 +254,16 @@ function App() {
           <CyberpunkOverlay enabled={isAuthenticated} intensity={0.03} />
           {!isInitialized ? <LoadingScreen /> : !isAuthenticated ? <LoginModal onLogin={handleLogin} /> : <TimerProvider>
               <Suspense fallback={<PageLoadingFallback />}>
-                <RouterProvider router={router} />
+                <RouterProvider router={pluginRouter ?? router} />
               </Suspense>
             </TimerProvider>}
         </div>
       </div>
     </ErrorBoundary>
-    </HighContrastProvider>;
+    </>;
 }
 function HighContrastKeyboardShortcut() {
-  const {
-    toggleHighContrast
-  } = useHighContrast();
+  const { toggleHighContrast } = useA11yStore();
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'H') {

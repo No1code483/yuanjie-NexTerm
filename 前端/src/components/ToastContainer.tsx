@@ -1,4 +1,4 @@
-import { useNotifStore } from '@/stores/notifStore'
+import { useNotifStore } from '@/kernel/state/notifStore'
 import styles from './ToastContainer.module.css'
 
 const TYPE_ICONS: Record<string, string> = {

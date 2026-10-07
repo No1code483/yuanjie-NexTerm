@@ -12,6 +12,23 @@ export default defineConfig({
     port: 3001,
     strictPort: true
   },
+  // 预优化动态导入的重依赖，避免首次路由跳转时 Vite on-demand 优化卡顿
+  optimizeDeps: {
+    include: [
+      '@xterm/xterm',
+      '@xterm/addon-fit',
+      '@xterm/addon-search',
+      '@react-three/fiber',
+      '@react-three/drei',
+      'three',
+      'mammoth',
+      'pdfjs-dist',
+      'pdf-lib',
+      '@handsontable/react',
+      'handsontable',
+      'wavesurfer.js',
+    ],
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,

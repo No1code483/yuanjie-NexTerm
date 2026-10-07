@@ -1,5 +1,4 @@
 pub mod agent;
-pub mod commands;
 pub mod compact;
 pub mod crypto;
 pub mod db;
@@ -16,7 +15,6 @@ pub mod plugins;
 pub mod prompts;
 pub mod safety;
 pub mod sandbox;
-pub mod services;
 pub mod skills;
 pub mod theme;
 pub mod tools;

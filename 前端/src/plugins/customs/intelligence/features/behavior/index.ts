@@ -1,0 +1,16 @@
+// intelligence.behavior L2 前端半体（底层智能「一切皆插件」拆分；manifest 与后端 manifest.rs 同源）。
+// 承载行为分析面板（BehaviorPanel），组件物理迁入本插件目录；
+// 贡献 /spyglass 板块内菜单选项（注册表驱动侧边栏）。
+import { definePlugin } from '@/kernel/registry/definePlugin';
+import { manifest } from './manifest';
+
+export default definePlugin({
+  manifest,
+  contributions: {
+    routes: [],
+    navItems: [
+      { target: 'intelligence.behavior', labelKey: 'components.intelligence.ActivityPanel.k18', order: 30, routePath: '?tab=behavior' },
+    ],
+    slotComponents: [],
+  },
+});

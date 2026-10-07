@@ -24,6 +24,7 @@
     "fs:allow-write-file",
     "fs:allow-temp-write-recursive",
     "notification:default",
-    "store:default"
+    "store:default",
+    "kernel:default"
   ]
 }

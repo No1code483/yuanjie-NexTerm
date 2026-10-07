@@ -39,6 +39,10 @@ const MAX_QUEUE_SIZE = 20
 let reportQueue: PerfMetricRecord[] = []
 let flushTimer: ReturnType<typeof setTimeout> | null = null
 let ipcInvoke: ((command: string, args?: any) => Promise<any>) | null = null
+// BUG-036：record_perf_metric 属阶段3 裁定 T1—T6 冻结项（perf→阶段4 systemtools），
+// 后端当前未登记该命令 → 命令不存在错误每 5s 刷屏（错误日志打在 lib/ipc/core.ts
+// 封装层，perfMonitor 自身的 catch 拦不住）。首次上报失败即禁用通道，阶段4 接回后自动恢复。
+let reportDisabled = false
 
 /**
  * 懒加载 IPC invoke，避免循环依赖
@@ -60,6 +64,7 @@ async function getInvoke(): Promise<typeof ipcInvoke> {
  * 立即刷新队列，把积压的指标全部上报到后端
  */
 async function flush(): Promise<void> {
+  if (reportDisabled) return
   if (flushTimer) {
     clearTimeout(flushTimer)
     flushTimer = null
@@ -71,14 +76,12 @@ async function flush(): Promise<void> {
   if (!invoke) return
 
   // 逐条上报（后端命令设计为单条 INSERT，避免事务复杂度）
-  // 失败静默：性能监控不能阻塞业务
-  await Promise.all(
-    batch.map((r) =>
-      invoke('record_perf_metric', r).catch(() => {
-        /* 静默丢弃 */
-      })
-    )
-  )
+  // 失败静默：性能监控不能阻塞业务；命令整体不可用（not found）时禁用通道（BUG-036）
+  try {
+    await Promise.all(batch.map((r) => invoke('record_perf_metric', r)))
+  } catch {
+    reportDisabled = true
+  }
 }
 
 /**
@@ -114,6 +117,9 @@ export function recordMetric(
     // console.debug('[perfMonitor] 非 Tauri 环境，丢弃指标:', metricName)
     return
   }
+
+  // 上报通道已禁用（后端命令未就绪，BUG-036）→ 静默丢弃
+  if (reportDisabled) return
 
   const record: PerfMetricRecord = {
     metricName: metricName,

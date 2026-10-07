@@ -28,7 +28,7 @@ use crate::agent::types::{
 };
 use crate::crypto::mek_manager::MekManager;
 use crate::error::app_error::AppError;
-use crate::services::cloud_api_router::CloudApiRouter;
+use crate::plugins::_legacy::services::cloud_api_router::CloudApiRouter;
 
 /// Agent 执行上下文 — 共享的依赖注入
 pub struct AgentContext {
@@ -218,7 +218,7 @@ impl AgentLifecycle for BaseAgent {
     ) -> Result<AgentPlan, AppError> {
         // 用一个临时 AgentContext（不依赖 ModelSelector UI 时使用默认 provider/model）
         let router = Arc::new(CloudApiRouter::new(Arc::new(
-            crate::services::ai_model_service::AiModelService::new(),
+            crate::plugins::_legacy::services::ai_model_service::AiModelService::new(),
         )));
         let ctx = AgentContext {
             pool: Arc::new(pool.clone()),
@@ -240,7 +240,7 @@ impl AgentLifecycle for BaseAgent {
         user_id: i64,
     ) -> Result<AgentResult, AppError> {
         let router = Arc::new(CloudApiRouter::new(Arc::new(
-            crate::services::ai_model_service::AiModelService::new(),
+            crate::plugins::_legacy::services::ai_model_service::AiModelService::new(),
         )));
         let ctx = AgentContext {
             pool: Arc::new(pool.clone()),

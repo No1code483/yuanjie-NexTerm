@@ -1,0 +1,72 @@
+@import '../../../../../styles/theme.css';
+
+.recycleActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recycleActionPrimary,
+.recycleActionDanger,
+.recycleActionSecondary {
+  padding: var(--nt-space-2) 12px;
+  font-family: var(--nt-font-mono);
+  font-size: 12px;
+  text-align: left;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.3px;
+}
+
+.recycleActionPrimary {
+  border: 1.5px solid rgba(0, 240, 255, 0.4);
+  background: rgba(0, 240, 255, 0.04);
+  color: var(--theme-text-primary);
+}
+
+.recycleActionPrimary:hover:not(:disabled) {
+  background: rgba(0, 240, 255, 0.12);
+  border-color: var(--theme-accent);
+  color: var(--theme-accent);
+  box-shadow:
+    0 0 10px rgba(0, 240, 255, 0.5),
+    0 0 20px rgba(0, 240, 255, 0.2);
+  transform: translateX(3px);
+}
+
+.recycleActionDanger {
+  border: 1.5px solid rgba(255, 0, 110, 0.4);
+  background: rgba(255, 0, 110, 0.04);
+  color: var(--theme-error);
+}
+
+.recycleActionDanger:hover:not(:disabled) {
+  background: rgba(255, 0, 110, 0.12);
+  border-color: var(--theme-error);
+  color: var(--theme-error);
+  box-shadow:
+    0 0 10px rgba(255, 0, 110, 0.5),
+    0 0 20px rgba(255, 0, 110, 0.2);
+  transform: translateX(3px);
+}
+
+.recycleActionSecondary {
+  border: 1px solid rgba(168, 216, 232, 0.25);
+  background: transparent;
+  color: var(--theme-text-secondary);
+}
+
+.recycleActionSecondary:hover:not(:disabled) {
+  border-color: rgba(0, 240, 255, 0.45);
+  color: var(--theme-text-primary);
+  background: rgba(0, 240, 255, 0.05);
+  transform: translateX(3px);
+}
+
+.recycleActionPrimary:disabled,
+.recycleActionDanger:disabled,
+.recycleActionSecondary:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}

@@ -168,6 +168,11 @@
     "k4": "🔄 Refresh页面"
   },
   "components": {
+    "Sync": {
+      "k1": "المزامنة",
+      "k2": "إدارة الأجهزة",
+      "k3": "حل التعارضات"
+    },
     "AddExtensionModal": {
       "k1": "请填写必填字段（ID、Name、Description）",
       "k2": "Add扩展Failed",
@@ -2530,6 +2535,16 @@
     "k13": "Sort by frequency descending"
   },
   "knowledge": {
+    "features": {
+      "browse": "تصفح الإدخالات",
+      "search": "بحث",
+      "tags": "الوسوم",
+      "media": "عارض الوسائط",
+      "editors": "المحررات",
+      "import": "استيراد",
+      "history": "اللقطات والروابط العكسية",
+      "ai": "مساعد الذكاء الاصطناعي"
+    },
     "ContextMenu": {
       "k1": "✏️ Rename",
       "k2": "📂 Move to...",
@@ -4612,15 +4627,13 @@
       "k7": "Game & entertainment features",
       "k8": "File回收管理",
       "k9": "全站Search引擎与内置浏览器",
-      "k10": "Global intelligence perception engine"
+      "k10": "Global intelligence perception engine",
+      "k11": "مزامنة الأجهزة المتعددة وحل التعارضات"
     }
   },
   "stores": {
     "chatStore": {
       "k1": "这Yes来自Model的模拟Reply。您发送了: \"{{content}}\""
-    },
-    "kbStore": {
-      "k1": "Website"
     },
     "terminalStore": {
       "k1": "内置Terminal",

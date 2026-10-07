@@ -2687,22 +2687,15 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
     alter_add_user_id(pool, "news_cache", "idx_news_cache_user_id").await?;
     alter_add_user_id(pool, "mcp_servers", "idx_mcp_servers_user_id").await?;
 
-    // === 3 张有 UNIQUE 约束的表：在同一连接的事务中重建 ===
-    // 修复：原先逐条 .execute(pool) 会经 20 连接池分派到不同连接，
-    // WAL 模式下各连接 schema 快照不一致，导致 "there is already another table
-    // or index with this name" 崩溃。必须绑定单连接事务执行整个重建序列。
-    let mut tx = pool.begin().await.map_err(AppError::Database)?;
+    // === 3 张有 UNIQUE 约束的表：重建表 ===
 
     // --- news_sources: UNIQUE(url) → UNIQUE(user_id, url) ---
-    let columns = sqlx::query("PRAGMA table_info(news_sources);")
-        .fetch_all(&mut *tx)
-        .await
-        .map_err(AppError::Database)?;
-    if !columns.iter().any(|r| r.get::<String, _>("name") == "user_id") {
+    if !has_user_id(pool, "news_sources").await? {
+        let mut tx = pool.begin().await?;
+        // 防御性清理：上次失败迁移可能残留 *_new 表
         sqlx::query("DROP TABLE IF EXISTS news_sources_new;")
             .execute(&mut *tx)
-            .await
-            .map_err(AppError::Database)?;
+            .await?;
         sqlx::query(
             "CREATE TABLE news_sources_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2736,19 +2729,17 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
             .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
+        tx.commit().await?;
         tracing::info!("📰 [批次6] news_sources 表已重建（UNIQUE(url) → UNIQUE(user_id, url)）");
     }
 
     // --- custom_themes: UNIQUE(name) → UNIQUE(user_id, name) ---
-    let columns = sqlx::query("PRAGMA table_info(custom_themes);")
-        .fetch_all(&mut *tx)
-        .await
-        .map_err(AppError::Database)?;
-    if !columns.iter().any(|r| r.get::<String, _>("name") == "user_id") {
+    if !has_user_id(pool, "custom_themes").await? {
+        let mut tx = pool.begin().await?;
+        // 防御性清理：上次失败迁移可能残留 *_new 表
         sqlx::query("DROP TABLE IF EXISTS custom_themes_new;")
             .execute(&mut *tx)
-            .await
-            .map_err(AppError::Database)?;
+            .await?;
         sqlx::query(
             "CREATE TABLE custom_themes_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2783,19 +2774,17 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
             .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
+        tx.commit().await?;
         tracing::info!("🎨 [批次6] custom_themes 表已重建（UNIQUE(name) → UNIQUE(user_id, name)）");
     }
 
     // --- model_routing_rules: UNIQUE(task_type) → UNIQUE(user_id, task_type) ---
-    let columns = sqlx::query("PRAGMA table_info(model_routing_rules);")
-        .fetch_all(&mut *tx)
-        .await
-        .map_err(AppError::Database)?;
-    if !columns.iter().any(|r| r.get::<String, _>("name") == "user_id") {
+    if !has_user_id(pool, "model_routing_rules").await? {
+        let mut tx = pool.begin().await?;
+        // 防御性清理：上次失败迁移可能残留 *_new 表
         sqlx::query("DROP TABLE IF EXISTS model_routing_rules_new;")
             .execute(&mut *tx)
-            .await
-            .map_err(AppError::Database)?;
+            .await?;
         sqlx::query(
             "CREATE TABLE model_routing_rules_new (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2837,10 +2826,10 @@ async fn add_user_id_to_remaining_tables(pool: &SqlitePool) -> Result<(), AppErr
             .execute(&mut *tx)
             .await
             .map_err(AppError::Database)?;
+        tx.commit().await?;
         tracing::info!("🛣️ [批次6] model_routing_rules 表已重建（UNIQUE(task_type) → UNIQUE(user_id, task_type)）");
     }
 
-    tx.commit().await.map_err(AppError::Database)?;
     Ok(())
 }
 
@@ -2924,9 +2913,8 @@ async fn add_user_id_to_terminal_history_tab_layout(pool: &SqlitePool) -> Result
 async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppError> {
     use sqlx::Row;
 
-    // 整个批次5（journals 重建 + timers ALTER）绑定单连接事务执行，
-    // 避免连接池多连接分派导致的 schema 快照不一致（同 v121 修复原因）。
-    let mut tx = pool.begin().await.map_err(AppError::Database)?;
+    // 表重建必须固定在同一连接，避免多连接池中的 SQLite schema 缓存不一致。
+    let mut tx = pool.begin().await?;
 
     // === journals 表：重建以改 UNIQUE(date) → UNIQUE(user_id, date) ===
     let journal_cols = sqlx::query("PRAGMA table_info(journals);")
@@ -2938,7 +2926,7 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         .map(|r| r.get::<String, _>("name"))
         .collect();
     if !journal_names.contains(&"user_id".to_string()) {
-        // 1. 创建新表（user_id + UNIQUE(user_id, date)）；先防御性清理残留
+        // 1. 创建新表（user_id + UNIQUE(user_id, date)）；先防御性清理上次失败迁移的残留
         sqlx::query("DROP TABLE IF EXISTS journals_new;")
             .execute(&mut *tx)
             .await
@@ -3007,7 +2995,7 @@ async fn add_user_id_to_journals_timers(pool: &SqlitePool) -> Result<(), AppErro
         tracing::info!("⏱️ [批次5] timers 表已添加 user_id 字段");
     }
 
-    tx.commit().await.map_err(AppError::Database)?;
+    tx.commit().await?;
     Ok(())
 }
 

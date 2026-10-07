@@ -8,7 +8,7 @@ import { t } from "i18next";
  * - 功能关闭时显示灰态提示
  */
 
-import styles from './Intelligence.module.css';
+import styles from '@/plugins/customs/intelligence/Intelligence.module.css';
 interface Props {
   type: 'disabled' | 'no_llm' | 'error';
   message?: string;

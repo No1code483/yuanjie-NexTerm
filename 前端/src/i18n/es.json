@@ -168,6 +168,11 @@
     "k4": "🔄 Refresh页面"
   },
   "components": {
+    "Sync": {
+      "k1": "Sincronización",
+      "k2": "Gestión de dispositivos",
+      "k3": "Resolución de conflictos"
+    },
     "AddExtensionModal": {
       "k1": "请填写必填字段（ID、Name、Description）",
       "k2": "Add扩展Failed",
@@ -2530,6 +2535,16 @@
     "k13": "Sort by frequency descending"
   },
   "knowledge": {
+    "features": {
+      "browse": "Explorar entradas",
+      "search": "Búsqueda",
+      "tags": "Etiquetas",
+      "media": "Visor multimedia",
+      "editors": "Editores",
+      "import": "Importar",
+      "history": "Instantáneas y enlaces inversos",
+      "ai": "Asistente IA"
+    },
     "ContextMenu": {
       "k1": "✏️ Rename",
       "k2": "📂 Move to...",
@@ -4612,15 +4627,13 @@
       "k7": "Game & entertainment features",
       "k8": "File回收管理",
       "k9": "全站Search引擎与内置浏览器",
-      "k10": "Global intelligence perception engine"
+      "k10": "Global intelligence perception engine",
+      "k11": "Sincronización multidispositivo y resolución de conflictos"
     }
   },
   "stores": {
     "chatStore": {
       "k1": "这Yes来自Model的模拟Reply。您发送了: \"{{content}}\""
-    },
-    "kbStore": {
-      "k1": "Website"
     },
     "terminalStore": {
       "k1": "内置Terminal",

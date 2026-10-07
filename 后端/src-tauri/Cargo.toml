@@ -1,6 +1,11 @@
+[workspace]
+# 插件化重构阶段1（06_Rust代码契约 §一）：src-tauri 既是 workspace 根又是主 crate，
+# 根 package 自动为 workspace 成员，此处只需显式列出新增 crate。
+members = ["crates/kernel-api", "crates/kernel"]
+
 [package]
 name = "nexterm"
-version = "1.0.5"
+version = "2.0.0"
 description = "NexTerm·元界 后端服务"
 authors = ["NexTerm Team"]
 edition = "2021"
@@ -12,6 +17,8 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
+# 生产打包必需：直接 cargo build --release 时启用 tauri 的 custom-protocol
+# （以 tauri.localhost 生产源加载前端资源，而非回退到 devServer localhost:3001）
 [features]
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
@@ -24,6 +31,9 @@ tauri-plugin-clipboard-manager = "2"
 tauri-plugin-fs = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-store = "2"
+# 插件化重构阶段1（B8）：内核骨架 + 接口层（06_Rust代码契约 §一）
+kernel = { path = "./crates/kernel" }
+kernel-api = { path = "./crates/kernel-api" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 meval = "0.2"

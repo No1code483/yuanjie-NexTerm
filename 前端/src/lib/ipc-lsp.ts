@@ -1,5 +1,7 @@
 // LSP IPC 封装 — 前端调用后端 LSP 命令
-import { ipc } from './ipc'
+// 阶段3 批次3c：lsp 域 5 条命令已迁 terminal.yuancode 插件（yc 命名空间），
+// 本封装仅将传输目标切至插件 client，函数签名（下游消费方）不变。
+import { yc } from '@/plugins/boards/terminal/features/yuancode/ipc'
 
 /** 诊断信息 */
 export interface LspDiagnostic {
@@ -49,7 +51,7 @@ export async function getDiagnostics(
   workspaceRoot: string,
 ): Promise<LspDiagnostic[]> {
   try {
-    const res = await ipc.invoke<LspDiagnostic[]>('lsp_diagnostics', {
+    const res = await yc.lspDiagnostics<LspDiagnostic[]>({
       filePath,
       workspaceRoot,
     })
@@ -69,7 +71,7 @@ export async function getCompletions(
   workspaceRoot: string,
 ): Promise<LspCompletionItem[]> {
   try {
-    const res = await ipc.invoke<LspCompletionItem[]>('lsp_completions', {
+    const res = await yc.lspCompletions<LspCompletionItem[]>({
       filePath,
       line,
       character,
@@ -91,7 +93,7 @@ export async function getHover(
   workspaceRoot: string,
 ): Promise<LspHoverResult | null> {
   try {
-    const res = await ipc.invoke<LspHoverResult | null>('lsp_hover', {
+    const res = await yc.lspHover<LspHoverResult | null>({
       filePath,
       line,
       character,
@@ -113,7 +115,7 @@ export async function getDefinition(
   workspaceRoot: string,
 ): Promise<LspLocation[]> {
   try {
-    const res = await ipc.invoke<LspLocation[]>('lsp_definition', {
+    const res = await yc.lspDefinition<LspLocation[]>({
       filePath,
       line,
       character,
@@ -130,7 +132,7 @@ export async function getDefinition(
  */
 export async function detectLanguage(filePath: string): Promise<string | null> {
   try {
-    const res = await ipc.invoke<string | null>('lsp_detect_language', {
+    const res = await yc.lspDetectLanguage<string | null>({
       filePath,
     })
     return res.code === 0 && res.data !== undefined ? res.data : null

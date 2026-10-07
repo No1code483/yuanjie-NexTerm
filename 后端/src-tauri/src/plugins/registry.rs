@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 
 use crate::error::app_error::AppError;
-use crate::models::plugin::{
-    PluginHookEvent, PluginRuntime, PluginState,
-};
+use crate::models::plugin::{PluginHookEvent, PluginRuntime, PluginState};
 
 /// 插件注册中心
 pub struct PluginRegistry {
@@ -77,10 +75,7 @@ impl PluginRegistry {
 
     /// 启用插件
     pub fn enable(&mut self, name: &str) -> Result<PluginState, AppError> {
-        let plugin = self
-            .plugins
-            .get_mut(name)
-            .ok_or(AppError::NotFound)?;
+        let plugin = self.plugins.get_mut(name).ok_or(AppError::NotFound)?;
 
         plugin.state = PluginState::Enabled;
         Ok(PluginState::Enabled)
@@ -88,10 +83,7 @@ impl PluginRegistry {
 
     /// 禁用插件
     pub fn disable(&mut self, name: &str) -> Result<PluginState, AppError> {
-        let plugin = self
-            .plugins
-            .get_mut(name)
-            .ok_or(AppError::NotFound)?;
+        let plugin = self.plugins.get_mut(name).ok_or(AppError::NotFound)?;
 
         plugin.state = PluginState::Disabled;
         Ok(PluginState::Disabled)
@@ -106,12 +98,7 @@ impl PluginRegistry {
     pub fn get_hooks(&self, event: &PluginHookEvent) -> Vec<&PluginRuntime> {
         self.hook_index
             .get(event)
-            .map(|names: &Vec<String>| {
-                names
-                    .iter()
-                    .filter_map(|n| self.plugins.get(n))
-                    .collect()
-            })
+            .map(|names: &Vec<String>| names.iter().filter_map(|n| self.plugins.get(n)).collect())
             .unwrap_or_default()
     }
 
@@ -122,10 +109,7 @@ impl PluginRegistry {
 
     /// 重新加载插件
     pub fn reload(&mut self, name: &str) -> Result<PluginState, AppError> {
-        let plugin = self
-            .plugins
-            .get_mut(name)
-            .ok_or(AppError::NotFound)?;
+        let plugin = self.plugins.get_mut(name).ok_or(AppError::NotFound)?;
 
         plugin.state = PluginState::Loading;
         // 实际重新加载逻辑由 loader 处理
@@ -155,9 +139,7 @@ impl Default for PluginRegistry {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::plugin::{
-        PluginCategory, PluginHook, PluginManifest,
-    };
+    use crate::models::plugin::{PluginCategory, PluginHook, PluginManifest};
 
     fn make_plugin(name: &str) -> PluginRuntime {
         PluginRuntime {

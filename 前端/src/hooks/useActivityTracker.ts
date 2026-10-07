@@ -2,12 +2,13 @@ import { t } from "i18next";
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { intelligence } from '@/lib/ipc';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/kernel/state/authStore';
 
 /** 路径 → 模块名映射 */
 const ROUTE_MODULE_MAP: Record<string, string> = {
   '/home': t("components.intelligence.DashboardPanel.k106"),
-  '/profile': t("components.intelligence.DashboardPanel.k105"),
+  // 个人中心 / 回收站随层级归位为首页子路由（手稿 20260926）
+  '/home/profile': t("components.intelligence.DashboardPanel.k105"),
   '/ai': t("components.PermissionRestricted.k2"),
   '/knowledge': t("components.intelligence.ActivityPanel.k1"),
   '/terminal': t("components.intelligence.ActivityPanel.k8"),
@@ -15,7 +16,7 @@ const ROUTE_MODULE_MAP: Record<string, string> = {
   '/game': t("components.AddExtensionModal.k11"),
   '/search': t("common.search"),
   '/spyglass': t("components.intelligence.DashboardPanel.k103"),
-  '/recycle': t("components.PermissionRestricted.k4")
+  '/home/recycle': t("components.PermissionRestricted.k4")
 };
 function resolveModule(pathname: string): string {
   if (ROUTE_MODULE_MAP[pathname]) return ROUTE_MODULE_MAP[pathname];

@@ -257,7 +257,8 @@ function generatePermissionMessage(resource: ResourceName, action: PermissionAct
     terminal_linux: 'Linux',
     search: t("common.search"),
     xin: t("components.FloatingXin.k26"),
-    spyglass: t("components.intelligence.DashboardPanel.k103")
+    spyglass: t("components.intelligence.DashboardPanel.k103"),
+    sync: t("components.Sync.k1")
   };
 
   // 操作类型映射（中文显示名称）

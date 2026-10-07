@@ -1,0 +1,23 @@
+[package]
+name = "kernel"
+version = "0.1.0"
+edition = "2021"
+# Tauri 2 插件 ACL 必需：links 名须与包名一致且无下划线（tauri_plugin::Builder 校验）
+links = "kernel"
+
+[build-dependencies]
+tauri-plugin = { version = "2", features = ["build"] }
+
+[dependencies]
+kernel-api = { path = "../kernel-api" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+async-trait = "0.1"
+thiserror = "1"
+tokio = { version = "1", features = ["sync", "macros", "rt-multi-thread"] }
+sqlx = { version = "0.8", features = ["sqlite", "runtime-tokio", "chrono"] }
+chrono = { version = "0.4", features = ["serde"] }
+tauri = "2"
+
+[dev-dependencies]
+tempfile = "3"

@@ -20,7 +20,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { t } from 'i18next';
-import { useThemeStore } from '../../stores/themeStore';
+import { useThemeStore } from '../../kernel/state/themeStore';
 import { ColorPicker } from '../ColorPicker/ColorPicker';
 import { ThemePreviewPanel } from './ThemePreviewPanel';
 import {

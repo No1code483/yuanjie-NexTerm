@@ -17,7 +17,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { t } from 'i18next';
-import { useThemeStore } from '../../stores/themeStore';
+import { useThemeStore } from '../../kernel/state/themeStore';
 import {
   BUILTIN_FONTS,
   FONT_FORMAT_MAP,

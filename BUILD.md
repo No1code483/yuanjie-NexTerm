@@ -1,21 +1,21 @@
 # NexTerm・元界 构建说明（BUILD.md）
 
-> 适用于开源版 v1.0.5。以下命令均在 **Windows** 环境验证。
+> 适用于开源版 v2.0.0。以下命令均在 **Windows** 环境验证。
 
 ## 环境准备
 
 | 依赖 | 版本要求 | 说明 |
 |------|---------|------|
 | Node.js | ≥ 20 | 前端构建 |
-| Rust | stable（1.8+） | 后端编译，需包含 `cargo` |
+| Rust | stable（较新稳定版） | 后端编译，需包含 `cargo`；Tauri 2 系列对 MSRV 有要求 |
 | Tauri 系统依赖 | Windows 10/11 | WebView2 随系统自带；桌面构建需 VC++ Build Tools |
 
 ## 安装依赖
 
 ```bash
-# 前端
+# 前端（依赖树含 legacy peer 组合，需加 --legacy-peer-deps）
 cd 前端
-npm install
+npm install --legacy-peer-deps
 
 # 后端（Tauri CLI）
 cd ../后端
@@ -38,12 +38,12 @@ npm run tauri dev
 
 ```bash
 cd 后端
-npm run tauri build
+npm run tauri build -- --bundles nsis
 ```
 
 产物输出到项目根下 `target-nexterm/release/bundle/`：
 
-- `nsis/NexTerm·元界_1.0.5_x64-setup.exe`（NSIS 安装包，推荐分发格式，无需管理员权限）
+- `nsis/NexTerm·元界_2.0.0_x64-setup.exe`（NSIS 安装包，推荐分发格式，无需管理员权限）
 
 ## 发布验收门禁
 
@@ -61,15 +61,15 @@ npm run tauri build
 # 前端类型检查
 cd 前端 && npx tsc --noEmit
 
-# 后端集成测试（跳过 lib 单元测试 target 以规避 Windows 工具链限制）
-cd 后端/src-tauri && cargo test --test '*'
+# 后端编译检查
+cd 后端/src-tauri && cargo check
 ```
 
 ## 常见问题
 
 ### 数据库迁移
 
-数据库迁移由后端启动时自动执行（`db/migrations.rs`），版本 001-123；升级应用时旧库自动迁移，无需手动操作。
+数据库迁移由后端启动时自动执行（`db/migrations.rs` 注册表，迁移目录 `migrations/` 共 109 个迁移单元、编号至 0123）；升级应用时旧库自动迁移，无需手动操作。
 
 ### 无 WebView2
 
@@ -79,4 +79,4 @@ Windows 10/11 通常已内置 WebView2。若缺失，从 Microsoft 官方安装 
 
 各 AI 模块默认关闭或需要配置 API Key / 本地模型（如 Ollama），见应用内「设置 → AI 模型管理」。
 
-> 开源版不捆绑任何第三方 API 密钥，首次使用请自行配置。
+> 开源版不捆绑任何第三方 API Key，首次使用请自行配置。

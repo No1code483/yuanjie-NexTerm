@@ -9,7 +9,8 @@ export const ROUTES = {
   // 主路由
   ROOT: '/',
   HOME: '/home',
-  PROFILE: '/profile',
+  // 个人中心（手稿 20260926：归位为首页必备子插件，路由随层级 → /home/profile）
+  PROFILE: '/home/profile',
   AI: '/ai',
   KNOWLEDGE: '/knowledge',
   TERMINAL: '/terminal',
@@ -17,9 +18,11 @@ export const ROUTES = {
   GAME: '/game',
   GAME_PLAY: '/game/play',
   GAME_PLAY_MAPPING: '/game/play/mapping',
-  RECYCLE: '/recycle',
+  // 回收站（手稿 20260926：归位为首页必备子插件，路由随层级 → /home/recycle）
+  RECYCLE: '/home/recycle',
   SEARCH: '/search',
   SPYGLASS: '/spyglass',
+  SYNC: '/sync',
   // 首页子路由
   HOME_NEWS: '/home/news',
   HOME_TODO: '/home/todo',
@@ -28,11 +31,11 @@ export const ROUTES = {
   HOME_TIMER_SHORT: '/home/timer/short',
   HOME_TIMER_LONG: '/home/timer/long',
   // 个人中心子路由
-  PROFILE_ACCOUNT: '/profile/account',
-  PROFILE_RESUME: '/profile/resume',
-  PROFILE_SETTING: '/profile/setting',
-  PROFILE_LOGOUT: '/profile/logout',
-  PROFILE_QUOTE: '/profile/quote',
+  PROFILE_ACCOUNT: '/home/profile/account',
+  PROFILE_RESUME: '/home/profile/resume',
+  PROFILE_SETTING: '/home/profile/setting',
+  PROFILE_LOGOUT: '/home/profile/logout',
+  PROFILE_QUOTE: '/home/profile/quote',
   // AI会话子路由
   AI_MODEL: '/ai/model',
   AI_CHAT: '/ai/chat/:id',
@@ -49,7 +52,7 @@ export const ROUTES = {
 } as const;
 
 // 只为主路由定义元数据，子路由使用父路由的元数据
-export type MainRoutePath = typeof ROUTES.ROOT | typeof ROUTES.HOME | typeof ROUTES.PROFILE | typeof ROUTES.AI | typeof ROUTES.KNOWLEDGE | typeof ROUTES.TERMINAL | typeof ROUTES.XIN | typeof ROUTES.GAME | typeof ROUTES.RECYCLE | typeof ROUTES.SEARCH | typeof ROUTES.SPYGLASS;
+export type MainRoutePath = typeof ROUTES.ROOT | typeof ROUTES.HOME | typeof ROUTES.PROFILE | typeof ROUTES.AI | typeof ROUTES.KNOWLEDGE | typeof ROUTES.TERMINAL | typeof ROUTES.XIN | typeof ROUTES.GAME | typeof ROUTES.RECYCLE | typeof ROUTES.SEARCH | typeof ROUTES.SPYGLASS | typeof ROUTES.SYNC;
 export type RoutePath = typeof ROUTES[keyof typeof ROUTES];
 
 /**
@@ -130,6 +133,12 @@ export const ROUTE_META: Record<MainRoutePath, RouteMeta> = {
     description: t("routes.routes.k10"),
     requiresAuth: true,
     allowedForTemp: false
+  },
+  [ROUTES.SYNC]: {
+    title: t("components.Sync.k1"),
+    description: t("routes.routes.k11"),
+    requiresAuth: true,
+    allowedForTemp: false
   }
 };
 
@@ -176,6 +185,8 @@ export const ROUTE_TO_RESOURCE: Record<string, ResourceName> = {
   // 搜索
   [ROUTES.SPYGLASS]: 'spyglass',
   // 底层智能
+  [ROUTES.SYNC]: 'sync',
+  // 同步（设备管理 / 冲突解决）
 
   // ===== 首页子路由 (6个) =====
   [ROUTES.HOME_NEWS]: 'home_news',

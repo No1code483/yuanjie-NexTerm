@@ -1,7 +1,7 @@
 //! 路径安全工具
 //!
 //! 提供 `canonicalize` + `starts_with` 校验，防止路径遍历攻击。
-//! 配合 `crate::commands::common::require_auth` 使用，构成文件操作的安全基线。
+//! 配合 `crate::plugins::_legacy::commands::common::require_auth` 使用，构成文件操作的安全基线。
 //!
 //! ## 设计依据
 //!

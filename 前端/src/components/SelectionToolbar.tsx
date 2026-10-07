@@ -1,6 +1,7 @@
 import { t } from "i18next";
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ipc } from '@/lib/ipc';
+import { systemtools } from '@/plugins/customs/systemtools';
 import styles from './SelectionToolbar.module.css';
 type ActionType = 'translate' | 'summarize' | 'rewrite' | 'explain';
 interface ActionConfig {
@@ -55,9 +56,7 @@ export default function SelectionToolbar() {
   useEffect(() => {
     const checkEnabled = async () => {
       try {
-        const res = await ipc.invoke<any>('get_system_config', {
-          key: 'intelligence_frontend_settings'
-        });
+        const res = await systemtools.getInfo('intelligence_frontend_settings');
         if (res?.code === 0 && res?.data?.config_value) {
           const parsed = JSON.parse(res.data.config_value);
           const masterOn = parsed.toggles?.master_switch !== false;

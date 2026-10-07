@@ -2,19 +2,21 @@ import { t } from "i18next";
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useTimer } from '@/contexts/TimerContext';
+import { listen } from '@tauri-apps/api/event';
+import type { KernelEvent } from '@/kernel/types';
+import { useTimer } from '@/plugins/boards/home/features/timer/context';
 import { useNavigation } from '@/routes/useNavigation';
-import { extensionManager } from '../utils/extensionManager';
-import { registerBuiltinExtensions } from '../utils/builtinExtensions';
-import { NexTermAdapter } from '../types/extensions';
-import { RecycleProvider, useRecycleContext } from '@/contexts/RecycleContext';
-import AddExtensionModal from '../components/AddExtensionModal';
+import { ROUTES } from '@/routes/routes';
+import { RecycleProvider } from '@/plugins/customs/recycle/context';
+import RecycleActions from '@/plugins/customs/recycle/features/actions/RecycleActions';
+import { useNavTree } from '@/kernel/registry/context';
+import PluginManagerNav from '@/kernel/plugin-manager/PluginManagerNav';
 import FloatingBall from '../components/FloatingBall';
 import SelectionToolbar from '../components/SelectionToolbar';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useRouteAnnouncement } from '@/hooks/useRouteAnnouncement';
 import { useModuleTheme } from '@/hooks/useModuleTheme'; // C1.4 模块级主题
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/kernel/state/authStore';
 import ScrollToTop from '@/components/ScrollToTop';
 import TitleBar from '@/components/TitleBar/TitleBar';
 import { windowControl, checkIsTauri } from '@/lib/tauri';
@@ -67,25 +69,52 @@ export default function Layout() {
     short: '00:00:00',
     long: t("components.NexTermTimer.k3")
   });
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [extensions, setExtensions] = useState<NexTermAdapter[]>([]);
-  const [, setMountedExtensions] = useState<Set<string>>(new Set());
-  const [showAddModal, setShowAddModal] = useState(false);
+  // 顶部导航随内核启用清单联动（手稿 20260926：板块插件停用 → 导航项消失、右侧自动补位；
+  // null = 内核未就绪/查询失败，保持全量显示兜底）
+  const [enabledIds, setEnabledIds] = useState<string[] | null>(null);
+  // 注册表导航树（K3/K4：侧边栏改为注册表驱动；标题=父插件名，选项=已启用子插件）
+  const navTree = useNavTree();
+
+  // 订阅内核启用清单（独立 listen，不与 App/管理页叠加；启停板块 → 导航即时重建）
+  useEffect(() => {
+    const query = async () => {
+      try {
+        const invokeMod = await import('@tauri-apps/api/core');
+        const list = await invokeMod.invoke<Array<{ id: string; state: string }>>(
+          'plugin:kernel|kernel_dispatch',
+          { cmd: 'kernel:plugin:get_enabled', args: {} }
+        );
+        setEnabledIds(list.filter((p) => p.state === 'enabled').map((p) => p.id));
+      } catch { setEnabledIds(null); }
+    };
+    void query();
+    const unlisten = listen<KernelEvent>('k://event', (ev) => {
+      if (ev.payload.name === 'kernel:plugin.state-changed') void query();
+    });
+    return () => { void unlisten.then((fn) => fn()); };
+  }, []);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(loadBookmarks);
 
   // 窄屏响应式：导航栏溢出处理
   const navContainerRef = useRef<HTMLDivElement>(null);
   const [visibleNavCount, setVisibleNavCount] = useState(7);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const allNavItems = [
-    t("components.intelligence.DashboardPanel.k106"),
-    t("components.PermissionRestricted.k2"),
-    t("components.intelligence.ActivityPanel.k1"),
-    t("components.intelligence.ActivityPanel.k8"),
-    t("components.FloatingXin.k26"),
-    t("components.AddExtensionModal.k11"),
-    t("common.search")
+  // 顶部导航项 = 板块插件清单（手稿 20260926 ①：板块插件显示在顶部导航，停用/卸载即消失、右侧自动补位。
+  // id 为插件 id（含 Hello/_hello 与 搜索/customs.search），可见性由 enabledIds 过滤）
+  const navItems = [
+    { id: 'boards.home', label: t("components.intelligence.DashboardPanel.k106"), path: '/home' },
+    { id: 'boards.ai', label: t("components.PermissionRestricted.k2"), path: '/ai' },
+    { id: 'boards.knowledge', label: t("components.intelligence.ActivityPanel.k1"), path: '/knowledge' },
+    { id: 'boards.terminal', label: t("components.intelligence.ActivityPanel.k8"), path: '/terminal' },
+    { id: 'boards.xin', label: t("components.FloatingXin.k26"), path: '/xin' },
+    { id: 'boards.game', label: t("components.AddExtensionModal.k11"), path: '/game' },
+    { id: 'customs.search', label: t("common.search"), path: '/search' },
+    { id: '_hello', label: 'Hello', path: '/hello' }
   ];
+  // 启用过滤（null = 内核未就绪 → 全量显示兜底；首页为必备插件恒在）
+  const visibleNavItems = enabledIds === null
+    ? navItems
+    : navItems.filter((item) => enabledIds.includes(item.id));
 
   useEffect(() => {
     const calculateVisibleNav = () => {
@@ -94,12 +123,13 @@ export default function Layout() {
       // 估算每个导航项的宽度（约 60px，已减小间距）
       const itemWidth = 60;
       const maxItems = Math.floor(containerWidth / itemWidth);
-      setVisibleNavCount(Math.max(2, Math.min(maxItems, allNavItems.length)));
+      setVisibleNavCount(Math.max(2, Math.min(maxItems, navItems.length)));
     };
 
     calculateVisibleNav();
     window.addEventListener('resize', calculateVisibleNav);
     return () => window.removeEventListener('resize', calculateVisibleNav);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const {
     isTiming,
@@ -110,15 +140,8 @@ export default function Layout() {
   const navigate = useNavigate();
   const isTauri = checkIsTauri();
   const {
-    navigateToHome,
-    navigateToAI,
-    navigateToKnowledge,
-    navigateToTerminal,
-    navigateToXin,
-    navigateToGame,
     navigateToProfile,
-    navigateToRecycle,
-    navigateToSearch
+    navigateToRecycle
   } = useNavigation();
 
   // 合并标题栏：拖动窗口处理
@@ -142,38 +165,6 @@ export default function Layout() {
   // C2.4：订阅 i18n 变化，语言切换时触发 Layout 及其子树重渲染
   useTranslation();
 
-  // 初始化扩展系统
-  useEffect(() => {
-    const initializeExtensions = async () => {
-      try {
-        // 注册内置扩展
-        await registerBuiltinExtensions(extensionManager);
-
-        // 获取所有扩展
-        const allExtensions = extensionManager.getAll();
-        setExtensions(allExtensions);
-
-        // 监听扩展状态变化
-        extensionManager.on('extensionMounted', (id: string) => {
-          setMountedExtensions(prev => new Set([...prev, id]));
-        });
-        extensionManager.on('extensionUnmounted', (id: string) => {
-          setMountedExtensions(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(id);
-            return newSet;
-          });
-        });
-
-        // 自动挂载启用的扩展
-        await extensionManager.mountAll();
-        console.log('扩展系统初始化完成');
-      } catch (error) {
-        console.error('扩展系统初始化失败:', error);
-      }
-    };
-    initializeExtensions();
-  }, []);
   useEffect(() => {
     function onBookmarkAdd(e: Event) {
       const detail = (e as CustomEvent).detail as Bookmark;
@@ -195,147 +186,81 @@ export default function Layout() {
     };
   }, []);
 
+  /** 侧边栏注册表驱动（K4）：命中当前路径的主干节点 → 标题=父插件名，选项=已启用子插件
+   *  navItems（`labelKey→t()`、`routePath→navigate`）；无子插件或未匹配时返回 null，回退 legacy 硬编码分支。 */
+  const registrySidebar = (): {
+    title: string;
+    registryDriven: true;
+    items: Array<{ id: string; label: string; icon?: string; route: string; registryDriven: true; active: boolean }>;
+  } | null => {
+    const path = location.pathname;
+    const match = navTree
+      .filter((n) => path === n.routePath || path.startsWith(`${n.routePath}/`))
+      .sort((a, b) => b.routePath.length - a.routePath.length)[0];
+    // 仅采纳「tab 型板块内选项」（routePath 含 `?tab=`）——排除 recycle 等非 tab 型历史 navItem，
+    // 未采纳时回退 legacy 硬编码分支（其他板块本轮不迁移）
+    const children = (match?.children ?? []).filter((c) => c.routePath.includes('?tab='));
+    if (!match || children.length === 0) return null;
+    const tabOf = (routePath: string) =>
+      new URLSearchParams(routePath.split('?')[1] ?? '').get('tab');
+    const currentTab = new URLSearchParams(location.search).get('tab');
+    // 无 tab 参数时以首个选项为默认激活项（如知识库首个选项=条目浏览）
+    const defaultTab = tabOf(children[0].routePath);
+    return {
+      title: t(match.labelKey),
+      registryDriven: true,
+      items: children.map((c) => ({
+        id: c.id,
+        label: t(c.labelKey),
+        icon: c.icon,
+        route: c.routePath,
+        registryDriven: true,
+        active: (currentTab ?? defaultTab) === tabOf(c.routePath),
+      })),
+    };
+  };
+
   // 根据当前路由获取侧边栏内容
   const getSidebarContent = () => {
+    // 注册表驱动优先（知识库等已迁移板块）；否则走下方 legacy 硬编码分支
+    const regSidebar = registrySidebar();
+    if (regSidebar) return regSidebar;
     const path = location.pathname;
     const searchParams = new URLSearchParams(location.search);
     const currentTab = searchParams.get('tab');
-    if (path.startsWith('/home')) {
-      return {
-        title: t("layout.k1"),
-        items: [{
-          id: 'news',
-          label: t("components.intelligence.ActivityPanel.k9"),
-          icon: '📰',
-          route: '/home',
-          active: currentTab === 'news'
-        }, {
-          id: 'todo',
-          label: t("components.intelligence.ActivityPanel.k2"),
-          icon: '✅',
-          route: '/home',
-          active: currentTab === 'todo'
-        }, {
-          id: 'log',
-          label: t("components.intelligence.ActivityPanel.k3"),
-          icon: '📝',
-          route: '/home',
-          active: currentTab === 'log'
-        }, {
-          id: 'timer',
-          label: t("components.intelligence.ActivityPanel.k4"),
-          icon: '⏱️',
-          route: '/home',
-          active: currentTab === 'timer'
-        }]
-      };
-    }
-    if (path.startsWith('/ai')) {
-      return {
-        title: t("components.PermissionRestricted.k2"),
-        items: [{
-          id: 'model',
-          label: t("layout.k2"),
-          icon: 'bot',
-          route: '/ai',
-          active: !currentTab || currentTab === 'model',
-          vertical: true
-        }, {
-          id: 'agent',
-          label: t("layout.k3"),
-          icon: 'cube',
-          route: '/ai',
-          active: currentTab === 'agent',
-          vertical: true
-        }, {
-          id: 'chat',
-          label: t("layout.k4"),
-          icon: 'chat',
-          route: '/ai',
-          active: currentTab === 'chat',
-          vertical: true
-        }, {
-          id: 'group',
-          label: t("layout.k5"),
-          icon: 'users',
-          route: '/ai',
-          active: currentTab === 'group',
-          vertical: true
-        }]
-      };
-    }
-    if (path.startsWith('/knowledge')) {
-      return {
-        title: t("components.intelligence.ActivityPanel.k1"),
-        items: [],
-        actionButtons: [{
-          id: 'insert-template',
-          label: t("layout.k6"),
-          icon: '📋'
-        }, {
-          id: 'relation-graph',
-          label: t("layout.k7"),
-          icon: '🕸️'
-        }]
-      };
-    }
-    if (path.startsWith('/terminal')) {
-      const isManualPage = path.startsWith('/terminal/manual');
-      return {
-        title: t("layout.k8"),
-        items: [{
-          id: 'terminal',
-          label: t("components.intelligence.ActivityPanel.k8"),
-          icon: '🖥️',
-          route: '/terminal',
-          active: !isManualPage && (!currentTab || currentTab === 'terminal')
-        }, {
-          id: 'yuancode',
-          label: 'Yuan Code',
-          icon: '◈',
-          route: '/terminal/yuancode',
-          active: currentTab === 'yuancode'
-        }, {
-          id: 'linux',
-          label: 'Linux',
-          icon: '🐧',
-          route: '/terminal/linux',
-          active: currentTab === 'linux'
-        }, {
-          id: 'manual',
-          label: t("components.PermissionRestricted.k9"),
-          icon: '📖',
-          route: '/terminal/manual',
-          active: isManualPage
-        }]
-      };
-    }
-    if (path.startsWith('/profile')) {
+    // 个人中心 / 回收站（首页子插件，手稿 20260926 ②）：须先于 /home 前缀判定（二者路由为 /home/profile、/home/recycle）
+    if (path.startsWith(ROUTES.PROFILE)) {
+      // 个人中心「一切皆插件」（2026-10-05）：各选项按子插件 pluginId 门控（停用即隐藏）；
+      // boards.profile 为 boards.home 的 L2（三级嵌套），其子插件不采用 ?tab= 注册表驱动
       return {
         title: t("components.intelligence.DashboardPanel.k105"),
         items: [{
           id: 'account',
+          pluginId: 'profile.account',
           label: t("layout.k9"),
           icon: '👤',
-          route: '/profile',
+          route: ROUTES.PROFILE,
           active: !currentTab || currentTab === 'account'
         }, {
           id: 'resume',
+          pluginId: 'profile.resume',
           label: t("components.intelligence.ActivityPanel.k5"),
           icon: '📄',
-          route: '/profile',
+          route: ROUTES.PROFILE,
           active: currentTab === 'resume'
         }, {
           id: 'quote',
+          pluginId: 'profile.quote',
           label: t("components.intelligence.ActivityPanel.k6"),
           icon: '💬',
-          route: '/profile',
+          route: ROUTES.PROFILE,
           active: currentTab === 'quote'
         }, {
           id: 'setting',
+          pluginId: 'profile.settings',
           label: t("common.settings"),
           icon: '⚙️',
-          route: '/profile',
+          route: ROUTES.PROFILE,
           active: currentTab === 'setting'
         }, {
           id: 'logout',
@@ -345,11 +270,97 @@ export default function Layout() {
         }]
       };
     }
-    if (path.startsWith('/recycle')) {
+    if (path.startsWith(ROUTES.RECYCLE)) {
       return {
         title: t("components.PermissionRestricted.k4"),
         isRecyclePage: true,
         items: []
+      };
+    }
+    if (path.startsWith('/home')) {
+      return {
+        title: t("layout.k1"),
+        items: [{
+          id: 'news',
+          pluginId: 'home.news',
+          label: t("components.intelligence.ActivityPanel.k9"),
+          icon: '📰',
+          route: '/home',
+          active: currentTab === 'news'
+        }, {
+          id: 'todo',
+          pluginId: 'home.todo',
+          label: t("components.intelligence.ActivityPanel.k2"),
+          icon: '✅',
+          route: '/home',
+          active: currentTab === 'todo'
+        }, {
+          id: 'log',
+          pluginId: 'home.journal',
+          label: t("components.intelligence.ActivityPanel.k3"),
+          icon: '📝',
+          route: '/home',
+          active: currentTab === 'log'
+        }, {
+          id: 'timer',
+          pluginId: 'home.timer',
+          label: t("components.intelligence.ActivityPanel.k4"),
+          icon: '⏱️',
+          route: '/home',
+          active: currentTab === 'timer'
+        }]
+      };
+    }
+    if (path.startsWith('/ai')) {
+      // AI 会话：侧边栏选项由注册表驱动（上方 registrySidebar 已处理，AI 为 /ai?tab= 单页模型）；
+      // 此处仅为内核未就绪/子插件全停用时的标题兜底
+      return {
+        title: t("components.PermissionRestricted.k2"),
+        items: []
+      };
+    }
+    if (path.startsWith('/knowledge')) {
+      // 知识库：侧边栏选项由注册表驱动（上方 registrySidebar 已处理）；
+      // 此处仅为内核未就绪/子插件全停用时的标题兜底（无 actionButtons、无私有事件通道）
+      return {
+        title: t("components.intelligence.ActivityPanel.k1"),
+        items: []
+      };
+    }
+    if (path.startsWith('/terminal')) {
+      const isManualPage = path.startsWith('/terminal/manual');
+      return {
+        title: t("layout.k8"),
+        items: [{
+          id: 'terminal',
+          pluginId: 'boards.terminal',
+          label: t("components.intelligence.ActivityPanel.k8"),
+          icon: '🖥️',
+          route: '/terminal',
+          active: !isManualPage && (!currentTab || currentTab === 'terminal')
+        }, {
+          id: 'yuancode',
+          pluginId: 'terminal.yuancode',
+          label: 'Yuan Code',
+          icon: '◈',
+          route: '/terminal/yuancode',
+          active: currentTab === 'yuancode'
+        }, {
+          id: 'linux',
+          pluginId: 'terminal.linux',
+          label: 'Linux',
+          icon: '🐧',
+          route: '/terminal/linux',
+          active: currentTab === 'linux'
+        }, {
+          id: 'manual',
+          // 修正：命令手册归 terminal.manual L2（原误标 boards.terminal，致停用后选项不消失）
+          pluginId: 'terminal.manual',
+          label: t("components.PermissionRestricted.k9"),
+          icon: '📖',
+          route: '/terminal/manual',
+          active: isManualPage
+        }]
       };
     }
     if (path.startsWith('/game')) {
@@ -383,81 +394,11 @@ export default function Layout() {
       };
     }
     if (path.startsWith('/xin')) {
+      // 小欣：侧边栏选项由注册表驱动（上方 registrySidebar 已处理，/xin?tab= 单页模型）；
+      // 此处仅为内核未就绪/子插件全停用时的标题兜底
       return {
         title: t("layout.k16"),
-        items: [{
-          id: 'chat',
-          label: t("layout.k17"),
-          icon: '💬',
-          route: '/xin',
-          active: !currentTab || currentTab === 'chat'
-        }, {
-          id: 'memory',
-          label: t("layout.k18"),
-          icon: '🧠',
-          route: '/xin',
-          active: currentTab === 'memory'
-        }, {
-          id: 'mood',
-          label: t("layout.k19"),
-          icon: '🌊',
-          route: '/xin',
-          active: currentTab === 'mood'
-        }, {
-          id: 'productivity',
-          label: t("layout.k20"),
-          icon: '⏱️',
-          route: '/xin',
-          active: currentTab === 'productivity'
-        }, {
-          id: 'briefing',
-          label: t("layout.k21"),
-          icon: '📊',
-          route: '/xin',
-          active: currentTab === 'briefing'
-        }, {
-          id: 'compaction',
-          label: t("layout.k22"),
-          icon: '🗜️',
-          route: '/xin',
-          active: currentTab === 'compaction'
-        }, {
-          id: 'dream',
-          label: t("layout.k23"),
-          icon: '🌙',
-          route: '/xin',
-          active: currentTab === 'dream'
-        }, {
-          id: 'checkpoint',
-          label: t("layout.k24"),
-          icon: '💾',
-          route: '/xin',
-          active: currentTab === 'checkpoint'
-        }, {
-          id: 'search',
-          label: t("common.search"),
-          icon: '🔍',
-          route: '/xin',
-          active: currentTab === 'search'
-        }, {
-          id: 'review',
-          label: t("layout.k25"),
-          icon: '📈',
-          route: '/xin',
-          active: currentTab === 'review'
-        }, {
-          id: 'skill',
-          label: t("layout.k26"),
-          icon: '⚡',
-          route: '/xin',
-          active: currentTab === 'skill'
-        }, {
-          id: 'tool',
-          label: t("layout.k27"),
-          icon: '🔧',
-          route: '/xin',
-          active: currentTab === 'tool'
-        }]
+        items: []
       };
     }
     if (path.startsWith('/search')) {
@@ -470,39 +411,28 @@ export default function Layout() {
       };
     }
     if (path.startsWith('/spyglass')) {
+      // 底层智能：侧边栏选项由注册表驱动（上方 registrySidebar 已处理，/spyglass?tab= 单页模型）；
+      // 此处仅为内核未就绪/子插件全停用时的标题兜底
       return {
         title: t("components.intelligence.DashboardPanel.k103"),
-        items: [{
-          id: 'dashboard',
-          label: t("layout.k29"),
-          icon: '📊',
-          route: '/spyglass',
-          active: !currentTab || currentTab === 'dashboard'
-        }, {
-          id: 'suggestions',
-          label: t("components.intelligence.ActivityPanel.k17"),
-          icon: '💡',
-          route: '/spyglass',
-          active: currentTab === 'suggestions'
-        }, {
-          id: 'behavior',
-          label: t("components.intelligence.ActivityPanel.k18"),
-          icon: '🧠',
-          route: '/spyglass',
-          active: currentTab === 'behavior'
-        }, {
-          id: 'activity',
-          label: t("layout.k30"),
-          icon: '📋',
-          route: '/spyglass',
-          active: currentTab === 'activity'
-        }, {
-          id: 'settings',
-          label: t("common.settings"),
-          icon: '⚙️',
-          route: '/spyglass',
-          active: currentTab === 'settings'
-        }]
+        items: []
+      };
+    }
+    if (path.startsWith('/sync')) {
+      // 同步：侧边栏选项由注册表驱动（上方 registrySidebar 已处理，/sync?tab= 单页模型）；
+      // 此处仅为内核未就绪/子插件全停用时的标题兜底
+      return {
+        title: t("components.Sync.k1"),
+        items: []
+      };
+    }
+
+    if (path.startsWith('/plugin-manager')) {
+      // 插件管理页：分组目录由 PluginManagerNav 渲染于全局侧边栏（手稿 20260926 ③，不占主内容区）
+      return {
+        title: '插件管理',
+        isPluginManagerPage: true,
+        items: []
       };
     }
 
@@ -519,9 +449,28 @@ export default function Layout() {
     };
   };
   const sidebarContent = getSidebarContent();
+  // 板块内菜单随插件启停联动（手稿 20260926：子插件停用 → 对应菜单项同步隐藏，消除僵菜单）
+  const sidebarItems = (sidebarContent.items as unknown[]).filter((item) => {
+    const pluginId = (item as { pluginId?: string }).pluginId;
+    return !pluginId || enabledIds === null || enabledIds.includes(pluginId);
+  }) as typeof sidebarContent.items;
+
+  // 侧边栏操作区（recycle.actions 可选子插件）随启停门控（Layout 已持有 enabledIds）
+  const recycleActionsEnabled = enabledIds === null || enabledIds.includes('recycle.actions');
 
   // 处理侧边栏项目点击
   const handleSidebarItemClick = (item: any) => {
+    // 注册表驱动的选项：routePath 已含 tab（如 /knowledge?tab=search），直接导航
+    if (item.registryDriven) {
+      if (item.route) {
+        // 临时账号：AI 模型/Agent 只读（等价于 legacy item.id==='model'|'agent' 的 &readonly=true）
+        const isTemp = localStorage.getItem('nt_temp_account') === 'true';
+        let target = item.route as string;
+        if (isTemp && /[?&]tab=(model|agent)\b/.test(target)) target += '&readonly=true';
+        navigate(target);
+      }
+      return;
+    }
     if (item.id === 'logout') {
       // 使用 authStore.logout() 安全清除 Token（tauriStorage），
       // 同时清除遗留的 localStorage 数据
@@ -579,40 +528,11 @@ export default function Layout() {
     }
   };
 
-  // 处理导航栏点击
-  const handleNavClick = (page: string) => {
-    switch (page) {
-      case t("components.intelligence.DashboardPanel.k106"):
-        navigateToHome();
-        break;
-      case t("components.PermissionRestricted.k2"):
-        navigateToAI();
-        break;
-      case t("components.intelligence.ActivityPanel.k1"):
-        navigateToKnowledge();
-        break;
-      case t("components.intelligence.ActivityPanel.k8"):
-        navigateToTerminal();
-        break;
-      case t("components.FloatingXin.k26"):
-        navigateToXin();
-        break;
-      case t("components.AddExtensionModal.k11"):
-        navigateToGame();
-        break;
-      case t("common.search"):
-        navigateToSearch();
-        break;
-      default:
-        navigateToHome();
-    }
+  // 处理导航栏点击：按导航项路径跳转（板块停用后导航项消失，不可达）
+  const handleNavClick = (path: string) => {
+    navigate(path);
   };
 
-  // 处理扩展添加完成
-  const handleExtensionAdded = (adapter: NexTermAdapter) => {
-    setExtensions(prev => [...prev, adapter]);
-    console.log(`扩展添加成功: ${adapter.name}`);
-  };
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
@@ -626,29 +546,6 @@ export default function Layout() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-  function RecycleActions() {
-    const {
-      selectedFiles,
-      clearSelection
-    } = useRecycleContext();
-    return <div className={styles.recycleActions}>
-        <button className={styles.recycleActionPrimary} disabled={selectedFiles.length === 0} onClick={() => window.dispatchEvent(new CustomEvent('recycle-restore'))} aria-label={t("common.restore")}>
-          {t("layout.k34")}{selectedFiles.length})
-        </button>
-        <button className={styles.recycleActionDanger} disabled={selectedFiles.length === 0} onClick={() => window.dispatchEvent(new CustomEvent('recycle-delete'))} aria-label={t("common.permanentDelete")}>
-          {t("layout.k35")}{selectedFiles.length})
-        </button>
-        <button className={styles.recycleActionDanger} onClick={() => window.dispatchEvent(new CustomEvent('recycle-clear'))} aria-label={t("common.clearAll")}>
-          {t("common.clearAll")}
-        </button>
-        <button className={styles.recycleActionSecondary} onClick={() => window.dispatchEvent(new CustomEvent('recycle-select-all'))} aria-label={t("common.selectAll")}>
-          {t("common.selectAll")}
-        </button>
-        <button className={styles.recycleActionSecondary} disabled={selectedFiles.length === 0} onClick={() => clearSelection()} aria-label={t("common.deselect")}>
-          {t("common.deselect")}
-        </button>
-      </div>;
-  }
   const handleFaviconError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const img = e.currentTarget;
     img.style.display = 'none';
@@ -673,29 +570,29 @@ export default function Layout() {
           </span>
         </div>
 
-        {/* 中间：主导航 */}
+        {/* 中间：主导航（板块插件动态渲染：停用即消失、右侧自动补位，手稿 20260926 ①） */}
         <nav className={styles.navContainer} ref={navContainerRef} role="navigation" aria-label={t('a11y.mainNav')}>
-          {allNavItems.slice(0, visibleNavCount).map(item => <div key={item} onClick={() => handleNavClick(item)} onKeyDown={e => {
+          {visibleNavItems.slice(0, visibleNavCount).map(item => <div key={item.id} onClick={() => handleNavClick(item.path)} onKeyDown={e => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              handleNavClick(item);
+              handleNavClick(item.path);
             }
-          }} className={`${styles.navItem} ${location.pathname.includes(getNavPath(item)) ? styles.navItemActive : ''}`} role="button" tabIndex={0} aria-current={location.pathname.includes(getNavPath(item)) ? 'page' : undefined}>
-              {item}
+          }} className={`${styles.navItem} ${location.pathname.startsWith(item.path) ? styles.navItemActive : ''}`} role="button" tabIndex={0} aria-current={location.pathname.startsWith(item.path) ? 'page' : undefined} style={item.id === '_hello' ? { color: '#00ff9d' } : undefined}>
+              {item.label}
             </div>)}
         </nav>
 
         {/* 窄屏响应式："…"按钮在导航区与时间区之间 */}
-        {visibleNavCount < allNavItems.length && <div style={{ position: 'relative' }}>
+        {visibleNavCount < visibleNavItems.length && <div style={{ position: 'relative' }}>
             <div className={styles.navMoreButton} onClick={() => setShowMoreMenu(!showMoreMenu)} role="button" tabIndex={0} aria-label={t("common.more")}>
               ⋯
             </div>
             {showMoreMenu && <div className={styles.navDropdown}>
-                {allNavItems.slice(visibleNavCount).map(item => <div key={item} className={`${styles.navDropdownItem} ${location.pathname.includes(getNavPath(item)) ? styles.navDropdownItemActive : ''}`} onClick={() => {
-                handleNavClick(item);
+                {visibleNavItems.slice(visibleNavCount).map(item => <div key={item.id} className={`${styles.navDropdownItem} ${location.pathname.startsWith(item.path) ? styles.navDropdownItemActive : ''}`} onClick={() => {
+                handleNavClick(item.path);
                 setShowMoreMenu(false);
               }} role="button" tabIndex={0}>
-                    {item}
+                    {item.label}
                   </div>)}
               </div>}
           </div>}
@@ -731,7 +628,7 @@ export default function Layout() {
         <aside id="sidebar" className={styles.sidebar} role="navigation" aria-label={t('a11y.sidebar')}>
           {/* 页面特定内容区域 */}
           <div style={{
-            flex: sidebarContent.items.length > 0 || (sidebarContent as any).isRecyclePage ? 1 : undefined,
+            flex: sidebarItems.length > 0 || (sidebarContent as any).isRecyclePage || (sidebarContent as any).isPluginManagerPage ? 1 : undefined,
             padding: '0 10px',
             overflow: 'auto'
           }}>
@@ -739,8 +636,8 @@ export default function Layout() {
               {sidebarContent.title}
             </div>
 
-            {(sidebarContent as any).isRecyclePage ? <RecycleActions /> : <div className={styles.sidebarItems}>
-                {sidebarContent.items.map(item => {
+            {(sidebarContent as any).isPluginManagerPage ? <PluginManagerNav /> : (sidebarContent as any).isRecyclePage ? (recycleActionsEnabled ? <RecycleActions /> : null) : <div className={styles.sidebarItems}>
+                {sidebarItems.map(item => {
                 const isDanger = (item as any).isDanger || false;
                 const iconName = (item as any).icon || '';
                 const isSvgIcon = ['bot', 'cube', 'chat', 'users'].includes(iconName);
@@ -831,122 +728,30 @@ export default function Layout() {
               </div>}
           </div>
 
-          {/* 功能按钮区（知识库等页面专用） */}
-          {location.pathname.startsWith('/knowledge') && <div className={styles.actionButtons}>
-              <div className={`${styles.actionBtn} ${localStorage.getItem('kb_library') !== 'study' ? styles.actionBtnActive : ''}`} onClick={() => {
-              localStorage.setItem('kb_library', 'material');
-              window.dispatchEvent(new CustomEvent('kb-library-change', {
-                detail: 'material'
-              }));
-            }} onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                localStorage.setItem('kb_library', 'material');
-                window.dispatchEvent(new CustomEvent('kb-library-change', {
-                  detail: 'material'
-                }));
-              }
-            }} title={t("layout.k37")} role="button" tabIndex={0}>
-                <span className={styles.actionBtnIcon}>📁</span>
-                <span className={styles.actionBtnLabel}>{t("layout.k37")}</span>
-              </div>
-              <div className={`${styles.actionBtn} ${localStorage.getItem('kb_library') === 'study' ? styles.actionBtnActive : ''}`} onClick={() => {
-              localStorage.setItem('kb_library', 'study');
-              window.dispatchEvent(new CustomEvent('kb-library-change', {
-                detail: 'study'
-              }));
-            }} onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                localStorage.setItem('kb_library', 'study');
-                window.dispatchEvent(new CustomEvent('kb-library-change', {
-                  detail: 'study'
-                }));
-              }
-            }} title={t("layout.k38")} role="button" tabIndex={0}>
-                <span className={styles.actionBtnIcon}>📚</span>
-                <span className={styles.actionBtnLabel}>{t("layout.k38")}</span>
-              </div>
-            </div>}
-
-          {(sidebarContent as any).actionButtons && (sidebarContent as any).actionButtons.length > 0 && <div className={styles.actionButtons}>
-              {(sidebarContent as any).actionButtons.map((btn: {
-              id: string;
-              label: string;
-              icon: string;
-            }) => <div key={btn.id} onClick={() => {
-              if (btn.id === 'insert-template') {
-                window.dispatchEvent(new CustomEvent('kb-action', {
-                  detail: 'insert-template'
-                }));
-              } else if (btn.id === 'relation-graph') {
-                window.dispatchEvent(new CustomEvent('kb-action', {
-                  detail: 'relation-graph'
-                }));
-              }
-            }} onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                window.dispatchEvent(new CustomEvent('kb-action', {
-                  detail: btn.id === 'insert-template' ? 'insert-template' : 'relation-graph'
-                }));
-              }
-            }} className={styles.actionBtn} title={btn.label} role="button" tabIndex={0}>
-                  <span className={styles.actionBtnIcon}>{btn.icon}</span>
-                  <span className={styles.actionBtnLabel}>{btn.label}</span>
-                </div>)}
-            </div>}
-
-          {/* 底部固定区域 - 扩展模块和回收站 */}
+          {/* 底部固定区域 - 插件管理和回收站 */}
           <div style={{
             marginTop: 'auto',
             paddingTop: '15px'
           }}>
-            {/* 扩展模块 */}
+            {/* 插件管理（首页必备子插件；手稿 20260926 ②：置于原「扩展」位） */}
             <div style={{
               borderTop: 'var(--nt-border-width) solid rgba(0, 240, 255, 0.4)',
               borderBottom: 'var(--nt-border-width) solid rgba(0, 240, 255, 0.4)',
               marginBottom: '10px'
             }}>
-              <div onClick={() => setIsExpanded(!isExpanded)} onKeyDown={e => {
+              <div onClick={() => handleNavClick('/plugin-manager')} onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  setIsExpanded(!isExpanded);
+                  handleNavClick('/plugin-manager');
                 }
-              }} className={styles.expandSection} role="button" tabIndex={0} aria-expanded={isExpanded}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" strokeWidth="1.5">
-                    <path d="M4 6H20M4 12H20M4 18H20" />
-                  </svg>
-                  <span style={{
-                    fontSize: '13px',
-                    color: '#00F0FF'
-                  }}>{t("layout.k39")}{extensions.length})</span>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" strokeWidth="1.5" style={{
-                  transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.3s'
-                }}>
-                  <path d="M6 9L12 15L18 9" />
+              }} className={`${styles.profileIcon} ${location.pathname.startsWith('/plugin-manager') ? styles.navItemActive : ''}`} role="button" tabIndex={0} aria-label="插件管理">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" strokeWidth="1.5">
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 17L12 22L22 17" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 12L12 17L22 12" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
+                <span style={{ fontSize: '13px' }}>插件管理</span>
               </div>
-
-              {/* 扩展内容区域 */}
-              {isExpanded && <div className={styles.expandContent}>
-                  <div style={{
-                  padding: '30px 20px',
-                  textAlign: 'center',
-                  color: 'rgba(106, 106, 138, 0.65)',
-                  fontSize: '13px',
-                  fontStyle: 'italic'
-                }}>
-                    {t("layout.k40")}
-                  </div>
-                </div>}
             </div>
 
             {/* 个人中心（从 header 移至此处，全局固定） */}
@@ -991,9 +796,6 @@ export default function Layout() {
         </main>
       </div>
       
-      {/* 添加扩展模态框 */}
-      <AddExtensionModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} onExtensionAdded={handleExtensionAdded} />
-
       {/* 智能悬浮球 */}
       <FloatingBall />
       {/* 选中文本快捷 AI 工具栏 */}
@@ -1002,18 +804,4 @@ export default function Layout() {
       <div id="route-announcer" role="status" aria-live="polite" className="sr-only"></div>
     </div>
     </RecycleProvider>;
-}
-
-// 辅助函数：获取导航路径
-function getNavPath(navItem: string): string {
-  const pathMap: Record<string, string> = {
-    '首页': '/home',
-    'AI会话': '/ai',
-    '知识库': '/knowledge',
-    '终端': '/terminal',
-    '小欣': '/xin',
-    '游戏': '/game',
-    '搜索': '/search'
-  };
-  return pathMap[navItem] || '';
 }

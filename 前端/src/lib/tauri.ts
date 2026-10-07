@@ -116,12 +116,16 @@ export const directory = {
   }
 }
 
-// 剪贴板操作（通过后端命令）
+// 剪贴板操作（通过后端命令，走内核 dispatcher st:plugin:*）
 export const clipboard = {
   readText: async (): Promise<string> => {
     if (checkIsTauri()) {
       const { invoke } = await import('@tauri-apps/api/core')
-      const res = await invoke<{data?: string}>('clipboard_read_text')
+      const KERNEL_DISPATCH = 'plugin:kernel|kernel_dispatch'
+      const res = await invoke<{data?: string}>(KERNEL_DISPATCH, {
+        cmd: 'st:plugin:clipboard_read_text',
+        args: {}
+      })
       return res.data || ''
     }
     return navigator.clipboard?.readText() || Promise.resolve('')
@@ -129,7 +133,11 @@ export const clipboard = {
   writeText: async (text: string): Promise<void> => {
     if (checkIsTauri()) {
       const { invoke } = await import('@tauri-apps/api/core')
-      await invoke<void>('clipboard_write_text', { text })
+      const KERNEL_DISPATCH = 'plugin:kernel|kernel_dispatch'
+      await invoke<void>(KERNEL_DISPATCH, {
+        cmd: 'st:plugin:clipboard_write_text',
+        args: { text }
+      })
       return
     }
     await navigator.clipboard?.writeText(text)

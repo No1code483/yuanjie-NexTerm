@@ -7,18 +7,18 @@ use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 use sqlx::SqlitePool;
 use tokio::sync::RwLock;
 
-use crate::crypto::mek_manager::MekManager;
+use crate::crypto::mek_manager::{MekManager, MekProvider};
 use crate::error::app_error::AppError;
-use crate::services::collab::CollabSessionManager;
-use crate::services::intelligence_service::IntelligenceService;
-use crate::services::model_health_monitor::ModelHealthMonitor;
-use crate::services::ssh_service::SshService;
-use crate::services::sync::connectivity::ConnectivityChecker;
-use crate::services::terminal_mux::TerminalMux;
-use crate::services::terminal_service::TerminalService;
-use crate::services::xin_dialogue_service::XinDialogueService;
-use crate::services::xin_basic_service::XiaoxinService;
-use crate::services::xin_tts_service::XinTtsService;
+use crate::plugins::_legacy::services::collab::CollabSessionManager;
+use crate::plugins::_legacy::services::intelligence_service::IntelligenceService;
+use crate::plugins::_legacy::services::model_health_monitor::ModelHealthMonitor;
+use crate::plugins::_legacy::services::ssh_service::SshService;
+use crate::plugins::_legacy::services::sync::connectivity::ConnectivityChecker;
+use crate::plugins::_legacy::services::terminal_mux::TerminalMux;
+use crate::plugins::_legacy::services::terminal_service::TerminalService;
+use crate::plugins::_legacy::services::xin_dialogue_service::XinDialogueService;
+use crate::plugins::_legacy::services::xin_basic_service::XiaoxinService;
+use crate::plugins::_legacy::services::xin_tts_service::XinTtsService;
 
 pub struct AppState {
     pub pool: SqlitePool,
@@ -70,7 +70,10 @@ impl AppState {
             .await
             .map_err(|e| AppError::Database(e))?;
 
-        let mek_manager = Arc::new(RwLock::new(MekManager::new()));
+        // 阶段3 批次1a-2a：加密基础设施实现由 customs.auth 插件提供，装配期注入内核门面。
+        let mek_manager = Arc::new(RwLock::new(MekManager::new(
+            crate::plugins::customs::auth::mek_provider(),
+        )));
 
         // D3.2 TTS 缓存目录：data_dir/tts_cache
         let tts_cache_dir = data_dir.join("tts_cache");

@@ -24,7 +24,7 @@ use tokio::sync::RwLock;
 
 use crate::crypto::mek_manager::MekManager;
 use crate::error::app_error::AppError;
-use crate::services::cloud_api_router::{CloudApiRouter, ProgrammingRequest};
+use crate::plugins::_legacy::services::cloud_api_router::{CloudApiRouter, ProgrammingRequest};
 
 pub mod api_design;
 pub mod code_review;
